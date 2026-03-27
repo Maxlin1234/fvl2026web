@@ -3,7 +3,7 @@
 <template>
   <section>
     <head>
-      <title>Fvl 2024</title>
+      <title>Fvl 2026</title>
       <meta charset="UTF-8">
       <meta
         name="viewport"

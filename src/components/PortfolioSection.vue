@@ -166,13 +166,17 @@ export default {
       return `https://unzip-clab-api.clab.org.tw/${String(directUrl).replace(/^\/+/, '')}`;
     },
     getWorkTitle(item) {
-      // 預設先中文，再英文
-      return item?.work_zh?.title
+      const zhTitle = item?.work_zh?.title
         || item?.titleZhTw
         || item?.title_zh_tw
-        || item?.title
-        || item?.work_en?.title
         || '';
+      const enTitle = item?.work_en?.title
+        || item?.title_en
+        || item?.titleEn
+        || item?.title
+        || '';
+
+      return this.isEnglish ? (enTitle || zhTitle) : (zhTitle || enTitle);
     },
     cacheWork(item, idx) {
       try {
