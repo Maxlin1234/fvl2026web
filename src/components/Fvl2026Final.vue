@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="fvl2026-page">
     <!-- 首頁區塊 -->
     <HeroSection
       :showButtons="true"
@@ -122,6 +122,7 @@ export default {
   },
   async mounted() {
     try {
+      this.removeStrayBodyCanvases();
       this.initLanguage();
       await this.debugApiConnection();
       await this.fetchData();
@@ -137,6 +138,22 @@ export default {
     ScrollTrigger.getAll().forEach(trigger => trigger.kill());
   },
   methods: {
+    removeStrayBodyCanvases() {
+      // 清除先前頁面 Three.js 遺留在 body 的 canvas（不影響本頁 Hero 內的 canvas）
+      const bodyCanvases = Array.from(document.querySelectorAll('body > canvas'));
+      bodyCanvases.forEach((canvasEl) => {
+        if (canvasEl && canvasEl.parentNode === document.body) {
+          canvasEl.parentNode.removeChild(canvasEl);
+        }
+      });
+      // 同步清理 dat.gui 容器（若有）
+      const datGuiPanels = Array.from(document.querySelectorAll('body > .dg.ac'));
+      datGuiPanels.forEach((panel) => {
+        if (panel && panel.parentNode === document.body) {
+          panel.parentNode.removeChild(panel);
+        }
+      });
+    },
     async debugApiConnection() {
       console.log('[Fvl2026Final] API debug start', {
         endpoint: WORKS_API_URL,
@@ -169,13 +186,12 @@ export default {
     },
     // 語言管理
     initLanguage() {
+      // 依需求：初次載入預設為中文
+      this.isEnglish = false;
       try {
-        const savedLang = localStorage.getItem(LOCAL_STORAGE_KEYS.LANG);
-        this.isEnglish = savedLang === 'en';
-        console.log("Initial language set to:", this.isEnglish ? "English" : "Chinese");
+        localStorage.setItem(LOCAL_STORAGE_KEYS.LANG, 'zh');
       } catch (error) {
-        console.warn("Failed to read language from localStorage:", error);
-        this.isEnglish = false; // 預設為中文
+        console.warn("Failed to persist default language:", error);
       }
     },
 
@@ -494,6 +510,17 @@ export default {
 </script>
 
 <style lang="scss">
+.fvl2026-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+}
+
+.fvl2026-page .foot-bar {
+  margin-top: auto;
+}
+
 // 變數定義
 $body-font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 $primary-bg: #181818;
