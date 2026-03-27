@@ -13,7 +13,7 @@ const routes = [
     path: '/',
     name: 'Home',
     // component: Fvlhome
-    component: () => import(/* webpackChunkName: 'about' */ '../views/Home.vue'),
+    component: () => import(/* webpackChunkName: 'about' */ '../components/Fvl2026Final.vue'),
   },
   {
     path: '/fvl-fest-2024',
@@ -110,7 +110,7 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: 'about' */ '../views/FvlFest.vue'),
+    component: () => import(/* webpackChunkName: 'about' */ '../components/Fvl2026Final.vue'),
   },
   {
     path: '/festival/2026',
