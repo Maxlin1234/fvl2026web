@@ -1,0 +1,261 @@
+{
+  "filters": [
+    {
+      "id": 1,
+      "title": "All",
+      "filter": "*",
+      "count": "08"
+    },
+    {
+      "id": 2,
+      "title": "#策劃邀請",
+      "filter": ".brand",
+      "count": "03"
+    },
+    {
+      "id": 3,
+      "title": "#內部自製",
+      "filter": ".app",
+      "count": "02"
+    },
+    {
+      "id": 4,
+      "title": "#表演藝術跨界合作",
+      "filter": ".web",
+      "count": "03"
+    },
+    {
+      "id": 5,
+      "title": "#科技媒體",
+      "filter": ".web",
+      "count": "03"
+    },
+    {
+      "id": 6,
+      "title": "#音像實驗",
+      "filter": ".web",
+      "count": "03"
+    },
+    {
+      "id": 7,
+      "title": "#玖格設計",
+      "filter": ".web",
+      "count": "03"
+    },
+    {
+      "id": 8,
+      "title": "#移動故事屋",
+      "filter": ".web",
+      "count": "03"
+    },
+    {
+      "id": 9,
+      "title": "#工作坊",
+      "filter": ".web",
+      "count": "03"
+    },
+    
+    {
+      "id": 10,
+      "title": "#XTRUX",
+      "filter": ".web",
+      "count": "03"
+    },
+    {
+      "id": 11,
+      "title": "#2020",
+      "filter": ".invite",
+      "count": "03"
+    },
+    {
+      "id": 12,
+      "title": "#2021",
+      "filter": ".invite",
+      "count": "03"
+    },
+    {
+      "id": 13,
+      "title": "#2022",
+      "filter": ".invite",
+      "count": "03"
+    },
+    {
+      "id": 14,
+      "title": "#2023",
+      "filter": ".invite",
+      "count": "03"
+    }
+  ],
+  "gallery": [
+    {
+      "id": 1,
+      "filter": "brand",
+      "image": "/dark/assets/imgs/works/grid2/2022.jpg",
+      "type": "TAICCA Spotlight",
+      "year": "2023",
+      "title": "◉ 移動故事屋《月球度假村》◉ "
+    },
+    {
+      "id": 2,
+      "filter": "brand",
+      "image": "/dark/assets/imgs/works/grid2/2.jpg",
+      "type": "TAICCA Spotlight",
+      "year": "2023",
+      "title": "◉ 夢想動畫《植物情人》◉ "
+    },
+    {
+      "id": 3,
+      "filter": "brand",
+      "image": "/dark/assets/imgs/works/grid2/3.jpg",
+      "type": "TAICCA Spotlight",
+      "year": "2023",
+      "title": "◉ 謝文毅《彼岸 in DOME》◉ "
+    },
+    {
+      "id": 4,
+      "filter": "brand",
+      "image": "/dark/assets/imgs/works/grid2/4.jpg",
+      "type": "TAICCA Spotlight",
+      "year": "2023",
+      "title": "◉ 躍界新媒體 《從心墨韻》◉ "
+    },
+    {
+      "id": 5,
+      "filter": "app",
+      "image": "/dark/assets/imgs/works/grid2/5.jpg",
+      "type": "徵件作品",
+      "year": "2023",
+      "title": "◉ Jeremy Oury《EXO CORTEX 2.0》◉"
+    },
+    {
+      "id": 6,
+      "filter": "app",
+      "image": "/dark/assets/imgs/works/grid2/6.jpg",
+      "type": "徵件作品",
+      "year": "2023",
+      "title": "◉ 吳秉聖《靈魂的副翼：穹丘》◉"
+    },
+    {
+      "id": 7,
+      "filter": "app",
+      "image": "/dark/assets/imgs/works/grid2/7.jpg",
+      "type": "徵件作品",
+      "year": "2023",
+      "title": "◉ Yan Breuleux《Matière Première/Raw Materia》◉"
+    },
+    {
+      "id": 8,
+      "filter": "web",
+      "image": "/dark/assets/imgs/works/grid2/8.jpg",
+      "type": "SAT Fest",
+      "year": "2023",
+      "title": "◉ 謝爾蓋・普羅科菲耶夫《迷宮》（德國）◉ "
+    },
+    {
+      "id": 9,
+      "filter": "web",
+      "image": "/dark/assets/imgs/works/grid2/9.jpg",
+      "type": "SAT Fest",
+      "year": "2023",
+      "title": "◉ 弗朗西斯・阿代爾・麥肯錫《蘭花與蜜蜂》（加拿大）◉"
+    },
+    {
+      "id": 10,
+      "filter": "web",
+      "image": "/dark/assets/imgs/works/grid2/10.jpg",
+      "type": "SAT Fest",
+      "year": "2023",
+      "title": "◉ 馬爾滕・艾薩克・德希爾《蜂湧》 (德國) ◉"
+    },
+    {
+      "id": 11,
+      "filter": "web",
+      "image": "/dark/assets/imgs/works/grid2/11.jpg",
+      "type": "SAT Fest",
+      "year": "2023",
+      "title": "◉ 大衛・加德納《奶奶的房子》（加拿大）◉ "
+    },
+    {
+      "id": 12,
+      "filter": "web",
+      "image": "/dark/assets/imgs/works/grid2/12.jpg",
+      "type": "SAT Fest",
+      "year": "2023",
+      "title": "◉ 張味迪、戈維璐、蘇少禹《星際》（美國）◉  "
+    },
+    {
+      "id": 13,
+      "filter": "web",
+      "image": "/dark/assets/imgs/works/grid2/13.jpg",
+      "type": "SAT Fest",
+      "year": "2023",
+      "title": "◉ 塞巴斯蒂安・拉布尼、克萊門・普特涅《風信子 XYZ》（法國）◉"
+    },
+    {
+      "id": 14,
+      "filter": "web",
+      "image": "/dark/assets/imgs/works/grid2/14.jpg",
+      "type": "SAT Fest",
+      "year": "2023",
+      "title": "◉ 莉迪亞・雅科諾夫斯基《導論：計量經濟學》（加拿大）◉ "
+    },
+    {
+      "id": 15,
+      "filter": "invite",
+      "image": "/dark/assets/imgs/works/grid2/15.jpg",
+      "type": "策劃邀請",
+      "year": "2023",
+      "title": "◉ 玖格設計《繁》◉"
+    },
+    {
+      "id": 16,
+      "filter": "invite",
+      "image": "/dark/assets/imgs/works/grid2/16.jpg",
+      "type": "策劃邀請",
+      "year": "2023",
+      "title": "◉ NANONANO《narrative of landscape》◉"
+    },
+    {
+      "id": 17,
+      "filter": "invite",
+      "image": "/dark/assets/imgs/works/grid2/17.jpg",
+      "type": "策劃邀請",
+      "year": "2023",
+      "title": "◉ XTRUX x 晟SHENG《觀》◉"
+    },
+    {
+      "id": 18,
+      "filter": "invite",
+      "image": "/dark/assets/imgs/works/grid2/18.jpg",
+      "type": "策劃邀請",
+      "year": "2023",
+      "title1": "◉ 魏廷宇《沉浸場域作品精選20-23》◉"
+    },
+    {
+      "id": 19,
+      "filter": "invite",
+      "image": "/dark/assets/imgs/works/grid2/19.jpg",
+      "type": "策劃邀請",
+      "year": "2023",
+      "title": "◉ 莊禾《夜遊 2023》◉"
+    },
+    {
+      "id": 20,
+      "filter": "invite",
+      "image": "/dark/assets/imgs/works/grid2/20.jpg",
+      "type": "策劃邀請",
+      "year": "2023",
+      "title": "◉ 黃偉Ｘ鄭道元《INNERSTAR 01 : Reddening》◉"
+    },
+    {
+      "id": 21,
+      "filter": "invite",
+      "image": "/dark/assets/imgs/works/grid2/21.jpg",
+      "type": "策劃邀請",
+      "year": "2023",
+      "title": "◉ 蔡奇宏《封包對撞機》◉"
+    }
+    
+
+  ]
+}

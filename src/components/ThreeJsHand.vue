@@ -1,0 +1,464 @@
+<script type="module" setup>
+import { ref, onBeforeUnmount, onMounted } from 'vue';
+import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
+import vertexShader from '../shader/vertex.glsl';
+import fragmentShader from '../shader/fragment.glsl';
+
+// import {gsap} from 'gsap';
+
+// import { _numWithUnitExp } from 'gsap/gsap-core';
+
+
+
+
+const target = ref(null);
+const scene = new THREE.Scene();
+
+// scene.environment.fog = new THREE.Fog( 0xcccccc,20,1000);
+// scene.fog = new THREE.Fog(0xc0f0ff,0.0015);
+
+// Environment (HDR)
+new RGBELoader().load('/test/model/space.hdr', (environmentMap) => {
+  environmentMap.mapping = THREE.EquirectangularReflectionMapping;
+  scene.background = environmentMap;
+  scene.environment = environmentMap;
+
+
+//   // 藍色半透明遮罩：讓 HDR 背景整體偏藍
+const blueOverlay = new THREE.Mesh(
+    new THREE.SphereGeometry(500, 32, 16),
+    new THREE.MeshBasicMaterial({
+      color: 0x0a50ff,
+      transparent: true,
+      opacity: 0.15,
+      side: THREE.BackSide,
+      depthWrite: false,
+    }),
+  );
+  blueOverlay.renderOrder = -999;
+  scene.add(blueOverlay);
+  // this.scene_.fog = new THREE.Fog(0xDFE9F3,1000,5000);
+});
+// Camera
+// eslint-disable-next-line max-len
+const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+camera.position.set(1, 0, -20);
+camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+
+
+// eslint-disable-next-line max-len
+// GSAP for DOME-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+// GSAP text
+// GSAP text end
+
+
+
+// GSAP CAMERA END
+
+
+// Renderer (safe init: avoid crashing when WebGL context fails)
+let renderer = null;
+try {
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.setClearColor(0x000000, 0);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+} catch (err) {
+  console.error('[ThreeJsHand] Failed to create WebGLRenderer:', err);
+}
+
+let hazeGroup = null;
+let hazeMats = [];
+
+function createHaze() {
+  // 讓單片煙霧「約半個視窗大」
+  const fov = THREE.MathUtils.degToRad(camera.fov);
+  const aspect = getAspect();
+  const distance = 10.0; // 放在鏡頭前方的距離（只用來算尺寸）
+  const viewHeight = 2.0 * distance * Math.tan(fov / 2.0);
+  const viewWidth = viewHeight * aspect;
+  const planeW = viewWidth * 0.55;
+  const planeH = viewHeight * 0.55;
+
+  const hazeVertex = `
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `;
+
+  const hazeFragment = `
+    precision mediump float;
+    uniform float uTime;
+    uniform vec3 uColor;
+    varying vec2 vUv;
+
+    float hash(vec2 p) {
+      p = fract(p * vec2(123.34, 456.21));
+      p += dot(p, p + 45.32);
+      return fract(p.x * p.y);
+    }
+
+    float noise(vec2 p) {
+      vec2 i = floor(p);
+      vec2 f = fract(p);
+      float a = hash(i);
+      float b = hash(i + vec2(1.0, 0.0));
+      float c = hash(i + vec2(0.0, 1.0));
+      float d = hash(i + vec2(1.0, 1.0));
+      vec2 u = f * f * (3.0 - 2.0 * f);
+      return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+    }
+
+    float fbm(vec2 p) {
+      float v = 0.0;
+      float a = 0.5;
+      for (int i = 0; i < 5; i++) {
+        v += a * noise(p);
+        p *= 2.0;
+        a *= 0.5;
+      }
+      return v;
+    }
+
+    void main() {
+      vec2 uv = vUv;
+      vec2 p = uv * 2.2;
+      float t = uTime * 0.08;
+      p += vec2(t, -t * 0.55);
+
+      float n = fbm(p + fbm(p * 1.6 + t));
+
+      // 柔邊：看起來像瀰漫，不是一張片
+      float r = length(uv - 0.5);
+      float radial = smoothstep(0.65, 0.15, r);
+
+      float alpha = smoothstep(0.40, 0.85, n) * radial;
+      alpha *= 0.16; // 不要太濃
+
+      gl_FragColor = vec4(uColor, alpha);
+    }
+  `;
+
+  const group = new THREE.Group();
+  group.position.set(0, 0, 0);
+
+  const geo = new THREE.PlaneGeometry(planeW, planeH, 1, 1);
+  const color = new THREE.Color(0.78, 0.88, 1.0); // 淡藍白霧
+
+  hazeMats = [];
+  const count = 36;
+  for (let i = 0; i < count; i++) {
+    const mat = new THREE.ShaderMaterial({
+      vertexShader: hazeVertex,
+      fragmentShader: hazeFragment,
+      transparent: true,
+      depthTest: false,
+      depthWrite: false,
+      blending: THREE.NormalBlending, // 不發光
+      uniforms: {
+        uTime: {value: 0},
+        uColor: {value: color},
+      },
+      side: THREE.DoubleSide,
+    });
+    hazeMats.push(mat);
+
+    const plane = new THREE.Mesh(geo, mat);
+    // 分佈在球/手周圍的前後景，堆疊出「瀰漫」
+    plane.position.set(
+      (Math.random() - 0.5) * 10.0,
+      (Math.random() - 0.5) * 5.0,
+      (Math.random() - 0.5) * 10.0,
+    );
+    plane.rotation.z = Math.random() * Math.PI;
+    plane.renderOrder = 50;
+    group.add(plane);
+  }
+
+  return group;
+}
+
+
+// Box
+// const geometry = new THREE.BoxGeometry(1, 1, 1);
+// const material = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+// const cube = new THREE.Mesh(geometry, material);
+// cube.position.set(0,1,0)
+// scene.add(cube);;
+
+
+// Control
+let controls = null;
+if (renderer) {
+  controls = new OrbitControls(camera, renderer.domElement);
+  // 阻尼
+  controls.enableDamping = true;
+
+  // 右鍵平移
+  controls.enablePan = false;
+  controls.enabled = true;
+
+  // controls.DragControls=f;
+  // 禁止縮放 (若也想可縮放，改成 true)
+  controls.enableZoom = false;
+
+  // 最小距離
+  controls.minDistance = 1;
+  // 最大距離
+  controls.maxDistance = 100;
+  controls.minPolarAngle = 0.5;
+  controls.maxPolarAngle = 1.5;
+  controls.autoRotate = false;
+  controls.target = new THREE.Vector3(0, 1, 0);
+  controls.update();
+}
+
+
+// Scroll
+
+
+// eslint-disable-next-line max-len
+// GLTF Loader-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+const loader = new GLTFLoader();
+
+// 用來做「BALL 緩慢自動來回旋轉」
+let ballMesh = null;
+
+
+loader.load('/test/model/GLTF.glb', (gltfScene) => {
+  gltfScene.scene.position.set(0,-1,0,);
+  const material = new THREE.ShaderMaterial({
+    vertexShader,
+    fragmentShader,
+    uniforms: {
+      uTime: {value: 0},
+      uScale: {value: 512}, // 控制噪波「解析度/縮放」，可自行調
+      uSteps: {value: 12},  // 1~25
+      uColorBias: {value: new THREE.Vector3(0, 0, 0)},
+      uAces: {value: 0},
+      uFrostStrength: { value: 0.6 }, // 0=清透, 1=霧玻璃（霧化但不透明）
+      uFrostRadius: { value: 0.5 }, // 霧化半徑（像素概念），2~6 較自然
+    },
+    side: THREE.DoubleSide,
+    transparent: false,
+    depthWrite: true,
+  });
+
+  const textureLoader = new THREE.TextureLoader();
+  const polyTex = textureLoader.load('/textures/poly.png');
+  polyTex.colorSpace = THREE.SRGBColorSpace;
+  const maxAnisotropy = renderer?.capabilities?.getMaxAnisotropy?.() || 1;
+  polyTex.anisotropy = Math.min(maxAnisotropy, 8);
+
+  const handMaterial = new THREE.MeshStandardMaterial({
+    map: polyTex,
+    color: new THREE.Color('#ffffff'),
+    roughness: 0.9,
+    metalness: 0.0,
+    envMapIntensity: 0.08,
+  });
+
+  console.log('loading model');
+  // console.log(THREE.REVISION);
+  const mesh = gltfScene.scene;
+  mesh.scale.set(0.6,0.6,0.6);
+  
+
+  // 只對名稱包含 "BALL" 的區塊套用 shader，其他維持原本模型材質
+  mesh.traverse((child) => {
+    if (child.isMesh) {
+      if (child.name === 'BALL' || child.name.indexOf('BALL') !== -1) {
+        child.material = material;
+        if (!ballMesh) ballMesh = child;
+      } else {
+        // 手（或其他非球的部分）使用白色材質
+        child.material = handMaterial;
+      }
+
+      // 保險：若球或其他部件仍是 PBR 材質，統一降低反射
+      // (某些 glb 可能有多個球子網格或命名不同，避免漏套而過亮/過反光)
+      const mat = child.material;
+      if (mat && (mat.isMeshStandardMaterial || mat.isMeshPhysicalMaterial)) {
+        mat.metalness = 0.0;
+        mat.roughness = Math.max(mat.roughness ?? 0.0, 0.85);
+        if ('envMapIntensity' in mat) mat.envMapIntensity = Math.min(mat.envMapIntensity ?? 1.0, 0.08);
+      }
+
+      child.castShadow = true;
+      child.receiveShadow = true;
+    }
+  });
+
+  // Center model and frame it with the camera
+  const box = new THREE.Box3().setFromObject(mesh);
+  const size = box.getSize(new THREE.Vector3());
+  const center = box.getCenter(new THREE.Vector3());
+  mesh.position.sub(center);
+
+  const maxDim = Math.max(size.x, size.y, size.z);
+  const fov = THREE.MathUtils.degToRad(camera.fov);
+  const fitDistance = (maxDim / 2) / Math.tan(fov / 2);
+  const distance = fitDistance * 1.4; // padding
+
+  camera.near = Math.max(0.01, distance / 100);
+  camera.far = distance * 100;
+  camera.updateProjectionMatrix();
+  // camera.position.set(distance, distance * 0.6, distance);
+  camera.lookAt(0, 0, 0);
+
+  if (controls) {
+    controls.target.set(0, 0, 0);
+    controls.update();
+  }
+
+  scene.add(mesh);
+}, function(xhr) {
+  console.log((xhr.loaded/xhr.total*100)+'% loaded');
+}, function(error) {
+  console.log('An error occurred', error);
+});
+
+
+// 上方主光，打亮整體
+// const spotLight = new THREE.SpotLight(0xffffff, 1200, 1200, Math.PI / 3, 0.5);
+// spotLight.position.set(0, 10, 0);
+// spotLight.castShadow = true;
+// spotLight.shadow.bias = -0.0001;
+// spotLight.target.position.set(0, 0, 0);
+// scene.add(spotLight);
+// scene.add(spotLight.target);
+
+// 前方補光，專門打亮前方兩隻手
+const frontLight = new THREE.SpotLight(0xffffff, 4500, 900, Math.PI / 4, 0.7);
+frontLight.position.set(0, 4, 10);
+frontLight.castShadow = false;
+frontLight.target.position.set(0, 0, 0);
+scene.add(frontLight);
+scene.add(frontLight.target);
+
+// 環境光，讓陰影不會太黑
+scene.add(new THREE.AmbientLight(0xffffff, 0.2));
+
+// const axesHelper = new THREE.AxesHelper(500)
+// scene.add(axesHelper)
+
+
+// let delta = 0;
+
+// Camera is framed after model load
+
+const clock = new THREE.Clock();
+
+const amplitude = 0.5; // The height of the movement
+const frequency = 0.5; // The speed of the movement
+
+// 球的「緩慢來回旋轉」設定
+const ballRotRange = 0.90; // 旋轉幅度（弧度），0.35 約 20 度
+const ballRotSpeed = 0.4; // 來回頻率（越小越慢）
+// eslint-disable-next-line require-jsdoc
+function animate() {
+  // model.position.y = baseY + Math.sin(t * 0.8) * 0.1
+  requestAnimationFrame(animate);
+  // drive shader time
+  if (scene) {
+    scene.traverse((obj) => {
+      if (obj.isMesh && obj.material && obj.material.uniforms && obj.material.uniforms.uTime) {
+        obj.material.uniforms.uTime.value = performance.now() * 0.001;
+      }
+      const elapsedTime = clock.getElapsedTime();
+      scene.position.y = Math.sin(elapsedTime * frequency) * amplitude;
+
+      // 讓球緩慢自動來回旋轉（左右擺動）
+      if (ballMesh) {
+        ballMesh.rotation.y = Math.sin(elapsedTime * ballRotSpeed) * ballRotRange;
+      }
+      // scene.position.y += 0.005;
+    });
+  }
+  // 瀰漫煙霧：更新時間 + billboard
+  if (hazeGroup) {
+    const t = performance.now() * 0.001;
+    for (const mat of hazeMats) {
+      if (mat && mat.uniforms && mat.uniforms.uTime) mat.uniforms.uTime.value = t;
+    }
+    hazeGroup.children.forEach((p) => p.lookAt(camera.position));
+  }
+  if (controls) controls.update();
+  if (renderer) renderer.render(scene, camera);
+}
+
+let resizeObserver = null;
+function getAspect() {
+  const el = target.value;
+  if (!el) return 1;
+  const w = el.clientWidth || 1;
+  const h = el.clientHeight || 1;
+  return w / h;
+}
+
+function resize() {
+  const el = target.value;
+  if (!el || !renderer) return;
+  const w = el.clientWidth || 1;
+  const h = el.clientHeight || 1;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+
+onMounted(() => {
+  if (!target.value) return;
+  if (!renderer) {
+    console.warn('[ThreeJsHand] WebGL unavailable, skip 3D rendering.');
+    return;
+  }
+  target.value.appendChild(renderer.domElement);
+  renderer.domElement.style.width = '100%';
+  renderer.domElement.style.height = '100%';
+  renderer.domElement.style.display = 'block';
+  renderer.domElement.style.pointerEvents = 'none';
+
+  hazeGroup = createHaze();
+  scene.add(hazeGroup);
+
+  resize();
+  resizeObserver = new ResizeObserver(() => resize());
+  resizeObserver.observe(target.value);
+
+  animate();
+});
+
+onBeforeUnmount(() => {
+  if (resizeObserver && target.value) resizeObserver.unobserve(target.value);
+  resizeObserver = null;
+  if (controls) controls.dispose();
+  if (renderer) renderer.dispose();
+});
+
+
+</script>
+
+<template>
+  <div ref="target" class="threejs-hand"></div>
+</template>
+
+
+<style>
+.threejs-hand {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+</style>
