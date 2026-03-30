@@ -157,18 +157,14 @@ void main() {
 
   vec3 blurred = sharp;
   if (frost > 0.001 && radiusPx > 0.0) {
-    // 9-tap box blur of the procedural pattern
+    // 5-tap（十字 + 中心）取代 9-tap：霧化近似、每像素少算 4 次 shadeBall
     blurred =
-      shadeBall(uv + vec2(-r.x, -r.y)) +
-      shadeBall(uv + vec2( 0.0, -r.y)) +
-      shadeBall(uv + vec2( r.x, -r.y)) +
       shadeBall(uv + vec2(-r.x,  0.0)) +
-      shadeBall(uv) +
       shadeBall(uv + vec2( r.x,  0.0)) +
-      shadeBall(uv + vec2(-r.x,  r.y)) +
+      shadeBall(uv + vec2( 0.0, -r.y)) +
       shadeBall(uv + vec2( 0.0,  r.y)) +
-      shadeBall(uv + vec2( r.x,  r.y));
-    blurred *= (1.0 / 9.0);
+      shadeBall(uv);
+    blurred *= 0.2;
   }
 
   vec3 finalColor = mix(sharp, blurred, frost);

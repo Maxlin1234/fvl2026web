@@ -322,6 +322,19 @@ html, body {
 
 /* ===== 手機版 ===== */
 @media (max-width: 768px) {
+  /*
+   * 避免 .hero { min-height: 100vh } 與子層 height: calc(var(--vh)*100) 在 iOS Safari 不一致，
+   * 父層多出一段「透明／底色」空隙，底下 FixedSection 白底會從縫隙透出成白條。
+   */
+  .hero {
+    min-height: 0;
+    height: calc(var(--vh, 1vh) * 100);
+  }
+  .hero-banner-wrapper {
+    height: 100%;
+    min-height: 100%;
+  }
+
   .cursor { display: none; }
 
   .corner-btn {

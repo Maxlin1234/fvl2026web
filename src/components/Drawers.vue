@@ -585,9 +585,31 @@ export default {
   margin-left: 40px;
 }
 
+.list-btn1,
+.list-btn2,
+.list-btn3 {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.list-btn1 h2,
+.list-btn2 h2,
+.list-btn3 h2 {
+  margin: 0;
+  padding: 0;
+  font-size: 1em;
+  font-weight: 700;
+  line-height: 1.25;
+  width: 100%;
+}
+
 .list-btn1 {
   background-color: rgb(255, 255, 255);
-  padding: 5px 8px;
+  padding: 10px 14px;
   border: 1px black solid;
   color: rgb(0, 0, 0);
 }
@@ -598,7 +620,7 @@ export default {
 
 .list-btn2 {
   background-color: white;
-  padding: 5px 8px;
+  padding: 10px 14px;
   border: 1px black solid;
   color: black;
 }
@@ -610,7 +632,7 @@ export default {
 
 .list-btn3 {
   background-color: #ffffff;
-  padding: 5px 8px;
+  padding: 10px 14px;
   border: 1px black solid;
   color: rgb(0, 0, 0);
 }
@@ -735,14 +757,42 @@ export default {
 }
 
 @media (max-width: 768px) {
-  .lecture-list{
+  /* 入場須知主標 */
+  .lecture-drawer .all-content > h2:first-of-type {
+    font-size: 1em !important;
+  }
+
+  /* 注意事項／入場方式 內文列表 */
+  .lecture-list {
     margin: 0;
-    font-size: 10px;
+    font-size: 1em;
+  }
+
+  .lecture-list h2 {
+    font-size: 1em;
+    line-height: 1.5;
   }
 
   .list-text{
-    padding:1em;
+    padding: 1em;
     margin-left: 0.5em;
+    width: calc(100% - 1em);
+    box-sizing: border-box;
+    align-items: stretch;
+  }
+
+  .list-btn1,
+  .list-btn2,
+  .list-btn3 {
+    flex: 1;
+    min-height: 48px;
+    padding: 12px 10px;
+  }
+
+  .list-btn1 h2,
+  .list-btn2 h2,
+  .list-btn3 h2 {
+    font-size: 0.95rem;
   }
   .carousel-container {
     display: none;

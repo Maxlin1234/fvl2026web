@@ -314,7 +314,8 @@ export default {
     initSectionAnimations() {
       // 僅包含有對應區塊 id 的項目（本頁無 #schedule，場次在 Drawers；勿留不存在的 trigger 以免 GSAP / Observer 警告）
       const sections = [
-        { id: '#portfolio', elements: ['.section-title', '.portfolio-item'] },
+        /* 播映作品格：由 PortfolioSection 自行做淡入，避免與該處 GSAP 重疊造成手機版跳動 */
+        { id: '#portfolio', elements: ['.section-title'] },
         { id: '#team', elements: ['.section-title', '.team-columns'] },
       ];
 

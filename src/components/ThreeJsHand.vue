@@ -128,6 +128,7 @@ function effectivePixelRatio() {
 }
 
 let renderer = null;
+// console.log(renderer.info);
 try {
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -333,7 +334,8 @@ loader.load('/test/model/GLTF.glb', (gltfScene) => {
     uniforms: {
       uTime: {value: 0},
       uScale: {value: 512}, // 控制噪波「解析度/縮放」，可自行調
-      uSteps: {value: 12},  // 1~25
+      // GLSL：simplex3d_fractal 每多 1 階每像素成本線性變大；略降可省 GPU
+      uSteps: {value: 7},   // 原 12；可 5~8 平衡畫質／效能
       uColorBias: {value: new THREE.Vector3(0, 0, 0)},
       uAces: {value: 0},
       uFrostStrength: { value: 0.6 }, // 0=清透, 1=霧玻璃（霧化但不透明）
@@ -598,6 +600,14 @@ onBeforeUnmount(() => {
 <style>
 .threejs-hand {
   position: relative;
+  width: 100%;
+  height: 100%;
+  line-height: 0;
+}
+
+/* canvas 為 replaced inline，預設底部會留字體基線縫隙，手機易出現細白線 */
+.threejs-hand canvas {
+  display: block;
   width: 100%;
   height: 100%;
 }

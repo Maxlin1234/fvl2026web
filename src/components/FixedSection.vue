@@ -1,5 +1,5 @@
 <template>
-  <section id="fix-section" style="width: 100vw;background-color:#fff;position: relative;">
+  <section id="fix-section" class="fixed-section-root" style="width: 100vw;background-color:#fff;position: relative;">
     <div class="title-box">
       <h2 ref="fixedHeading" class="fixed-section-title" style="color:black;">FUTURE VISION LAB 2026</h2>
     </div>
@@ -48,6 +48,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.fixed-section-root {
+  margin-top: 0;
+}
+
+@media (max-width: 768px) {
+  /* 與上方 hero 接縫處偶發 1px 抗鋸齒縫，微上移與深色主視覺貼齊 */
+  .fixed-section-root {
+    margin-top: -2px;
+  }
+}
+
 .title-box{
    position:absolute;
    display: flex;
@@ -72,6 +83,8 @@ export default {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-weight: 700;
   letter-spacing: 0.02em;
+  white-space: nowrap;
+  text-align: center;
 }
 
 .fix-bg {
@@ -86,13 +99,17 @@ export default {
 }
 
 @media (max-width: 768px) {
-  .title-box{
-    padding: 30px;
+  .title-box {
+    width: calc(100% - 20px);
+    max-width: 100%;
+    padding: 24px 10px;
+    box-sizing: border-box;
   }
-.title-box h2,
-.title-box .fixed-section-title{
-  font-size: 0.6em;
-}
+  /* 單行顯示：字級隨視寬略縮，避免截斷 */
+  .title-box h2,
+  .title-box .fixed-section-title {
+    font-size: 0.8em;
+  }
 .fix-bg {
   min-height:500px;
   background-attachment:scroll;

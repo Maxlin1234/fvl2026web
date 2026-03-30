@@ -40,9 +40,28 @@
 <script>
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { onMounted, onBeforeUnmount, ref, nextTick } from 'vue';
+import { onMounted, onBeforeUnmount, ref, nextTick, watch } from 'vue';
 
 gsap.registerPlugin(ScrollTrigger);
+
+/** 等 grid 內圖片載入完成（避免高度變動後重算列） */
+function waitForGridImages(container) {
+  if (!container) return Promise.resolve();
+  const images = Array.from(container.querySelectorAll('img'));
+  if (!images.length) return Promise.resolve();
+  return Promise.all(
+    images.map(
+      (img) =>
+        new Promise((resolve) => {
+          if (img.complete) resolve();
+          else {
+            img.addEventListener('load', () => resolve(), { once: true });
+            img.addEventListener('error', () => resolve(), { once: true });
+          }
+        }),
+    ),
+  );
+}
 
 export default {
   name: 'PortfolioSection',
@@ -56,10 +75,14 @@ export default {
       default: false
     }
   },
-  setup() {
+  setup(props) {
     const grid = ref(null);
     let scrollTriggerInstance = null;
     let resizeTimer = null;
+    let activeTimeline = null;
+
+    const isMobileLayout = () =>
+      typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches;
 
     const buildRowFadeIn = () => {
       const container = grid.value;
@@ -67,54 +90,87 @@ export default {
       const items = Array.from(container.querySelectorAll('.portfolio-item'));
       if (!items.length) return;
 
-      // 清理舊的 ScrollTrigger 實例
+      if (activeTimeline) {
+        activeTimeline.kill();
+        activeTimeline = null;
+      }
       if (scrollTriggerInstance) {
         scrollTriggerInstance.kill();
         scrollTriggerInstance = null;
       }
+      gsap.killTweensOf(items);
 
-      // 如果項目已經可見，跳過動畫
-      const firstItem = items[0];
-      if (firstItem && window.getComputedStyle(firstItem).opacity !== '0') {
+      const mobile = isMobileLayout();
+
+      // 手機：僅依序淡入，不用 y，避免與圖片漸載、雙重 ScrollTrigger 叠加造成「跳動」
+      if (mobile) {
+        gsap.set(items, { opacity: 0 });
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: '#portfolio',
+            start: 'top 85%',
+            once: true,
+            markers: false,
+          },
+        });
+        scrollTriggerInstance = tl.scrollTrigger;
+        activeTimeline = tl;
+        tl.to(items, {
+          opacity: 1,
+          duration: 0.5,
+          ease: 'power2.out',
+          stagger: 0.12,
+        });
         return;
       }
 
-      // 初始狀態
+      // 桌機：維持依列分组 + 轻微上移
       gsap.set(items, { opacity: 0, y: 24 });
-
-      // 依 offsetTop 分組為各「行」
-      const rows = [];
       const rowMap = new Map();
       items.forEach((el) => {
         const top = Math.round(el.offsetTop);
         if (!rowMap.has(top)) rowMap.set(top, []);
         rowMap.get(top).push(el);
       });
-      // 由上到下排序
-      Array.from(rowMap.keys()).sort((a,b)=>a-b).forEach((k)=> rows.push(rowMap.get(k)));
+      const rows = [];
+      Array.from(rowMap.keys())
+        .sort((a, b) => a - b)
+        .forEach((k) => rows.push(rowMap.get(k)));
 
-      // 建立逐行淡入動畫
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: '#portfolio',
           start: 'top 80%',
           once: true,
-          markers: false
-        }
+          markers: false,
+        },
       });
-
-      // 保存 ScrollTrigger 實例
       scrollTriggerInstance = tl.scrollTrigger;
+      activeTimeline = tl;
 
       rows.forEach((rowEls, i) => {
-        tl.to(rowEls, {
-          opacity: 1,
-          y: 0,
-          duration: 0.6,
-          ease: 'power2.out',
-          stagger: 0.08
-        }, i * 0.18); // 每行間隔
+        tl.to(
+          rowEls,
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            ease: 'power2.out',
+            stagger: 0.08,
+          },
+          i * 0.18,
+        );
       });
+    };
+
+    const scheduleBuild = async () => {
+      await nextTick();
+      const container = grid.value;
+      if (!container) return;
+      if (!props.portfolioList || props.portfolioList.length === 0) return;
+      await waitForGridImages(container);
+      buildRowFadeIn();
+      ScrollTrigger.refresh();
     };
 
     const handleResize = () => {
@@ -122,25 +178,31 @@ export default {
         clearTimeout(resizeTimer);
       }
       resizeTimer = setTimeout(() => {
-        buildRowFadeIn();
+        scheduleBuild();
       }, 250);
     };
 
-    onMounted(async () => {
-      await nextTick();
-      // 等圖片載入以取得正確 offsetTop
-      const images = grid.value ? Array.from(grid.value.querySelectorAll('img')) : [];
-      const waitAll = images.map(img => new Promise(resolve => {
-        if (img.complete) return resolve();
-        img.addEventListener('load', resolve, { once: true });
-        img.addEventListener('error', resolve, { once: true });
-      }));
-      Promise.all(waitAll).then(() => buildRowFadeIn());
-      // 視窗尺寸改變時重新建立（避免斷行變化）
+    watch(
+      () => props.portfolioList,
+      (list) => {
+        if (!list || list.length === 0) return;
+        scheduleBuild();
+      },
+      { deep: true },
+    );
+
+    onMounted(() => {
+      if (props.portfolioList && props.portfolioList.length > 0) {
+        scheduleBuild();
+      }
       window.addEventListener('resize', handleResize, { passive: true });
     });
 
     onBeforeUnmount(() => {
+      if (activeTimeline) {
+        activeTimeline.kill();
+        activeTimeline = null;
+      }
       if (scrollTriggerInstance) {
         scrollTriggerInstance.kill();
         scrollTriggerInstance = null;
@@ -262,6 +324,7 @@ export default {
 .section-title {
   text-align: center;
   font-size: 2.5rem;
+  font-weight: 800;
   margin-bottom: 40px;
   color: #ffffff;
 }
