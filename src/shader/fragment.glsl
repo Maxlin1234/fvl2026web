@@ -8,7 +8,7 @@ uniform float uFrostStrength;  // 0 = 清透, 1 = 霧玻璃（模糊球面紋理
 uniform float uFrostRadius;    // 模糊半徑（以像素為概念）
 
 varying vec2 vUv;
-varying vec3 vPosition;
+varying vec3 vBallDir;
 
 const float PI = 3.14159265358979323846;
 
@@ -144,8 +144,8 @@ vec3 shadeBall(vec2 uv) {
 
 void main() {
   float iResolution = max(1.0, uScale);
-  // Compute seam-free spherical UV from the fragment position on the ball
-  vec2 uv = sphereUVFromPosition(vPosition);
+  // 以表面法線方向做等價球座標（避免倚賴網格是否以原點為球心）
+  vec2 uv = sphereUVFromPosition(vBallDir);
 
   vec3 sharp = shadeBall(uv);
 

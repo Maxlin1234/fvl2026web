@@ -3,7 +3,6 @@ import { ref, onBeforeUnmount, onMounted } from 'vue';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 import vertexShader from '../shader/vertex.glsl';
 import fragmentShader from '../shader/fragment.glsl';
 
@@ -20,28 +19,34 @@ const scene = new THREE.Scene();
 // scene.environment.fog = new THREE.Fog( 0xcccccc,20,1000);
 // scene.fog = new THREE.Fog(0xc0f0ff,0.0015);
 
-// Environment (HDR)
-new RGBELoader().load('/test/model/space.hdr', (environmentMap) => {
-  environmentMap.mapping = THREE.EquirectangularReflectionMapping;
-  scene.background = environmentMap;
-  scene.environment = environmentMap;
+// Background：等距長條圖（取代 space.hdr）
+const textureLoader = new THREE.TextureLoader();
+textureLoader.load(
+  '/test/model/space.jpg',
+  (map) => {
+    map.mapping = THREE.EquirectangularReflectionMapping;
+    map.colorSpace = THREE.SRGBColorSpace;
+    scene.background = map;
+    scene.environment = map;
 
-
-//   // 藍色半透明遮罩：讓 HDR 背景整體偏藍
-const blueOverlay = new THREE.Mesh(
-    new THREE.SphereGeometry(500, 32, 16),
-    new THREE.MeshBasicMaterial({
-      color: 0x0a50ff,
-      transparent: true,
-      opacity: 0.15,
-      side: THREE.BackSide,
-      depthWrite: false,
-    }),
-  );
-  blueOverlay.renderOrder = -999;
-  scene.add(blueOverlay);
-  // this.scene_.fog = new THREE.Fog(0xDFE9F3,1000,5000);
-});
+    const blueOverlay = new THREE.Mesh(
+      new THREE.SphereGeometry(500, 32, 16),
+      new THREE.MeshBasicMaterial({
+        color: 0x0a50ff,
+        transparent: true,
+        opacity: 0.15,
+        side: THREE.BackSide,
+        depthWrite: false,
+      }),
+    );
+    blueOverlay.renderOrder = -999;
+    scene.add(blueOverlay);
+  },
+  undefined,
+  (err) => {
+    console.error('[ThreeJsHand] Failed to load space.jpg:', err);
+  },
+);
 // Camera
 // eslint-disable-next-line max-len
 const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
@@ -75,10 +80,19 @@ try {
   console.error('[ThreeJsHand] Failed to create WebGLRenderer:', err);
 }
 
+/** 煙霧層數；0 = 關閉（較省 draw call）。若要輕量恢復可改 10～12（原 36）。 */
+const HAZE_PLANE_COUNT = 0;
+
 let hazeGroup = null;
 let hazeMats = [];
 
 function createHaze() {
+  const count = HAZE_PLANE_COUNT;
+  if (!count || count <= 0) {
+    hazeMats = [];
+    return null;
+  }
+
   // 讓單片煙霧「約半個視窗大」
   const fov = THREE.MathUtils.degToRad(camera.fov);
   const aspect = getAspect();
@@ -156,7 +170,6 @@ function createHaze() {
   const color = new THREE.Color(0.78, 0.88, 1.0); // 淡藍白霧
 
   hazeMats = [];
-  const count = 36;
   for (let i = 0; i < count; i++) {
     const mat = new THREE.ShaderMaterial({
       vertexShader: hazeVertex,
@@ -235,10 +248,9 @@ const loader = new GLTFLoader();
 // 用來做「BALL 緩慢自動來回旋轉」
 let ballMesh = null;
 
-
 loader.load('/test/model/GLTF.glb', (gltfScene) => {
   gltfScene.scene.position.set(0,-1,0,);
-  const material = new THREE.ShaderMaterial({
+  const ballMaterialTemplate = new THREE.ShaderMaterial({
     vertexShader,
     fragmentShader,
     uniforms: {
@@ -273,16 +285,32 @@ loader.load('/test/model/GLTF.glb', (gltfScene) => {
   // console.log(THREE.REVISION);
   const mesh = gltfScene.scene;
   mesh.scale.set(0.6,0.6,0.6);
-  
 
-  // 只對名稱包含 "BALL" 的區塊套用 shader，其他維持原本模型材質
+  /**
+   * gltfpack 常把「BALL」收成只有名字的父節點，實際 Mesh 在無名子節點上。
+   * 需沿 parent 鏈檢查，並用原始材質名稱（如 Ball）當備援。
+   */
+  function meshIsBallPart(obj) {
+    let p = obj;
+    while (p) {
+      const nm = (p.name || '').toUpperCase();
+      if (nm === 'BALL' || nm.includes('BALL')) return true;
+      p = p.parent;
+    }
+    const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+    for (const m of mats) {
+      if (m && m.name && m.name.toUpperCase().includes('BALL')) return true;
+    }
+    return false;
+  }
+
+  // 只對 BALL 子樹（或材質名含 Ball）套用 shader，其餘為手部材質
   mesh.traverse((child) => {
     if (child.isMesh) {
-      if (child.name === 'BALL' || child.name.indexOf('BALL') !== -1) {
-        child.material = material;
+      if (meshIsBallPart(child)) {
+        child.material = ballMaterialTemplate.clone();
         if (!ballMesh) ballMesh = child;
       } else {
-        // 手（或其他非球的部分）使用白色材質
         child.material = handMaterial;
       }
 
@@ -372,18 +400,16 @@ function animate() {
   requestAnimationFrame(animate);
   // drive shader time
   if (scene) {
+    const elapsedTime = clock.getElapsedTime();
+    scene.position.y = Math.sin(elapsedTime * frequency) * amplitude;
+    if (ballMesh) {
+      ballMesh.rotation.y = Math.sin(elapsedTime * ballRotSpeed) * ballRotRange;
+    }
+    const t = performance.now() * 0.001;
     scene.traverse((obj) => {
       if (obj.isMesh && obj.material && obj.material.uniforms && obj.material.uniforms.uTime) {
-        obj.material.uniforms.uTime.value = performance.now() * 0.001;
+        obj.material.uniforms.uTime.value = t;
       }
-      const elapsedTime = clock.getElapsedTime();
-      scene.position.y = Math.sin(elapsedTime * frequency) * amplitude;
-
-      // 讓球緩慢自動來回旋轉（左右擺動）
-      if (ballMesh) {
-        ballMesh.rotation.y = Math.sin(elapsedTime * ballRotSpeed) * ballRotRange;
-      }
-      // scene.position.y += 0.005;
     });
   }
   // 瀰漫煙霧：更新時間 + billboard
@@ -430,7 +456,7 @@ onMounted(() => {
   renderer.domElement.style.pointerEvents = 'none';
 
   hazeGroup = createHaze();
-  scene.add(hazeGroup);
+  if (hazeGroup) scene.add(hazeGroup);
 
   resize();
   resizeObserver = new ResizeObserver(() => resize());

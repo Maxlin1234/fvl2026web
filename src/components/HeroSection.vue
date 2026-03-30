@@ -289,15 +289,30 @@ html, body {
   .bottom-left { bottom: calc(16px + env(safe-area-inset-bottom)); left: calc(16px + env(safe-area-inset-left)); }
   .bottom-right { bottom: calc(16px + env(safe-area-inset-bottom)); right: calc(16px + env(safe-area-inset-right)); }
 
+  /*
+   * 主標放大時須維持在視窗內：父層 overflow:hidden 會裁切負 left / 純 scale 造成的溢出。
+   * width 先縮短再 scale，視覺寬度仍為 100%，左右不會被切掉。
+   */
   .banner-title {
-    bottom: 20%;
-    left: -25%;
-    scale: 1.5;
+    left: 50%;
+    right: auto;
+    bottom: 24%;
+    width: calc(100% / 1.38);
+    max-width: calc(100% - env(safe-area-inset-left) - env(safe-area-inset-right));
+    padding: 0 env(safe-area-inset-right) 0 env(safe-area-inset-left);
+    transform: translateX(-50%) scale(1.38);
+    transform-origin: center bottom;
   }
-  .banner-title2{
-    bottom: 20%;
-    left:-20%;
-    scale: 1.45;
+
+  .banner-title2 {
+    left: 50%;
+    right: auto;
+    bottom: 19%;
+    width: calc(100% / 1.30);
+    max-width: calc(100% - env(safe-area-inset-left) - env(safe-area-inset-right));
+    padding: 0 env(safe-area-inset-right) 0 env(safe-area-inset-left);
+    transform: translateX(-50%) scale(1.3);
+    transform-origin: center bottom;
   }
 }
 </style>

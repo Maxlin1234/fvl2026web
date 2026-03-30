@@ -54,7 +54,6 @@ import img3 from '../assets/3.jpg';
 gsap.registerPlugin(SplitText, ScrollTrigger);
 
 // 常數定義
-const API_BASE_URL = 'https://unzip-clab-api.clab.org.tw/api/v1';
 const WORKS_API_URL = 'https://unzip.clab.org.tw/api/v1/projects/21/works';
 const API_AUTH = 'Api-Key 1e801a8fbe21fe2bef15df853e62ec9dc5a1cd08';
 const LOCAL_STORAGE_KEYS = {
@@ -124,8 +123,7 @@ export default {
     try {
       this.removeStrayBodyCanvases();
       this.initLanguage();
-      await this.debugApiConnection();
-      await this.fetchData();
+      await this.loadWorksData();
       this.initAnimations();
     } catch (error) {
       console.error('MainSection initialization failed:', error);
@@ -154,34 +152,51 @@ export default {
         }
       });
     },
-    async debugApiConnection() {
-      console.log('[Fvl2026Final] API debug start', {
-        endpoint: WORKS_API_URL,
-        nodeEnv: process.env.NODE_ENV,
-      });
+    /**
+     * 作品列表只請求一次 WORKS_API_URL，同步更新 firstImage 與 portfolioList。
+     */
+    async loadWorksData() {
       try {
-        const worksResp = await axios.get(
-          WORKS_API_URL,
-          {
-            headers: {
-              Authorization: API_AUTH,
-            },
-          }
-        );
-        const payload = worksResp?.data;
+        const response = await axios.get(WORKS_API_URL, {
+          headers: { Authorization: API_AUTH },
+        });
+        const payload = response?.data;
         const works = Array.isArray(payload) ? payload : payload?.data || payload?.results || [];
-        console.log('[Fvl2026Final] API debug works success', {
-          status: worksResp?.status,
-          worksCount: works.length,
-          firstWork: works[0] || null,
-          raw: payload,
+
+        if (process.env.NODE_ENV === 'development') {
+          console.log('[Fvl2026Final] works loaded', {
+            status: response?.status,
+            worksCount: works.length,
+            firstWork: works[0] || null,
+          });
+        }
+
+        this.firstImage = works[0]?.featured_photo_media?.url
+          || works[0]?.featuredPhotoMedia?.url
+          || '';
+
+        this.portfolioList = works.map((w) => ({
+          id: w.id,
+          title: w.title,
+          titleZhTw: w.titleZhTw || w.title_zh_tw,
+          photo_1: w?.featured_photo_media?.url || w?.featuredPhotoMedia?.url || '',
+          work_en: {
+            title: w.title || '',
+            interactive_description: '',
+          },
+          work_zh: {
+            title: w.titleZhTw || w.title_zh_tw || w.title || '',
+            interactive_description: '',
+          },
+        }));
+      } catch (error) {
+        console.error('[Fvl2026Final] loadWorksData failed', {
+          message: error?.message,
+          status: error?.response?.status,
+          data: error?.response?.data,
         });
-      } catch (err) {
-        console.error('[Fvl2026Final] API debug failed', {
-          message: err?.message,
-          status: err?.response?.status,
-          data: err?.response?.data,
-        });
+        this.firstImage = '';
+        this.portfolioList = [];
       }
     },
     // 語言管理
@@ -203,93 +218,6 @@ export default {
         localStorage.setItem(LOCAL_STORAGE_KEYS.LANG, isEnglish ? 'en' : 'zh');
       } catch (error) {
         console.warn('Failed to persist language:', error);
-      }
-    },
-
-    // 資料獲取
-    async fetchData() {
-      try {
-        await Promise.all([
-          this.fetchFirstImage(),
-          this.fetchPortfolioData(),
-          this.fetchDatabaseData()
-        ]);
-      } catch (error) {
-        console.error('Failed to fetch data:', error);
-      }
-    },
-
-    async fetchFirstImage() {
-      try {
-        const response = await axios.get(
-          WORKS_API_URL,
-          {
-            headers: {
-              Authorization: API_AUTH,
-            },
-          }
-        );
-        const payload = response?.data;
-        const works = Array.isArray(payload) ? payload : payload?.data || payload?.results || [];
-        this.firstImage = works[0]?.featured_photo_media?.url || works[0]?.featuredPhotoMedia?.url || '';
-      } catch (error) {
-        console.error('Failed to fetch first image:', error);
-        this.firstImage = '';
-      }
-    },
-
-    async fetchPortfolioData() {
-      try {
-        console.log('[Fvl2026Final] fetchPortfolioData start');
-        const response = await axios.get(
-          WORKS_API_URL,
-          {
-            headers: {
-              Authorization: API_AUTH,
-            },
-          }
-        );
-
-        const payload = response?.data;
-        const works = Array.isArray(payload) ? payload : payload?.data || payload?.results || [];
-        // 轉成現有 PortfolioSection 使用欄位，避免額外改模板
-        this.portfolioList = works.map((w) => ({
-          id: w.id,
-          title: w.title,
-          titleZhTw: w.titleZhTw || w.title_zh_tw,
-          photo_1: w?.featured_photo_media?.url || w?.featuredPhotoMedia?.url || '',
-          work_en: {
-            title: w.title || '',
-            interactive_description: '',
-          },
-          work_zh: {
-            title: w.titleZhTw || w.title_zh_tw || w.title || '',
-            interactive_description: '',
-          },
-        }));
-        console.log('[Fvl2026Final] fetchPortfolioData done', {
-          worksCount: this.portfolioList.length,
-          firstWork: this.portfolioList[0] || null,
-        });
-      } catch (error) {
-        console.error('Failed to fetch portfolio data:', error);
-        console.error('[Fvl2026Final] fetchPortfolioData error detail', {
-          message: error?.message,
-          status: error?.response?.status,
-          data: error?.response?.data,
-        });
-        this.portfolioList = [];
-      }
-    },
-
-    async fetchDatabaseData() {
-      try {
-        const response = await axios.get('http://localhost:3001/api/data');
-        console.log('Database data:', response.data);
-        return response.data;
-      } catch (error) {
-        console.error('Failed to fetch database data:', error);
-        return [];
       }
     },
 

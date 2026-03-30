@@ -1,10 +1,11 @@
 export default /* glsl */`
 varying vec2 vUv;
-varying vec3 vPosition;
+// 球面著色用「向外的單位方向」：用法線比用 position 更穩（網格原點不一定在球心）
+varying vec3 vBallDir;
 
 void main() {
   vUv = uv;
-  vPosition = position;
+  vBallDir = normalize(normal);
   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 }
 `;
