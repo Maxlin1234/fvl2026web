@@ -92,7 +92,7 @@
                 <img src="../assets/logos/NMAT.png" alt="北藝新媒" class="partner-logo" />
               </div>
 
-              <div class="partner-item shihchien nthu" style="margin-right: 1.5em;">
+              <div class="partner-item shihchien nthu partner-item-nthu-gap">
                 <div class="nthu-lockup" aria-label="國立清華大學 藝術學院">
                   <img src="../assets/logos/NTHU.png" alt="國立清華大學" class="partner-logo nthulogo-main" />
                 </div>
@@ -434,6 +434,11 @@ export default {
   transform-origin: left center;
 }
 
+/* 桌面：清華 logo 區與右側區塊留白 */
+.partner-item-nthu-gap {
+  margin-right: 1.5em;
+}
+
 
 .partner-logo-text {
   width: 160px;
@@ -536,21 +541,49 @@ export default {
   .partner-logos {
     flex-direction: column;
     gap: 16px;
-    align-items: self-start;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  /* 合作單位（最後一組）：logo 一律靠左與標題對齊 */
+  .partner-group:last-child .partner-logos {
+    align-items: flex-start;
   }
   
   .partner-item {
-    min-width: 100%;
-    height: 80px;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    min-height: 80px;
     flex-direction: column;
     text-align: left;
     align-items: flex-start;
+    justify-content: flex-start;
     gap: 8px;
   }
-  
+
+  .partner-item-nthu-gap {
+    margin-right: 0;
+  }
+
+  .partner-item.nthu .nthu-lockup {
+    width: 100%;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-self: flex-start;
+  }
+
   .partner-logo {
     height: 60px;
     width: auto;
+  }
+
+  /* 僅合作單位：圖檔靠左對齊標題 */
+  .partner-group:last-child .partner-logo {
+    max-width: min(100%, 280px);
+    object-position: left center;
   }
 
   .partner-title {
