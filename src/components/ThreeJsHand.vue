@@ -133,6 +133,10 @@ try {
 /** 煙霧層數；0 = 關閉（較省 draw call）。若要輕量恢復可改 10～12（原 36）。 */
 const HAZE_PLANE_COUNT = 0;
 
+/** Hero 區可見時才畫 WebGL，避免捲動到下方時仍每幀渲染與捲動搶主執行緒 */
+let heroWebglVisible = true;
+let heroIntersectionObserver = null;
+
 let hazeGroup = null;
 let hazeMats = [];
 
@@ -446,11 +450,11 @@ const ballRotRange = 0.90; // 旋轉幅度（弧度），0.35 約 20 度
 const ballRotSpeed = 0.4; // 來回頻率（越小越慢）
 // eslint-disable-next-line require-jsdoc
 function animate() {
-  // model.position.y = baseY + Math.sin(t * 0.8) * 0.1
   requestAnimationFrame(animate);
-  // drive shader time
+  if (!heroWebglVisible || !renderer) return;
+
+  const elapsedTime = clock.getElapsedTime();
   if (scene) {
-    const elapsedTime = clock.getElapsedTime();
     scene.position.y = Math.sin(elapsedTime * frequency) * amplitude;
     if (ballMesh) {
       ballMesh.rotation.y = Math.sin(elapsedTime * ballRotSpeed) * ballRotRange;
@@ -462,7 +466,6 @@ function animate() {
       }
     });
   }
-  // 瀰漫煙霧：更新時間 + billboard
   if (hazeGroup) {
     const t = performance.now() * 0.001;
     for (const mat of hazeMats) {
@@ -471,7 +474,7 @@ function animate() {
     hazeGroup.children.forEach((p) => p.lookAt(camera.position));
   }
   if (controls) controls.update();
-  if (renderer) renderer.render(scene, camera);
+  renderer.render(scene, camera);
 }
 
 let resizeObserver = null;
@@ -512,10 +515,23 @@ onMounted(() => {
   resizeObserver = new ResizeObserver(() => resize());
   resizeObserver.observe(target.value);
 
+  heroIntersectionObserver = new IntersectionObserver(
+    (entries) => {
+      const e = entries[0];
+      heroWebglVisible = !!(e && e.isIntersecting);
+    },
+    { threshold: 0, rootMargin: '48px 0px 64px 0px' },
+  );
+  heroIntersectionObserver.observe(target.value);
+
   animate();
 });
 
 onBeforeUnmount(() => {
+  if (heroIntersectionObserver && target.value) {
+    heroIntersectionObserver.unobserve(target.value);
+  }
+  heroIntersectionObserver = null;
   if (resizeObserver && target.value) resizeObserver.unobserve(target.value);
   resizeObserver = null;
   if (controls) controls.dispose();

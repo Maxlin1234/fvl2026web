@@ -1,2 +1,0 @@
-# SPA：所有路徑都回 index.html，由 Vue Router 處理（含 /festival/2026）
-/*    /index.html   200

@@ -375,7 +375,8 @@ export default {
         if (maxScroll <= 0) return;
         gsap.set(slider, { x: 0 });
         gsap.to(slider, { x: -maxScroll, ease: 'none',
-          scrollTrigger: { trigger: '#services', start: 'top top', end: `+=${maxScroll}`, scrub: 1.2, pin: true, anticipatePin: 1 }
+          // scrub 數字越大越「拖尾」且捲動時越吃主執行緒；true = 與捲動同步、較順
+          scrollTrigger: { trigger: '#services', start: 'top top', end: `+=${maxScroll}`, scrub: true, pin: true, anticipatePin: 0 }
         });
       });
     },
