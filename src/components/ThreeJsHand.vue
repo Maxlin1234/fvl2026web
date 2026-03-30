@@ -19,6 +19,48 @@ const scene = new THREE.Scene();
 // scene.environment.fog = new THREE.Fog( 0xcccccc,20,1000);
 // scene.fog = new THREE.Fog(0xc0f0ff,0.0015);
 
+/**
+ * 背景貼圖：Canvas 高斯模糊 + 淡色疊加，模擬霧磨砂玻璃（只處理 panorama 貼圖，不模糊前景模型）
+ */
+function textureWithFrostedGlassEffect(texture, options = {}) {
+  const blurPx = options.blurPx ?? 20;
+  const frostAlpha = options.frostAlpha ?? 0.12;
+  const maxDim = options.maxDim ?? 2400;
+
+  const img = texture.image;
+  if (!img || !img.complete || !img.width) return texture;
+
+  let w = img.naturalWidth || img.width;
+  let h = img.naturalHeight || img.height;
+  const scale = Math.min(1, maxDim / Math.max(w, h));
+  w = Math.round(w * scale);
+  h = Math.round(h * scale);
+
+  const pad = Math.ceil(blurPx * 1.6);
+  const cw = w + pad * 2;
+  const ch = h + pad * 2;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = cw;
+  canvas.height = ch;
+  const ctx = canvas.getContext('2d', { alpha: false });
+  ctx.fillStyle = '#060d14';
+  ctx.fillRect(0, 0, cw, ch);
+  ctx.filter = `blur(${blurPx}px) saturate(1.08)`;
+  ctx.drawImage(img, pad, pad, w, h);
+  ctx.filter = 'none';
+  ctx.fillStyle = `rgba(232, 242, 252, ${frostAlpha})`;
+  ctx.fillRect(0, 0, cw, ch);
+
+  const out = new THREE.CanvasTexture(canvas);
+  out.mapping = THREE.EquirectangularReflectionMapping;
+  out.colorSpace = THREE.SRGBColorSpace;
+  out.minFilter = THREE.LinearMipmapLinearFilter;
+  out.magFilter = THREE.LinearFilter;
+  out.generateMipmaps = true;
+  return out;
+}
+
 // Background：等距長條圖（取代 space.hdr）
 const textureLoader = new THREE.TextureLoader();
 textureLoader.load(
@@ -26,8 +68,16 @@ textureLoader.load(
   (map) => {
     map.mapping = THREE.EquirectangularReflectionMapping;
     map.colorSpace = THREE.SRGBColorSpace;
-    scene.background = map;
-    scene.environment = map;
+
+    const bgTex = textureWithFrostedGlassEffect(map, {
+      blurPx: 0,
+      frostAlpha: 0.001,
+      maxDim: 2400,
+    });
+    if (bgTex !== map) map.dispose();
+
+    scene.background = bgTex;
+    scene.environment = bgTex;
 
     const blueOverlay = new THREE.Mesh(
       new THREE.SphereGeometry(500, 32, 16),
