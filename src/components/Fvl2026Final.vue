@@ -9,15 +9,15 @@
     />
     <!-- <BannerParticles/> -->
 
-    <!-- 主要內容區塊 -->
-    <div ref="fixedSectionAnchor">
+    <!-- 主要內容：content-visibility 讓瀏覽器略過螢幕外排版/繪製，捲動較順 -->
+    <div ref="fixedSectionAnchor" class="fvl2026-below-hero">
       <FixedSection :isEnglish="isEnglish" />
+      <AboutSection :firstImage="firstImage" :isEnglish="isEnglish" />
+      <VideoBanner />
+      <PortfolioSection :portfolioList="portfolioList" :isEnglish="isEnglish" />
+      <TeamSection :isEnglish="isEnglish" />
+      <FootBar />
     </div>
-    <AboutSection :firstImage="firstImage" :isEnglish="isEnglish" />
-    <VideoBanner />
-    <PortfolioSection :portfolioList="portfolioList" :isEnglish="isEnglish" />
-    <TeamSection :isEnglish="isEnglish" />
-    <FootBar />
 
     <!-- 抽屜組件 -->
     <Drawers 
@@ -312,28 +312,31 @@ export default {
     },
 
     initSectionAnimations() {
+      // 僅包含有對應區塊 id 的項目（本頁無 #schedule，場次在 Drawers；勿留不存在的 trigger 以免 GSAP / Observer 警告）
       const sections = [
-        { id: '#schedule', elements: '.section-title, .schedule-table' },
-        { id: '#portfolio', elements: '.section-title, .portfolio-item' },
-        { id: '#team', elements: '.section-title, .team-item' }
+        { id: '#portfolio', elements: ['.section-title', '.portfolio-item'] },
+        { id: '#team', elements: ['.section-title', '.team-columns'] },
       ];
 
       sections.forEach(({ id, elements }) => {
-        gsap.fromTo(`${id} ${elements}`, 
+        if (!document.querySelector(id)) return;
+        const targets = elements.map((sel) => `${id} ${sel}`).join(', ');
+        if (!document.querySelector(targets.split(',')[0].trim())) return;
+        gsap.fromTo(targets,
           { opacity: 0, y: 50 },
-          { 
-            opacity: 1, 
-            y: 0, 
-            duration: 0.8, 
-            stagger: 0.2, 
-            ease: "power2.out",
-            scrollTrigger: { 
-              trigger: id, 
-              start: "top 80%", 
-              end: "bottom 20%", 
-              toggleActions: "play none none reverse" 
-            }
-          }
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            stagger: 0.2,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: id,
+              start: 'top 80%',
+              end: 'bottom 20%',
+              toggleActions: 'play none none reverse',
+            },
+          },
         );
       });
     },
@@ -444,6 +447,12 @@ export default {
   display: flex;
   flex-direction: column;
   background: transparent;
+}
+
+.fvl2026-below-hero {
+  content-visibility: auto;
+  /* 估算高度避免摺疊區塊在建立 layout 前高度為 0 造成捲動條跳動 */
+  contain-intrinsic-size: 1px 3200px;
 }
 
 .fvl2026-page .foot-bar {

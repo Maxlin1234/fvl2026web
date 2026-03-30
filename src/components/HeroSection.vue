@@ -272,6 +272,54 @@ html, body {
 .bottom-left { bottom: 24px; left: 24px; }
 .bottom-right { bottom: 24px; right: 24px; }
 
+/* ===== 電腦版：主標由左、副標由右淡入（載入時） ===== */
+@media (min-width: 769px) {
+  @keyframes hero-banner-from-left {
+    from {
+      opacity: 0;
+      transform: translate3d(-2.25rem, 0, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+  @keyframes hero-banner-from-right {
+    from {
+      opacity: 0;
+      transform: translate3d(2.25rem, 0, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  .banner-title,
+  .banner-title2 {
+    backface-visibility: hidden;
+  }
+
+  .banner-title {
+    will-change: opacity, transform;
+    animation: hero-banner-from-left 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0s forwards;
+  }
+  .banner-title2 {
+    will-change: opacity, transform;
+    animation: hero-banner-from-right 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0s forwards;
+  }
+}
+
+@media (min-width: 769px) and (prefers-reduced-motion: reduce) {
+  .banner-title,
+  .banner-title2 {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    will-change: auto;
+  }
+}
+
 /* ===== 手機版 ===== */
 @media (max-width: 768px) {
   .cursor { display: none; }

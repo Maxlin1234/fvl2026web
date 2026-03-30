@@ -80,7 +80,7 @@ textureLoader.load(
     scene.environment = bgTex;
 
     const blueOverlay = new THREE.Mesh(
-      new THREE.SphereGeometry(500, 32, 16),
+      new THREE.SphereGeometry(500, 20, 12),
       new THREE.MeshBasicMaterial({
         color: 0x0a50ff,
         transparent: true,
@@ -122,7 +122,8 @@ function effectivePixelRatio() {
   const dpr = typeof window !== 'undefined' ? (window.devicePixelRatio || 1) : 1;
   const mobile = typeof window.matchMedia === 'function'
     && window.matchMedia('(max-width: 768px)').matches;
-  return Math.min(dpr, mobile ? 1.5 : 1.85);
+  // 略降上限可明顯減少像素填充量，畫面略柔但捲動較順
+  return Math.min(dpr, mobile ? 1.25 : 1.5);
 }
 
 let renderer = null;
@@ -498,6 +499,7 @@ function animate() {
 }
 
 let resizeObserver = null;
+let resizeDebounceTimer = null;
 function getAspect() {
   const el = target.value;
   if (!el) return 1;
@@ -533,7 +535,13 @@ onMounted(() => {
   if (hazeGroup) scene.add(hazeGroup);
 
   resize();
-  resizeObserver = new ResizeObserver(() => resize());
+  resizeObserver = new ResizeObserver(() => {
+    if (resizeDebounceTimer) clearTimeout(resizeDebounceTimer);
+    resizeDebounceTimer = setTimeout(() => {
+      resizeDebounceTimer = null;
+      resize();
+    }, 120);
+  });
   resizeObserver.observe(target.value);
 
   heroIntersectionObserver = new IntersectionObserver(
@@ -554,6 +562,10 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+  if (resizeDebounceTimer) {
+    clearTimeout(resizeDebounceTimer);
+    resizeDebounceTimer = null;
+  }
   if (visibilityChangeHandler) {
     document.removeEventListener('visibilitychange', visibilityChangeHandler);
     visibilityChangeHandler = null;
