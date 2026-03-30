@@ -762,10 +762,10 @@ export default {
     font-size: 1em !important;
   }
 
-  /* 注意事項／入場方式 內文列表 */
+  /* 注意事項／入場方式 點開後的內文列表 */
   .lecture-list {
     margin: 0;
-    font-size: 1em;
+    font-size: 0.7em;
   }
 
   .lecture-list h2 {

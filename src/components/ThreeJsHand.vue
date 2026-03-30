@@ -101,8 +101,27 @@ textureLoader.load(
 // Camera
 // eslint-disable-next-line max-len
 const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-camera.position.set(1, 0, -20);
-camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+/** Hero 主視覺是否為手機寬度（與 CSS 768px 對齊） */
+function isHeroMobileView() {
+  return typeof window !== 'undefined'
+    && typeof window.matchMedia === 'function'
+    && window.matchMedia('(max-width: 768px)').matches;
+}
+
+/** 手機版鏡頭略遠，避免模型佔滿畫面；旋轉裝置時由 resize 重算 */
+const HERO_CAMERA_DESKTOP_Z = -20;
+const HERO_CAMERA_MOBILE_Z = -25;
+
+function applyHeroCameraDistance() {
+  const z = isHeroMobileView() ? HERO_CAMERA_MOBILE_Z : HERO_CAMERA_DESKTOP_Z;
+  camera.position.set(1, 0, z);
+  camera.lookAt(0, 0, 0);
+  if (controls) {
+    controls.target.set(0, 0, 0);
+    controls.update();
+  }
+}
 
 
 
@@ -307,6 +326,7 @@ if (renderer) {
   controls.autoRotate = false;
   controls.target = new THREE.Vector3(0, 1, 0);
   controls.update();
+  applyHeroCameraDistance();
 }
 
 
@@ -426,13 +446,7 @@ loader.load('/test/model/GLTF.glb', (gltfScene) => {
   camera.near = Math.max(0.01, distance / 100);
   camera.far = distance * 100;
   camera.updateProjectionMatrix();
-  // camera.position.set(distance, distance * 0.6, distance);
-  camera.lookAt(0, 0, 0);
-
-  if (controls) {
-    controls.target.set(0, 0, 0);
-    controls.update();
-  }
+  applyHeroCameraDistance();
 
   scene.add(mesh);
 }, function(xhr) {
@@ -525,6 +539,7 @@ function resize() {
   renderer.setSize(w, h, false);
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
+  applyHeroCameraDistance();
 }
 
 onMounted(() => {
