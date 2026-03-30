@@ -5,6 +5,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import vertexShader from '../shader/vertex.glsl';
 import fragmentShader from '../shader/fragment.glsl';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 
 // import {gsap} from 'gsap';
 
@@ -314,7 +315,12 @@ if (renderer) {
 // eslint-disable-next-line max-len
 // GLTF Loader-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+// Draco 必須先建立再掛到 GLTFLoader；否則 draco 尚在暫時死區會直接 ReferenceError，模型不會出現。
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
+
 const loader = new GLTFLoader();
+loader.setDRACOLoader(dracoLoader);
 
 // 用來做「BALL 緩慢自動來回旋轉」
 let ballMesh = null;
@@ -577,6 +583,7 @@ onBeforeUnmount(() => {
   if (resizeObserver && target.value) resizeObserver.unobserve(target.value);
   resizeObserver = null;
   if (controls) controls.dispose();
+  dracoLoader.dispose();
   if (renderer) renderer.dispose();
 });
 
