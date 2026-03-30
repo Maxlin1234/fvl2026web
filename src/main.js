@@ -6,7 +6,6 @@ import App from "./App.vue";
 import router from "./router";
 import Buefy from 'buefy';
 import axios from 'axios';
-import 'font-awesome/css/font-awesome.css';
 import 'font-awesome/css/font-awesome.min.css';
 import '../style.css';
 import store from './store';

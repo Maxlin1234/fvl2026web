@@ -570,8 +570,12 @@ section {
 
 .team-content {
   position: relative;
-  padding: 5em 2em 2em 2em; 
-  backdrop-filter: blur(10px);
+  padding: 5em 2em 2em 2em;
+  /* 強 blur 在捲動時成本高；略減並獨立合成層減少重繪範圍 */
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transform: translateZ(0);
+  isolation: isolate;
 }
 
 .team-list {

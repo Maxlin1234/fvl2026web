@@ -118,14 +118,21 @@ camera.lookAt(new THREE.Vector3(0, 0, 0));
 
 
 // Renderer (safe init: avoid crashing when WebGL context fails)
+function effectivePixelRatio() {
+  const dpr = typeof window !== 'undefined' ? (window.devicePixelRatio || 1) : 1;
+  const mobile = typeof window.matchMedia === 'function'
+    && window.matchMedia('(max-width: 768px)').matches;
+  return Math.min(dpr, mobile ? 1.5 : 1.85);
+}
+
 let renderer = null;
 try {
-  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.setClearColor(0x000000, 0);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.setPixelRatio(effectivePixelRatio());
+  // 場景無投射陰影的燈光時，關閉 shadow map 可省 GPU/CPU
+  renderer.shadowMap.enabled = false;
 } catch (err) {
   console.error('[ThreeJsHand] Failed to create WebGLRenderer:', err);
 }
@@ -133,9 +140,18 @@ try {
 /** 煙霧層數；0 = 關閉（較省 draw call）。若要輕量恢復可改 10～12（原 36）。 */
 const HAZE_PLANE_COUNT = 0;
 
-/** Hero 區可見時才畫 WebGL，避免捲動到下方時仍每幀渲染與捲動搶主執行緒 */
-let heroWebglVisible = true;
+/** Hero 進入視窗且分頁在前景時才畫 WebGL（減輕捲動 / 背景分頁負擔） */
+let heroInView = true;
+let documentVisible = typeof document === 'undefined' ? true : !document.hidden;
 let heroIntersectionObserver = null;
+let visibilityChangeHandler = null;
+
+function shouldRenderWebgl() {
+  return heroInView && documentVisible;
+}
+
+/** 球體 Shader 材質（避免每幀 scene.traverse） */
+const ballTimeMaterials = [];
 
 let hazeGroup = null;
 let hazeMats = [];
@@ -324,8 +340,11 @@ loader.load('/test/model/GLTF.glb', (gltfScene) => {
   const textureLoader = new THREE.TextureLoader();
   const polyTex = textureLoader.load('/textures/poly.png');
   polyTex.colorSpace = THREE.SRGBColorSpace;
+  polyTex.generateMipmaps = true;
+  polyTex.minFilter = THREE.LinearMipmapLinearFilter;
+  polyTex.magFilter = THREE.LinearFilter;
   const maxAnisotropy = renderer?.capabilities?.getMaxAnisotropy?.() || 1;
-  polyTex.anisotropy = Math.min(maxAnisotropy, 8);
+  polyTex.anisotropy = Math.min(maxAnisotropy, 4);
 
   const handMaterial = new THREE.MeshStandardMaterial({
     map: polyTex,
@@ -362,7 +381,9 @@ loader.load('/test/model/GLTF.glb', (gltfScene) => {
   mesh.traverse((child) => {
     if (child.isMesh) {
       if (meshIsBallPart(child)) {
-        child.material = ballMaterialTemplate.clone();
+        const bm = ballMaterialTemplate.clone();
+        child.material = bm;
+        ballTimeMaterials.push(bm);
         if (!ballMesh) ballMesh = child;
       } else {
         child.material = handMaterial;
@@ -377,8 +398,8 @@ loader.load('/test/model/GLTF.glb', (gltfScene) => {
         if ('envMapIntensity' in mat) mat.envMapIntensity = Math.min(mat.envMapIntensity ?? 1.0, 0.08);
       }
 
-      child.castShadow = true;
-      child.receiveShadow = true;
+      child.castShadow = false;
+      child.receiveShadow = false;
     }
   });
 
@@ -451,7 +472,7 @@ const ballRotSpeed = 0.4; // 來回頻率（越小越慢）
 // eslint-disable-next-line require-jsdoc
 function animate() {
   requestAnimationFrame(animate);
-  if (!heroWebglVisible || !renderer) return;
+  if (!shouldRenderWebgl() || !renderer) return;
 
   const elapsedTime = clock.getElapsedTime();
   if (scene) {
@@ -460,11 +481,10 @@ function animate() {
       ballMesh.rotation.y = Math.sin(elapsedTime * ballRotSpeed) * ballRotRange;
     }
     const t = performance.now() * 0.001;
-    scene.traverse((obj) => {
-      if (obj.isMesh && obj.material && obj.material.uniforms && obj.material.uniforms.uTime) {
-        obj.material.uniforms.uTime.value = t;
-      }
-    });
+    for (let i = 0; i < ballTimeMaterials.length; i++) {
+      const u = ballTimeMaterials[i].uniforms;
+      if (u && u.uTime) u.uTime.value = t;
+    }
   }
   if (hazeGroup) {
     const t = performance.now() * 0.001;
@@ -491,6 +511,7 @@ function resize() {
   if (!el || !renderer) return;
   const w = el.clientWidth || 1;
   const h = el.clientHeight || 1;
+  renderer.setPixelRatio(effectivePixelRatio());
   renderer.setSize(w, h, false);
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
@@ -518,16 +539,25 @@ onMounted(() => {
   heroIntersectionObserver = new IntersectionObserver(
     (entries) => {
       const e = entries[0];
-      heroWebglVisible = !!(e && e.isIntersecting);
+      heroInView = !!(e && e.isIntersecting);
     },
     { threshold: 0, rootMargin: '48px 0px 64px 0px' },
   );
   heroIntersectionObserver.observe(target.value);
 
+  visibilityChangeHandler = () => {
+    documentVisible = typeof document !== 'undefined' ? !document.hidden : true;
+  };
+  document.addEventListener('visibilitychange', visibilityChangeHandler);
+
   animate();
 });
 
 onBeforeUnmount(() => {
+  if (visibilityChangeHandler) {
+    document.removeEventListener('visibilitychange', visibilityChangeHandler);
+    visibilityChangeHandler = null;
+  }
   if (heroIntersectionObserver && target.value) {
     heroIntersectionObserver.unobserve(target.value);
   }
