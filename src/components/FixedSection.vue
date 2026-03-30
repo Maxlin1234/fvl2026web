@@ -100,7 +100,7 @@ export default {
 
 @media (max-width: 768px) {
   .title-box {
-    width: calc(100% - 20px);
+    width: calc(100% - 60px);
     max-width: 100%;
     padding: 24px 10px;
     box-sizing: border-box;
@@ -108,7 +108,7 @@ export default {
   /* 單行顯示：字級隨視寬略縮，避免截斷 */
   .title-box h2,
   .title-box .fixed-section-title {
-    font-size: 0.8em;
+    font-size: 0.6em;
   }
 .fix-bg {
   min-height:500px;
