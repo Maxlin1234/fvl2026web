@@ -150,6 +150,14 @@ export default {
           String(zh).includes('時間層理')
           || /stratigraphy/i.test(String(en)),
       },
+      {
+        /** 《循鹿》：桑德琳．德米耶 → 拉爾夫．基爾赫茲；鍵可對 API「·／拉圖夫」等變體 */
+        nameOrder: ['桑德琳', '拉爾夫', '拉圖'],
+        test: ({ zh, en }) =>
+          String(zh).includes('循鹿')
+          || /following\s*the\s*deer/i.test(String(en))
+          || /tying\s*the\s*deer/i.test(String(en)),
+      },
     ];
 
     const entityMatchesCustomOrderKey = (entity, orderKey) => {
