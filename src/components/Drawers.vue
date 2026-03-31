@@ -57,7 +57,7 @@
 
   <!-- 講座 Drawer 結構 -->
   <div class="lecture-drawer" :class="{ open: showLectureDrawer }">
-    <button class="drawer-close" @click="$emit('close-drawer', 'lecture')">×</button>
+    <button class="drawer-close" type="button" @click="closeLectureDrawer">×</button>
  
     <div class="drawer-content" style="background-color:black;color:white;">
       <video
@@ -68,7 +68,8 @@
   playsinline
   webkit-playsinline
   x5-playsinline
-  preload="auto"
+  :preload="showLectureDrawer ? 'auto' : 'none'"
+  :class="{ 'lecture-video--idle': !showLectureDrawer }"
   style="
     position: absolute;
     top: 0;
@@ -158,13 +159,13 @@
             <h2 v-if="!isEnglish">售票節目共2檔：5/13(三) 19:30｜《未來視覺派對#3》、5/30(六) 19:00｜姚瑞中 X 郭一 X Meuko! Meuko《虛迷山》派對場</h2>
             <h2 v-if="!isEnglish">⭓ 一人一票憑票入場。</h2>
             <h2 v-if="!isEnglish">⭓ 開演前10分鐘開放入場，並不開放遲到觀眾入場。</h2>
-            <h2 v-if="!isEnglish">⭓ 4/1(三) 中午12:00早鳥8折啟售；4/14(二) 中午12:00 正式啟售。</h2>
+            <h2 v-if="!isEnglish">⭓ 4/10(五) 中午12:00早鳥8折啟售；4/20(一) 中午12:00 正式啟售。</h2>
 
             <h2 v-if="isEnglish">Ticketed programs include: May 13 (Wed.) 7:30 p.m. “Future Vision Party #3”, May 30 (Sat.) 7:30 p.m. “YAO Jui-Chung × KUO Yi × Meuko Meuko, Mount Ecstasy“</h2>
             <h2 v-if="isEnglish">⭓ One person, one ticket admission.</h2>
             <h2 v-if="isEnglish">⭓ Please arrive at least 10 minutes before the performance or screening. Latecomers will not be admitted.</h2>
-            <h2 v-if="isEnglish">⭓ Early Bird 20% Off starts at 12:00 p.m. on April 1 (Wed.)</h2>
-            <h2 v-if="isEnglish">⭓ General Sale starts at 12:00 p.m. on April 14 (Tue.)</h2>
+            <h2 v-if="isEnglish">⭓ Early Bird 20% Off starts at 12:00 p.m. on April 10 (Fri.)</h2>
+            <h2 v-if="isEnglish">⭓ General Sale starts at 12:00 p.m. on April 20 (Mon.)</h2>
 
             <h2 style="color: #81C1DF;margin-top: 1em;">{{ isEnglish ? '【Exhibition】' : '【展覽】' }}</h2>
             <div v-if="!isEnglish" class="exhibition-info">
@@ -268,21 +269,21 @@ export default {
   emits: ['close-drawer', 'event-type-changed'],
   watch: {
     showLectureDrawer(open) {
-      // 關閉時暫停背景影片，避免 scale 動畫與連續解碼/合成搶資源造成卡頓
-      this.$nextTick(() => {
-        const v = this.$refs.lectureVideo;
-        if (!v) return;
-        if (open) {
+      const v = this.$refs.lectureVideo;
+      if (!v) return;
+      if (open) {
+        this.$nextTick(() => {
           const p = v.play();
           if (p && typeof p.catch === 'function') p.catch(() => {});
-        } else {
-          try {
-            v.pause();
-          } catch (e) {
-            console.warn('講座背景影片暫停失敗', e);
-          }
+        });
+      } else {
+        // 同步暫停：勿等 nextTick，否則 scale 關閉動畫會與影片解碼疊加易掉幀
+        try {
+          v.pause();
+        } catch (e) {
+          console.warn('講座背景影片暫停失敗', e);
         }
-      });
+      }
     },
   },
   data() {
@@ -373,6 +374,17 @@ export default {
     }
   },
   methods: {
+    closeLectureDrawer() {
+      const v = this.$refs.lectureVideo;
+      if (v) {
+        try {
+          v.pause();
+        } catch (e) {
+          console.warn('講座背景影片暫停失敗', e);
+        }
+      }
+      this.$emit('close-drawer', 'lecture');
+    },
     toggleContent() {
       this.showContentA = true;
       this.showContentB = false;
@@ -507,16 +519,17 @@ export default {
   transform: scale(0);
   border-radius: 50%;
   transform-origin: bottom left;
-  /* 勿用 transition: all（易與子層屬性一併插值）；略過尾端回彈 easing，關閉較流暢 */
+  /* 勿用 transition: all；關閉略縮短，減少長時間重繪 */
   transition:
-    transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1),
-    border-radius 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
+    transform 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+    border-radius 0.32s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
   padding: 0;
   overflow: hidden;
   pointer-events: none;
   backface-visibility: hidden;
+  isolation: isolate;
 }
 
 .lecture-drawer.open {
@@ -660,6 +673,17 @@ export default {
   overflow-y: auto;
   color: white;
   padding-bottom: 96px; /* 底部留白：避免文字貼齊視窗底部 */
+}
+
+/* 抽屜關閉時立刻隱藏影片，避免與 scale 動畫同時合成背景視訊造成卡頓 */
+.lecture-drawer video {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.lecture-drawer video.lecture-video--idle {
+  opacity: 0 !important;
+  visibility: hidden !important;
 }
 
 .all-content {
@@ -810,13 +834,20 @@ export default {
 }
 
 .indicator {
-  width: 10px;
-  height: 15px;
+  width: 12px;
+  height: 12px;
+  min-width: 12px;
+  min-height: 12px;
+  padding: 0;
+  box-sizing: border-box;
+  flex-shrink: 0;
   border-radius: 50%;
   background-color: rgba(255, 255, 255, 0.5);
   border: 1px solid #fff;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  appearance: none;
+  -webkit-appearance: none;
 }
 
 .indicator.active {

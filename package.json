@@ -102,9 +102,8 @@
     "pre-commit": "lint-staged"
   },
   "lint-staged": {
-    "*.{js,jsx,vue}": [
-      "vue-cli-service lint",
-      "git add"
+    "src/**/*.{js,jsx,vue}": [
+      "vue-cli-service lint"
     ]
   },
   "main": "babel.config.js",

@@ -209,7 +209,7 @@ const JUN_WORKSHOP_NTHU_EN = `Immersive Audio-Visual Workshop — The Joint Pres
 /** 6/7 14:00（圖檔用字：藏端、超緯度） */
 const JUN_607_A_ZH = `浮點設計 | 《萬象之初》 | 3 mins
 凱蒂·卡托納 | 《藏端》 | 12 mins
-初未來 X 超緯度 X 江戶未來世 X Kivi X 賴皮 X 林強 | 《新摩登時代》 | 20 mins`;
+初未來 X 超維度 X 江戶未來世 X Kivi X 賴皮 X 林強 | 《新摩登時代》 | 20 mins`;
 
 const JUN_607_A_EN = `FPA | Genesis | 3 mins
 Katie Katona | Terminal | 12 mins

@@ -1,2 +1,5 @@
 node_modules
 .DS_Store
+
+# build output（勿提交；避免 lint-staged 對壓縮 bundle 跑 ESLint）
+/dist

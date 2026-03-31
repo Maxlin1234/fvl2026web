@@ -51,16 +51,28 @@
               </div>
             </template>
             <div class="artist-info">
-              <p v-if="artistIntroText">{{ artistIntroText }}</p>
-              <template v-if="showTeamSection">
+              <template v-if="shinModernIntroRows.length">
                 <div
-                  v-for="(row, i) in teamCollectivesTextRows"
-                  :key="i"
+                  v-for="(row, i) in shinModernIntroRows"
+                  :key="'shin-intro-' + i"
                   class="team-blurb"
                 >
                   <h3 v-if="row.name" class="team-blurb-title">{{ row.name }}</h3>
                   <p v-if="row.description">{{ row.description }}</p>
                 </div>
+              </template>
+              <template v-else>
+                <p v-if="artistIntroText">{{ artistIntroText }}</p>
+                <template v-if="showTeamSection">
+                  <div
+                    v-for="(row, i) in teamCollectivesTextRows"
+                    :key="i"
+                    class="team-blurb"
+                  >
+                    <h3 v-if="row.name" class="team-blurb-title">{{ row.name }}</h3>
+                    <p v-if="row.description">{{ row.description }}</p>
+                  </div>
+                </template>
               </template>
             </div>
           </div>
@@ -122,6 +134,99 @@ export default {
       return text;
     };
 
+    /** 《新摩登時代》藝術家／團體顯示順序（對應 API 的 name / name_zh_tw） */
+    const SHIN_MODERN_ERA_NAME_ORDER = ['初未來', '超維度', '江戶未來世', 'Kivi', '賴皮', '林強'];
+
+    const entityMatchesShinOrderKey = (entity, orderKey) => {
+      const zh = String(entity?.name_zh_tw || entity?.nameZhTw || '').trim();
+      const en = String(entity?.name || '').trim();
+      const key = String(orderKey || '').trim();
+      if (!key) return false;
+      if (zh === key || en === key) return true;
+      if (zh && (zh.includes(key) || key.includes(zh))) return true;
+      const el = en.toLowerCase();
+      const kl = key.toLowerCase();
+      if (en && (el.includes(kl) || kl.includes(el))) return true;
+      return false;
+    };
+
+    const buildShinModernOrderedPairs = (contributors, collectives) => {
+      const cList = Array.isArray(contributors) ? contributors : [];
+      const tList = Array.isArray(collectives) ? collectives : [];
+      const usedC = new Set();
+      const usedT = new Set();
+      const ordered = [];
+      for (const orderKey of SHIN_MODERN_ERA_NAME_ORDER) {
+        let idx = -1;
+        for (let i = 0; i < cList.length; i += 1) {
+          if (usedC.has(i)) continue;
+          if (entityMatchesShinOrderKey(cList[i], orderKey)) {
+            idx = i;
+            break;
+          }
+        }
+        if (idx >= 0) {
+          usedC.add(idx);
+          ordered.push({ kind: 'contributor', item: cList[idx] });
+          continue;
+        }
+        for (let i = 0; i < tList.length; i += 1) {
+          if (usedT.has(i)) continue;
+          if (entityMatchesShinOrderKey(tList[i], orderKey)) {
+            idx = i;
+            break;
+          }
+        }
+        if (idx >= 0) {
+          usedT.add(idx);
+          ordered.push({ kind: 'collective', item: tList[idx] });
+        }
+      }
+      for (let i = 0; i < cList.length; i += 1) {
+        if (!usedC.has(i)) ordered.push({ kind: 'contributor', item: cList[i] });
+      }
+      for (let i = 0; i < tList.length; i += 1) {
+        if (!usedT.has(i)) ordered.push({ kind: 'collective', item: tList[i] });
+      }
+      return ordered;
+    };
+
+    const isShinModernEraWork = computed(() => {
+      const zh = work.value?.work_zh?.title || '';
+      const en = work.value?.work_en?.title || '';
+      if (String(zh).includes('新摩登時代') || String(en).includes('新摩登時代')) return true;
+      return /shin\s*modern/i.test(String(en)) || /modern\s*era/i.test(String(en));
+    });
+
+    const shinModernOrdered = computed(() => {
+      if (!isShinModernEraWork.value) return [];
+      return buildShinModernOrderedPairs(work.value?.contributors, work.value?.collectives);
+    });
+
+    /** 《新摩登時代》藝術家介紹：依固定順序分段（名稱＋簡介），與頭像列一致 */
+    const shinModernIntroRows = computed(() => {
+      if (!isShinModernEraWork.value || shinModernOrdered.value.length === 0) return [];
+      const rows = [];
+      for (const { kind, item } of shinModernOrdered.value) {
+        const name = isEnglish.value
+          ? String(item?.name || item?.name_zh_tw || '').trim()
+          : String(item?.name_zh_tw || item?.name || '').trim();
+        let raw = '';
+        if (kind === 'contributor') {
+          raw = isEnglish.value
+            ? (item?.introduction || '')
+            : (item?.introduction_zh_tw || item?.introductionZhTw || item?.introduction || '');
+        } else {
+          raw = isEnglish.value
+            ? (item?.description || '')
+            : (item?.description_zh_tw || item?.descriptionZhTw || item?.description || '');
+        }
+        const description = stripHtml(raw || '').trim();
+        rows.push({ name, description });
+      }
+      return rows;
+    });
+
     const recalcDerived = () => {
       const makeUrl = (p) => {
         if (!p) return '';
@@ -144,6 +249,13 @@ export default {
     };
 
     const artistHeadingText = computed(() => {
+      if (isShinModernEraWork.value && shinModernOrdered.value.length > 0) {
+        const names = shinModernOrdered.value
+          .map(({ item }) => (isEnglish.value ? item?.name : (item?.name_zh_tw || item?.name)))
+          .filter((v) => typeof v === 'string' && v.trim().length > 0);
+        if (names.length) return names.join(' × ');
+      }
+
       const contributorList = Array.isArray(work.value?.contributors) ? work.value.contributors : [];
       if (contributorList.length > 0) {
         const names = contributorList
@@ -166,6 +278,10 @@ export default {
     });
 
     const artistIntroText = computed(() => {
+      if (isShinModernEraWork.value && shinModernIntroRows.value.length > 0) {
+        return '';
+      }
+
       const firstContributor = Array.isArray(work.value?.contributors) ? work.value.contributors[0] : null;
       const contributorList = Array.isArray(work.value?.contributors) ? work.value.contributors : [];
       if (contributorList.length > 0) {
@@ -224,6 +340,24 @@ export default {
     };
 
     const artistAvatarUrls = computed(() => {
+      if (isShinModernEraWork.value && shinModernOrdered.value.length > 0) {
+        const urls = [];
+        for (const { item } of shinModernOrdered.value) {
+          const u =
+            item?.image_1920_media?.url
+            || item?.image1920Media?.url
+            || item?.avatar_media?.url
+            || item?.avatarMedia?.url
+            || item?.avatar
+            || '';
+          const nu = normalizeMediaUrl(u);
+          if (typeof nu === 'string' && nu.trim().length > 0 && !isBlockedArtistImage(nu)) {
+            urls.push(nu);
+          }
+        }
+        if (urls.length > 0) return urls;
+      }
+
       // 新 API 優先：直接使用 contributors.image_1920_media.url
       const contributorList = Array.isArray(work.value?.contributors) ? work.value.contributors : [];
       if (contributorList.length > 0) {
@@ -294,7 +428,16 @@ export default {
     });
 
     const teamCollectivesDisplay = computed(() => {
-      const list = Array.isArray(work.value?.collectives) ? work.value.collectives : [];
+      let list = Array.isArray(work.value?.collectives) ? [...work.value.collectives] : [];
+      if (isShinModernEraWork.value && shinModernOrdered.value.length > 0) {
+        const collectiveItems = shinModernOrdered.value
+          .filter((x) => x.kind === 'collective')
+          .map((x) => x.item);
+        const idOf = (c) => c?.id ?? JSON.stringify(c?.name_zh_tw || c?.name || '');
+        const orderedIds = new Set(collectiveItems.map(idOf));
+        const rest = list.filter((c) => !orderedIds.has(idOf(c)));
+        list = [...collectiveItems, ...rest];
+      }
       return list
         .map((c) => {
           const name = isEnglish.value
@@ -330,6 +473,24 @@ export default {
     );
 
     const mergedPhotoItems = computed(() => {
+      if (isShinModernEraWork.value && shinModernOrdered.value.length > 0 && !hideArtistPhoto.value) {
+        const items = [];
+        for (const { kind, item } of shinModernOrdered.value) {
+          const u =
+            item?.image_1920_media?.url
+            || item?.image1920Media?.url
+            || item?.avatar_media?.url
+            || item?.avatarMedia?.url
+            || item?.avatar
+            || '';
+          const nu = normalizeMediaUrl(u);
+          if (typeof nu === 'string' && nu.length > 0 && !isBlockedArtistImage(nu)) {
+            items.push({ url: nu, kind: kind === 'collective' ? 'team' : 'artist' });
+          }
+        }
+        return items;
+      }
+
       const items = [];
       if (!hideArtistPhoto.value) {
         for (const url of artistAvatarUrls.value) {
@@ -492,6 +653,7 @@ export default {
       teamCollectivesTextRows,
       mergedPhotoItems,
       showMergedPhotos,
+      shinModernIntroRows,
       extraProposalHtml,
       showExtraProposal,
     };
