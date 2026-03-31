@@ -316,7 +316,7 @@ export default {
         aprEvt(134, '2026-05-28', '12:00–18:00', MAY_YAO_EXH_ZH, MAY_YAO_EXH_EN, 1),
         aprEvt(135, '2026-05-29', '12:00–18:00', MAY_YAO_EXH_ZH, MAY_YAO_EXH_EN, 1),
         aprEvt(136, '2026-05-30', '12:00–18:00', MAY_YAO_EXH_ZH, MAY_YAO_EXH_EN, 1),
-        aprEvt(137, '2026-05-30', '12:00–18:00', MAY_YAO_LIVE_ZH, MAY_YAO_LIVE_EN, 2),
+        aprEvt(137, '2026-05-30', '19:00–20:00', MAY_YAO_LIVE_ZH, MAY_YAO_LIVE_EN, 2),
         aprEvt(138, '2026-05-31', '12:00–18:00', MAY_YAO_EXH_ZH, MAY_YAO_EXH_EN, 1),
 
         aprEvt(139, '2026-06-06', '14:00', JUN_WORKSHOP_TNUA_ZH, JUN_WORKSHOP_TNUA_EN, 1),
