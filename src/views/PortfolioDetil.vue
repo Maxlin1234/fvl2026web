@@ -21,21 +21,44 @@
           <div class="work-description">{{ descriptionText }}</div>
         </div>
 
-        <!-- 右欄：藝術家資訊 -->
+        <!-- 右欄：藝術家（團隊 collectives 頭像與藝術家同一排圓形；團隊說明在藝術家介紹下方） -->
         <div class="artist-section" :class="{ 'logo-artist': isLogoArtistWork }">
-          <!-- <h2 class="section-heading">{{ isEnglish ? 'About Artist' : '藝術家' }}</h2> -->
           <h2 class="section-heading">{{ artistHeadingText }}</h2>
           <div class="artist-content">
-            <template v-if="!hideArtistPhoto && artistAvatarUrls.length > 0">
-              <div v-if="artistAvatarUrls.length <= 1" class="artist-photo">
-                <img :src="artistAvatarUrls[0]" alt="artist photo" loading="lazy" decoding="async" />
+            <template v-if="showMergedPhotos">
+              <div v-if="mergedPhotoItems.length === 1" class="artist-photo">
+                <img
+                  :src="mergedPhotoItems[0].url"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                  :class="{ 'people-photo-img--logo': mergedPhotoItems[0].kind === 'artist' && isLogoArtistWork }"
+                />
               </div>
               <div v-else class="artist-photos">
-                <img v-for="(url, i) in artistAvatarUrls" :key="i" :src="url" alt="artist photo" loading="lazy" decoding="async" />
+                <img
+                  v-for="(item, i) in mergedPhotoItems"
+                  :key="i"
+                  :src="item.url"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                  :class="{ 'people-photo-img--logo': item.kind === 'artist' && isLogoArtistWork }"
+                />
               </div>
             </template>
             <div class="artist-info">
-              <p>{{ artistIntroText }}</p>
+              <p v-if="artistIntroText">{{ artistIntroText }}</p>
+              <template v-if="showTeamSection">
+                <div
+                  v-for="(row, i) in teamCollectivesTextRows"
+                  :key="i"
+                  class="team-blurb"
+                >
+                  <h3 v-if="row.name" class="team-blurb-title">{{ row.name }}</h3>
+                  <p v-if="row.description">{{ row.description }}</p>
+                </div>
+              </template>
             </div>
           </div>
         </div>
@@ -380,6 +403,71 @@ export default {
       );
     });
 
+    /** 同時有 contributors 與 collectives 時：藝術家區塊只用 contributors，collectives 改在製作團隊區塊顯示，避免重複。 */
+    const showTeamSection = computed(() => {
+      const contributors = work.value?.contributors;
+      const collectives = work.value?.collectives;
+      return (
+        Array.isArray(contributors) &&
+        contributors.length > 0 &&
+        Array.isArray(collectives) &&
+        collectives.length > 0
+      );
+    });
+
+    const teamCollectivesDisplay = computed(() => {
+      const list = Array.isArray(work.value?.collectives) ? work.value.collectives : [];
+      return list
+        .map((c) => {
+          const name = isEnglish.value
+            ? (c?.name || c?.name_zh_tw || '').trim()
+            : (c?.name_zh_tw || c?.name || '').trim();
+          const rawDesc = isEnglish.value
+            ? (c?.description || '')
+            : (c?.description_zh_tw || c?.description || '');
+          const description = stripHtml(rawDesc).trim();
+          const u =
+            c?.image_1920_media?.url
+            || c?.image1920Media?.url
+            || c?.avatar_media?.url
+            || c?.avatarMedia?.url
+            || c?.avatar
+            || '';
+          const imageUrl = normalizeMediaUrl(u);
+          const imageOk =
+            typeof imageUrl === 'string' &&
+            imageUrl.length > 0 &&
+            !isBlockedArtistImage(imageUrl);
+          return {
+            name,
+            description,
+            imageUrl: imageOk ? imageUrl : '',
+          };
+        })
+        .filter((r) => r.name || r.description || r.imageUrl);
+    });
+
+    const teamCollectivesTextRows = computed(() =>
+      teamCollectivesDisplay.value.filter((r) => r.name || r.description),
+    );
+
+    const mergedPhotoItems = computed(() => {
+      const items = [];
+      if (!hideArtistPhoto.value) {
+        for (const url of artistAvatarUrls.value) {
+          items.push({ url, kind: 'artist' });
+        }
+      }
+      if (showTeamSection.value) {
+        for (const row of teamCollectivesDisplay.value) {
+          if (row.imageUrl) items.push({ url: row.imageUrl, kind: 'team' });
+        }
+      }
+      return items;
+    });
+
+    const showMergedPhotos = computed(() => mergedPhotoItems.value.length > 0);
+
     const loadFromLocal = () => {
       try {
         const key = `work_${id}`;
@@ -442,6 +530,7 @@ export default {
               interactive_description: entity?.work_zh?.interactive_description || contributors?.[0]?.name_zh_tw || contributors?.[0]?.name || '',
             },
             contributors,
+            collectives: Array.isArray(entity?.collectives) ? entity.collectives : [],
           };
           recalcDerived();
         } else {
@@ -463,8 +552,13 @@ export default {
     onMounted(async () => {
       isEnglish.value = resolveInitialLang();
       const ok = loadFromLocal();
-      if (!ok) await fetchFromApi();
-      // 移除不再使用的額外 API，避免進入作品頁時多發請求造成延遲。
+      const staleTeam =
+        ok &&
+        work.value &&
+        Array.isArray(work.value.contributors) &&
+        work.value.contributors.length > 0 &&
+        (!Array.isArray(work.value.collectives) || work.value.collectives.length === 0);
+      if (!ok || staleTeam) await fetchFromApi();
       window.addEventListener('storage', handleStorage);
     });
 
@@ -485,6 +579,11 @@ export default {
       artistAvatarUrls,
       hideArtistPhoto,
       isLogoArtistWork,
+      showTeamSection,
+      teamCollectivesDisplay,
+      teamCollectivesTextRows,
+      mergedPhotoItems,
+      showMergedPhotos,
     };
   }
 }
@@ -656,12 +755,33 @@ export default {
       text-align: justify;
     }
   }
+
+  .team-blurb {
+    margin-top: 1.35em;
+  }
+
+  .team-blurb-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin: 0 0 0.5em 0;
+    color: #000000;
+    line-height: 1.35;
+  }
+
+  .team-blurb p {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: #000000;
+    margin: 0;
+    white-space: pre-wrap;
+    text-align: justify;
+  }
 }
 
-/* 特定作品：藝術家圖片為圓形 logo，不套圓框與裁切 */
+/* 特定作品：僅藝術家頭像為 logo 排版，團隊頭像仍為圓形 */
 .artist-section.logo-artist {
-  .artist-photo img,
-  .artist-photos img {
+  .artist-photo img.people-photo-img--logo,
+  .artist-photos img.people-photo-img--logo {
     border-radius: 0;
     border: none;
     box-shadow: none;

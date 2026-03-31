@@ -112,14 +112,25 @@ export default {
     };
   },
   mounted() {
-    this.fixVhUnit(); // 🔧 修正 100vh 問題
+    this.fixVhUnit(); // 桌面／不支援 svh 時作為 hero 高度 fallback
     this.initCursor();
-    window.addEventListener('resize', this.fixVhUnit);
+    window.addEventListener('resize', this.onWindowResize);
+    window.addEventListener('orientationchange', this.fixVhUnit);
   },
   beforeUnmount() {
-    window.removeEventListener('resize', this.fixVhUnit);
+    window.removeEventListener('resize', this.onWindowResize);
+    window.removeEventListener('orientationchange', this.fixVhUnit);
   },
   methods: {
+    /** 手機已用 100svh 固定首屏高度，略過 resize 與網址列連動，避免 3D 區塊隨捲動變形 */
+    onWindowResize() {
+      const mobile = typeof window.matchMedia === 'function'
+        && window.matchMedia('(max-width: 768px)').matches;
+      if (mobile && typeof CSS !== 'undefined' && CSS.supports?.('height: 100svh')) {
+        return;
+      }
+      this.fixVhUnit();
+    },
     fixVhUnit() {
       const vh = window.innerHeight * 0.01;
       document.documentElement.style.setProperty('--vh', `${vh}px`);
@@ -323,16 +334,34 @@ html, body {
 /* ===== 手機版 ===== */
 @media (max-width: 768px) {
   /*
-   * 避免 .hero { min-height: 100vh } 與子層 height: calc(var(--vh)*100) 在 iOS Safari 不一致，
-   * 父層多出一段「透明／底色」空隙，底下 FixedSection 白底會從縫隙透出成白條。
+   * 避免 .hero { min-height: 100vh } 與子層高度在 iOS Safari 不一致造成白條。
+   * 使用 100svh：以「最小視窗」為準，捲動時網址列收合不會改變高度，3D 區塊比例固定。
+   * 不支援 svh 的瀏覽器仍用 --vh（resize 時由 fixVhUnit 更新）。
    */
   .hero {
     min-height: 0;
+    width: 100%;
+    max-width: 100%;
     height: calc(var(--vh, 1vh) * 100);
   }
+
+  @supports (height: 100svh) {
+    .hero {
+      height: 100svh;
+    }
+  }
+
   .hero-banner-wrapper {
     height: 100%;
     min-height: 100%;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .hero-visual {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .cursor { display: none; }

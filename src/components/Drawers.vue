@@ -22,7 +22,7 @@
     <div class="drawer-content2">
       <div class="cal-page">
         <div class="cal-title">
-          <p class="schedule-coming-soon-text">將於3/31(二)更新，敬請期待！</p>
+          <p v-if="isScheduleComingSoon" class="schedule-coming-soon-text">將於3/31(二)更新，敬請期待！</p>
           <Calendar
             v-if="!isScheduleComingSoon"
             :isEnglish="isEnglish"
@@ -200,7 +200,31 @@
 </template>
 
 <script>
+import axios from 'axios';
 import Calendar from './Calendar2.vue';
+
+const SCHEDULE_WORKS_API_URL = 'https://unzip.clab.org.tw/api/v1/projects/21/works';
+const SCHEDULE_WORKS_API_AUTH = 'Api-Key 1e801a8fbe21fe2bef15df853e62ec9dc5a1cd08';
+
+/** 節目表輪播：僅用作品 featured_photo_media（相對路徑補 unzip-clab-api 網域） */
+function resolveWorkFeaturedPhotoUrl(w) {
+  const directUrl = w?.featured_photo_media?.url || w?.featuredPhotoMedia?.url;
+  if (!directUrl) return '';
+  const s = String(directUrl);
+  if (/^https?:\/\//i.test(s)) return s;
+  return `https://unzip-clab-api.clab.org.tw/${s.replace(/^\/+/, '')}`;
+}
+
+const FALLBACK_SCHEDULE_CAROUSEL_IMAGES = [
+  require('../assets/slider1.jpg'),
+  require('../assets/slider2.jpg'),
+  require('../assets/slider3.jpg'),
+  require('../assets/slider4.jpg'),
+  require('../assets/slider5.jpg'),
+  require('../assets/slider6.jpg'),
+  require('../assets/slider7.jpg'),
+  require('../assets/slider8.jpg'),
+];
 
 export default {
   name: 'DraWers',
@@ -232,27 +256,19 @@ export default {
   emits: ['close-drawer', 'event-type-changed'],
   data() {
     return {
-      // 場次表暫時先隱藏內容，只顯示提示文字
-      isScheduleComingSoon: true,
+      isScheduleComingSoon: false,
       showContentA: true,
       showContentB: false,
       showContentC: false,
       currentImageIndex: 0,
-      carouselImages: [
-        require('../assets/slider1.jpg'),
-        require('../assets/slider2.jpg'),
-        require('../assets/slider3.jpg'),
-        require('../assets/slider4.jpg'),
-        require('../assets/slider5.jpg'),
-        require('../assets/slider6.jpg'),
-        require('../assets/slider7.jpg'),
-        require('../assets/slider8.jpg'),
-      ],
+      carouselImages: [...FALLBACK_SCHEDULE_CAROUSEL_IMAGES],
       carouselTimer: null
     }
   },
   mounted() {
-    this.startCarousel();
+    this.loadScheduleCarouselImages().then(() => {
+      this.startCarousel();
+    });
     // 行動裝置自動播放處理
     const video = this.$refs.lectureVideo;
     if (video) {
@@ -345,17 +361,46 @@ export default {
       this.$emit('event-type-changed', eventType);
     },
     nextSlide() {
-      this.currentImageIndex = (this.currentImageIndex + 1) % this.carouselImages.length;
+      const n = this.carouselImages.length;
+      if (n === 0) return;
+      this.currentImageIndex = (this.currentImageIndex + 1) % n;
     },
     prevSlide() {
-      this.currentImageIndex = this.currentImageIndex === 0 
-        ? this.carouselImages.length - 1 
-        : this.currentImageIndex - 1;
+      const n = this.carouselImages.length;
+      if (n === 0) return;
+      this.currentImageIndex = this.currentImageIndex === 0 ? n - 1 : this.currentImageIndex - 1;
     },
     goToSlide(index) {
       this.currentImageIndex = index;
     },
+    async loadScheduleCarouselImages() {
+      try {
+        const { data } = await axios.get(SCHEDULE_WORKS_API_URL, {
+          headers: { Authorization: SCHEDULE_WORKS_API_AUTH },
+        });
+        const list = Array.isArray(data) ? data : (data?.data || data?.results || []);
+        // 8 張輪播：前 6 件為 API 第 1–6 件；第 7 張改為第 9 件的 featured；第 8 張為第 8 件
+        const workIndices = [0, 1, 2, 3, 4, 5, 8, 7];
+        const urls = [];
+        for (let slot = 0; slot < workIndices.length; slot++) {
+          const idx = workIndices[slot];
+          let u = list[idx] ? resolveWorkFeaturedPhotoUrl(list[idx]) : '';
+          if (!u && slot === 6 && list[6]) {
+            u = resolveWorkFeaturedPhotoUrl(list[6]);
+          }
+          if (typeof u === 'string' && u.length > 0) urls.push(u);
+        }
+        if (urls.length > 0) {
+          this.carouselImages = urls;
+          this.currentImageIndex = 0;
+        }
+      } catch (e) {
+        console.error('節目表輪播：載入作品圖失敗，使用本地備援', e);
+      }
+    },
     startCarousel() {
+      this.stopCarousel();
+      if (this.carouselImages.length === 0) return;
       this.carouselTimer = setInterval(() => {
         this.nextSlide();
       }, 4000); // 每4秒自動切換
@@ -477,7 +522,7 @@ export default {
   padding: 0px;
   flex: 1;
   overflow-y: auto;
-  margin-bottom: 2em;
+  margin-bottom: 0;
 }
 
 .drawer-content2 img {
@@ -500,8 +545,11 @@ export default {
 
 .cal-title {
   width: 50%;
-  height: 100vh;
+  min-height: 0;
+  height: auto;
   padding: 30px;
+  padding-bottom: 24px;
+  box-sizing: border-box;
   z-index: 1;
 }
 

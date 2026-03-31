@@ -263,7 +263,7 @@ function onClick(event) {
   // eslint-disable-next-line require-jsdoc
   function isMobile() {
     return window.innerWidth <= 768; // 判斷是否為手機版
-  };
+  }
   if (!isMobile()) {
     if (intersects.length > 0) {
       const selectedObject = intersects[0].object;

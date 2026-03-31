@@ -73,15 +73,17 @@ textureLoader.load(
     const bgTex = textureWithFrostedGlassEffect(map, {
       blurPx: 0,
       frostAlpha: 0.001,
-      maxDim: 2400,
+      // 手機降解析度可省記憶體與採樣成本
+      maxDim: isHeroMobileView() ? 1280 : 2400,
     });
     if (bgTex !== map) map.dispose();
 
     scene.background = bgTex;
     scene.environment = bgTex;
 
+    const overlaySegs = isHeroMobileView() ? [12, 8] : [20, 12];
     const blueOverlay = new THREE.Mesh(
-      new THREE.SphereGeometry(500, 20, 12),
+      new THREE.SphereGeometry(500, overlaySegs[0], overlaySegs[1]),
       new THREE.MeshBasicMaterial({
         color: 0x0a50ff,
         transparent: true,
@@ -140,16 +142,21 @@ function applyHeroCameraDistance() {
 // Renderer (safe init: avoid crashing when WebGL context fails)
 function effectivePixelRatio() {
   const dpr = typeof window !== 'undefined' ? (window.devicePixelRatio || 1) : 1;
-  const mobile = typeof window.matchMedia === 'function'
-    && window.matchMedia('(max-width: 768px)').matches;
-  // 略降上限可明顯減少像素填充量，畫面略柔但捲動較順
-  return Math.min(dpr, mobile ? 1.25 : 1.5);
+  const mobile = isHeroMobileView();
+  // 手機 cap 1 可大幅減少 fragment 負擔（著色球每像素成本高）
+  return Math.min(dpr, mobile ? 1 : 1.5);
 }
 
 let renderer = null;
 // console.log(renderer.info);
 try {
-  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+  // 手機關 MSAA 可省頻寬；桌面維持較銳利邊緣
+  renderer = new THREE.WebGLRenderer({
+    antialias: !isHeroMobileView(),
+    alpha: true,
+    powerPreference: 'high-performance',
+    stencil: false,
+  });
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.setClearColor(0x000000, 0);
   renderer.setPixelRatio(effectivePixelRatio());
@@ -174,6 +181,22 @@ function shouldRenderWebgl() {
 
 /** 球體 Shader 材質（避免每幀 scene.traverse） */
 const ballTimeMaterials = [];
+
+/** 手機版降低球體 noise 層數與霧化採樣負擔（resize / 載入後同步） */
+function applyHeroBallShaderQuality() {
+  const mobile = isHeroMobileView();
+  const steps = mobile ? 5 : 7;
+  const frost = mobile ? 0.45 : 0.6;
+  const frostR = mobile ? 0.38 : 0.5;
+  for (let i = 0; i < ballTimeMaterials.length; i++) {
+    const m = ballTimeMaterials[i];
+    if (!m || !m.uniforms) continue;
+    if (m.uniforms.uSteps) m.uniforms.uSteps.value = steps;
+    if (m.uniforms.uFrostStrength) m.uniforms.uFrostStrength.value = frost;
+    if (m.uniforms.uFrostRadius) m.uniforms.uFrostRadius.value = frostR;
+    if (m.uniforms.uScale) m.uniforms.uScale.value = mobile ? 384 : 512;
+  }
+}
 
 let hazeGroup = null;
 let hazeMats = [];
@@ -373,7 +396,7 @@ loader.load('/test/model/GLTF.glb', (gltfScene) => {
   polyTex.minFilter = THREE.LinearMipmapLinearFilter;
   polyTex.magFilter = THREE.LinearFilter;
   const maxAnisotropy = renderer?.capabilities?.getMaxAnisotropy?.() || 1;
-  polyTex.anisotropy = Math.min(maxAnisotropy, 4);
+  polyTex.anisotropy = Math.min(maxAnisotropy, isHeroMobileView() ? 2 : 4);
 
   const handMaterial = new THREE.MeshStandardMaterial({
     map: polyTex,
@@ -448,6 +471,7 @@ loader.load('/test/model/GLTF.glb', (gltfScene) => {
   camera.updateProjectionMatrix();
   applyHeroCameraDistance();
 
+  applyHeroBallShaderQuality();
   scene.add(mesh);
 }, function(xhr) {
   console.log((xhr.loaded/xhr.total*100)+'% loaded');
@@ -492,6 +516,12 @@ const frequency = 0.5; // The speed of the movement
 // 球的「緩慢來回旋轉」設定
 const ballRotRange = 0.90; // 旋轉幅度（弧度），0.35 約 20 度
 const ballRotSpeed = 0.4; // 來回頻率（越小越慢）
+
+/** 手機限制約 30fps 繪製，減輕 GPU 與發熱（邏輯仍每幀更新） */
+let lastHeroRenderTimeMs = 0;
+const HERO_MOBILE_FPS = 30;
+const HERO_MOBILE_FRAME_MS = 1000 / HERO_MOBILE_FPS;
+
 // eslint-disable-next-line require-jsdoc
 function animate() {
   requestAnimationFrame(animate);
@@ -517,6 +547,13 @@ function animate() {
     hazeGroup.children.forEach((p) => p.lookAt(camera.position));
   }
   if (controls) controls.update();
+
+  const nowMs = performance.now();
+  if (isHeroMobileView()) {
+    if (nowMs - lastHeroRenderTimeMs < HERO_MOBILE_FRAME_MS) return;
+    lastHeroRenderTimeMs = nowMs;
+  }
+
   renderer.render(scene, camera);
 }
 
@@ -540,6 +577,7 @@ function resize() {
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
   applyHeroCameraDistance();
+  applyHeroBallShaderQuality();
 }
 
 onMounted(() => {

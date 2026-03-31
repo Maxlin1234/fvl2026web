@@ -1924,7 +1924,7 @@ MarkerClusterer.IMAGE_SIZES = [53, 56, 66, 78, 90];
         }
 
         return obj;
-    };
+    }
 
     //load opts from object
     function loadOpts($this) {

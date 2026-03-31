@@ -180,6 +180,8 @@ export default {
           title: w.title,
           titleZhTw: w.titleZhTw || w.title_zh_tw,
           photo_1: w?.featured_photo_media?.url || w?.featuredPhotoMedia?.url || '',
+          contributors: Array.isArray(w.contributors) ? w.contributors : [],
+          collectives: Array.isArray(w.collectives) ? w.collectives : [],
           work_en: {
             title: w.title || '',
             interactive_description: '',
