@@ -121,7 +121,7 @@ export default {
   computed: {
     participatingArtistsHtml() {
       const zh =
-        '江戶未來世、初未來、吳秉聖、李根耀、拉爾夫．基爾赫茲、林強、姚瑞中、俞志美、浮點設計、桑德琳．德米耶、郭一、移動故事屋、凱蒂．卡托納、超維度、劉承杰、劉東昱、賴皮、蔡奇宏、謝鎮璘、魏廷宇';
+        '江戶未來世、初未來、吳秉聖、李根耀、拉爾夫．基爾赫茲、林強、姚瑞中、兪志美、浮點設計、桑德琳．德米耶、郭一、移動故事屋、凱蒂．卡托納、超維度、劉承杰、劉東昱、賴皮、蔡奇宏、謝鎮璘、魏廷宇';
       const enZhPage =
         'AINO X Yunyoung JANG, barbe_generative_diary, Kohui, Kivi, MONOCOLOR, Meuko! Meuko!, PHOSPHENE';
       const enEnglishPage =

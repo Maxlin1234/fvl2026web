@@ -90,7 +90,7 @@ const APR_BLOCK_C_ZH = `浮點設計 | 《萬象之初》 | 3 mins
 AINO X Yunyoung JANG | 《深層根木》 | 12 mins
 barbe_generative_diary | 短篇集錦 - 《描繪寂靜》 | 5 mins
 李根耀 | 《街道之書：同淋一場雨》 | 5 mins
-詹志英 | 《非體 1》 | 5 mins
+兪志美 | 《非體 1》 | 5 mins
 謝鎮璘 | 《光所到之處》 | 5 mins
 琳恩．湯琳森 | 《山之夜曲》 | 3 mins`;
 
@@ -170,12 +170,12 @@ const MAY_517_A_EN = `FPA | Genesis | 3 mins
 Katie Katona | Soul Departure | 12 mins
 Hello World x Dimension Plus x Hello Ebol x Kivi x Mr. Skin x LIM Giong | NEW MODERN TIMES | 20 mins`;
 
-/** 5/17 17:00 短片集錦／詹志英、謝鎮璘、琳恩·潘琳森 */
+/** 5/17 17:00 短片集錦／兪志美、謝鎮璘、琳恩·潘琳森 */
 const MAY_517_C17_ZH = `浮點設計 | 《萬象之初》 | 3 mins
 AINO X Yunyoung JANG | 《深層根本》 | 12 mins
 barbe_generative_diary | 短篇集錦 — 《描繪寂靜》 | 5 mins
 李根耀 | 短篇集錦 — 《街道之書：同淋一場雨》 | 5 mins
-詹志英 | 短篇集錦 — 《非體 1》 | 5 mins
+兪志美 | 短篇集錦 — 《非體 1》 | 5 mins
 謝鎮璘 | 短篇集錦 — 《光所到之處》 | 5 mins
 琳恩·潘琳森 | 《山之夜曲》 | 3 mins`;
 
@@ -215,12 +215,12 @@ const JUN_607_A_EN = `FPA | Genesis | 3 mins
 Katie Katona | Terminal | 12 mins
 Hello World x Ultra-Latitude x Hello Ebol x Kivi x Mr. Skin x LIM Giong | NEW MODERN TIMES | 20 mins`;
 
-/** 6/7 15:00／18:00 長節目單（深層根木、詹志美、琳恩·馮琳森） */
+/** 6/7 15:00／18:00 長節目單（深層根木、兪志美、琳恩·馮琳森） */
 const JUN_607_LONG_ZH = `浮點設計 | 《萬象之初》 | 3 mins
 AINO X Yunyoung JANG | 《深層根木》 | 12 mins
 barbe_generative_diary | 短篇集錦 — 《描繪寂靜》 | 5 mins
 李根耀 | 短篇集錦 — 《街道之書：同淋一場雨》 | 5 mins
-詹志美 | 短篇集錦 — 《非體 1》 | 5 mins
+兪志美 | 短篇集錦 — 《非體 1》 | 5 mins
 謝鎮璘 | 短篇集錦 — 《光所到之處》 | 5 mins
 琳恩·馮琳森 | 《山之夜曲》 | 3 mins`;
 
