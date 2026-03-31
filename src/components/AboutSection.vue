@@ -24,7 +24,6 @@ import axios from 'axios';
 
 const PROJECT_API_URL = 'https://unzip.clab.org.tw/api/v1/projects/21';
 const API_AUTH = 'Api-Key 1e801a8fbe21fe2bef15df853e62ec9dc5a1cd08';
-
 export default {
   name: 'AboutSection',
   data() {
@@ -51,7 +50,7 @@ export default {
   },
   mounted() {
     this.fetchProjectIntro();
-  },
+  }, 
   methods: {
     async fetchProjectIntro() {
       try {

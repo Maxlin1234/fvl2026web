@@ -92,7 +92,7 @@ barbe_generative_diary | 短篇集錦 - 《描繪寂靜》 | 5 mins
 李根耀 | 《街道之書：同淋一場雨》 | 5 mins
 詹志英 | 《非體 1》 | 5 mins
 謝鎮璘 | 《光所到之處》 | 5 mins
-琳恩·濕琳森 | 《山之夜曲》 | 3 mins`;
+琳恩．湯琳森 | 《山之夜曲》 | 3 mins`;
 
 const APR_BLOCK_C_EN = `FPA | Genesis | 3 mins
 AINO x Yunyoung JANG | Deep Rootwood | 12 mins
@@ -103,7 +103,7 @@ Damonsari | Short Film Showcase — "Where Light Reaches" | 5 mins
 Lynn TOMLINSON | "Nocturne of the Mountain" | 3 mins`;
 
 const APR_BLOCK_D_ZH = `浮點設計 | 《萬象之初》 | 3 mins
-桑德琳·德米耶 X 拉爾夫·基爾赫茲 | 《係鹿》 | 12 mins
+桑德琳·德米耶 X 拉爾夫·基爾赫茲 | 《循鹿》 | 12 mins
 吳秉聖 X 劉承杰 | 《時間層理》 | 22 mins`;
 
 const APR_BLOCK_D_EN = `FPA | Genesis | 3 mins
@@ -142,7 +142,7 @@ barbe_generative_diary | 短篇集錦 —《描繪寂靜》 | 5 mins
 李根耀 | 《街道之書：同林一場雨》 | 5 mins
 龐志美 | 《非體 1》 | 5 mins
 謝韻琪 | 《光所到之處》 | 5 mins
-琳恩·湯琳森 | 《山之夜曲》 | 3 mins`;
+琳恩．湯琳森 | 《山之夜曲》 | 3 mins`;
 
 const MAY_BLOCK_C_EN = `FPA | Genesis | 3 mins
 AINO x Yunyoung JANG | Deep Roots | 12 mins
@@ -190,10 +190,10 @@ Lynne Pan Lin-Sen | "Nocturne of the Mountain" | 3 mins`;
 const MAY_WEI_EXH_ZH = `魏廷宇 | 《誤差追獵》(展覽)`;
 const MAY_WEI_EXH_EN = `Tin Will | Seeking for Errors (Exhibition)`;
 
-const MAY_YAO_EXH_ZH = `姚瑞中 X 郭一 X Meuko! Meuko! | 《虛廷山》(展覽)`;
+const MAY_YAO_EXH_ZH = `姚瑞中 X 郭一 X Meuko! Meuko! | 《虛迷山》(展覽)`;
 const MAY_YAO_EXH_EN = `YAO Jui-Chung x YIKUO x Meuko Meuko | Mount Fantasy (Exhibition)`;
 
-const MAY_YAO_LIVE_ZH = `姚瑞中 X 郭一 X Meuko! Meuko! | 《虛廷山》(現場售票演出) | 60 mins`;
+const MAY_YAO_LIVE_ZH = `姚瑞中 X 郭一 X Meuko! Meuko! | 《虛迷山》(現場售票演出) | 60 mins`;
 const MAY_YAO_LIVE_EN = `YAO Jui-Chung x YIKUO x Meuko Meuko | Mount Fantasy (Live Performance) | 60 mins`;
 
 /** 六月：沉浸式影音工作坊（三校輪播，依圖檔） */
