@@ -128,7 +128,7 @@
           </div>
           <div class="lecture-list" v-if="showContentC">
             <!-- <h2>{{ isEnglish ? 'Admission Information' : '入場方式' }}</h2> -->
-            <h2 style="color: #81C1DF;">{{ isEnglish ? '【Screening & Live Performance】' : '【播映及現場演出】' }}</h2>
+            <h2 class="admission-section-title">{{ isEnglish ? '【Screening & Live Performance】' : '【播映及現場演出】' }}</h2>
             <h2>
               <span v-if="isEnglish">
                 ⭓ For detailed program registration information, please visit the
@@ -154,7 +154,7 @@
             <h2>{{ isEnglish ? '⭓ Please arrive at least 10 minutes before the performance or screening. Latecomers will not be admitted.' : '⭓ 每場播映/現場演出於開演前10分鐘開放入場，並不開放遲到觀眾入場。' }}</h2>
             <h2>{{ isEnglish ? '⭓ From April 7 (Tue.) onward, tickets for alternating weekend screening sessions will open every Monday. Stay tuned and secure your tickets in time.' : '⭓ 4/7 (二)起，每週一將開放〔隔週末展映場次〕索票，請密切追蹤把握。' }}</h2>
 
-            <h2 style="color: #81C1DF;margin-top: 1em;">{{ isEnglish ? '【Paid Programs】' : '【售票節目】' }}</h2>
+            <h2 class="admission-section-title">{{ isEnglish ? '【Paid Programs】' : '【售票節目】' }}</h2>
             <h2 v-if="!isEnglish">售票節目共2檔：5/13(三) 19:30｜《未來視覺派對#3》、5/30(六) 19:00–20:00｜姚瑞中 X 郭一 X Meuko! Meuko《虛迷山》派對場</h2>
             <h2 v-if="!isEnglish">⭓ 一人一票憑票入場。</h2>
             <h2 v-if="!isEnglish">⭓ 開演前10分鐘開放入場，並不開放遲到觀眾入場。</h2>
@@ -166,14 +166,13 @@
             <h2 v-if="isEnglish">⭓ Early Bird 20% Off starts at 12:00 p.m. on April 10 (Fri.)</h2>
             <h2 v-if="isEnglish">⭓ General Sale starts at 12:00 p.m. on April 20 (Mon.)</h2>
 
-            <h2 style="color: #81C1DF;margin-top: 1em;">{{ isEnglish ? '【Exhibition】' : '【展覽】' }}</h2>
+            <h2 class="admission-section-title">{{ isEnglish ? '【Exhibition】' : '【展覽】' }}</h2>
             <div v-if="!isEnglish" class="exhibition-info">
               <h2>5/21-24｜魏廷宇《誤差追獵》</h2>
               <h2>⭓ 每12分鐘為一梯次，每梯次開放30人進場體驗。</h2>
               <h2>⭓ 進場方式採現場排隊依序入場，直到該梯次人數額滿為止。</h2>
               <h2>⭓ 若想要再次體驗作品，需於前一梯次結束後先離場並重新排隊依序等候入場。</h2>
               <h2>⭓ 開放入場時若排隊人員不在現場即視同放棄，需重新排隊依序等候入場。</h2>
-              <div class="exhibition-spacer"></div>
               <h2>5/28-31｜姚瑞中 X 郭一 X Meuko! Meuko《虛迷山》</h2>
               <h2>⭓ 採現場排隊依序入場，場內人數額滿為止。</h2>
               <h2>⭓ 場內人數上限為100人，若額滿請等候場內觀眾離場後，依現場人數管制進場。</h2>
@@ -185,7 +184,6 @@
               <h2>⭓ Entry will be granted in order of on-site queue until capacity is reached.</h2>
               <h2>⭓ To experience the work again, you must leave after the current session ends and rejoin the queue for the next session.</h2>
               <h2>⭓ If individuals in the queue are not present when entry opens, they will be considered to have forfeited their places and must rejoin the line in order to wait for entry.</h2>
-              <div class="exhibition-spacer"></div>
               <h2>May 28-31 “YAO Jui-Chung × KUO Yi × Meuko Meuko, Mount Ecstasy“.</h2>
               <h2>⭓ Entry will be granted in order of on-site queue until capacity is reached.</h2>
               <h2>⭓ The maximum capacity is 100 people. If the venue is full, please wait for audiences exiting before entering according to the capacity control.</h2>
@@ -811,19 +809,31 @@ export default {
 
 .lecture-list {
   width: 90%;
-  // margin-top: 40px;
   margin-left: 40px;
   padding: 20px;
-  gap: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
   font-size: 1em;
 }
 
-.exhibition-info h2 {
-  margin: 0 0 10px 0;
+.lecture-list > h2 {
+  margin: 0;
 }
 
-.exhibition-spacer {
-  height: 16px;
+.admission-section-title {
+  margin: 0;
+  color: #81c1df;
+}
+
+.exhibition-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.exhibition-info h2 {
+  margin: 0;
 }
 
 .carousel-container {
@@ -972,11 +982,19 @@ export default {
     box-sizing: border-box;
     word-break: break-word;
     overflow-wrap: anywhere;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
   }
 
   .lecture-list h2 {
+    margin: 0;
     font-size: 1em;
     line-height: 1.5;
+  }
+
+  .lecture-list .exhibition-info {
+    gap: 1rem;
   }
 
   .list-text{
