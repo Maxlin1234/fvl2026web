@@ -19,6 +19,9 @@
         <div class="work-description-section">
           <h2 class="section-heading">{{ isEnglish ? work?.work_en?.title : work?.work_zh?.title }}</h2>
           <div class="work-description">{{ descriptionText }}</div>
+          <div v-if="showExtraProposal" class="work-proposal">
+            <div class="work-proposal-body" v-html="extraProposalHtml"></div>
+          </div>
         </div>
 
         <!-- 右欄：藝術家（團隊 collectives 頭像與藝術家同一排圓形；團隊說明在藝術家介紹下方） -->
@@ -69,14 +72,17 @@
 </template>
 
 <script>
-import { ref, onMounted, onBeforeUnmount, computed, getCurrentInstance } from 'vue';
+import { ref, onMounted, onBeforeUnmount, computed, watch, getCurrentInstance } from 'vue';
 import axios from 'axios';
 
 export default {
   name: 'PortfolioDetil',
   setup() {
     const WORKS_API_URL = 'https://unzip.clab.org.tw/api/v1/projects/21/works';
+    const WORK_DETAIL_API = (workId) => `https://unzip.clab.org.tw/api/v1/works/${workId}`;
     const API_AUTH = 'Api-Key 1e801a8fbe21fe2bef15df853e62ec9dc5a1cd08';
+    /** 需額外顯示 proposal_zh_tw / proposal 的作品 id（單筆 works API） */
+    const EXTRA_PROPOSAL_WORK_IDS = new Set(['193', '194']);
     // vue-router v3 doesn't provide useRoute(); use component instance route instead
     const { proxy } = getCurrentInstance();
     const route = proxy.$route;
@@ -89,19 +95,9 @@ export default {
     const imageUrls = ref([]);
     const descriptionText = ref('');
     const errorText = ref('');
-    const artists = ref([]);
-    const scheduleWorks = ref([]);
-    const cachedListIndex = ref(null);
+    const extraProposalZh = ref('');
+    const extraProposalEn = ref('');
 
-    const fetchArtists = async () => {
-      try {
-        const { data } = await axios.get('https://unzip-clab-api.clab.org.tw/api/v1/schedules/10/artists?page=0&limit=25');
-        const list = Array.isArray(data?.results) ? data.results : [];
-        artists.value = list;
-      } catch (e) {
-        console.error('Failed to fetch artists list:', e);
-      }
-    };
     const resolveInitialLang = () => {
       const q = route.query.lang;
       if (q === 'en') return true;
@@ -209,35 +205,6 @@ export default {
       return stripHtml(source);
     });
 
-    const resolvedWorkIndex = computed(() => {
-      // 0) 列表頁緩存的 idx 優先
-      if (typeof cachedListIndex.value === 'number' && cachedListIndex.value >= 0) {
-        return cachedListIndex.value;
-      }
-      // 1) 優先使用 work.index（資料庫欄位），常見為 1-based；需轉 0-based
-      const raw = work.value?.index;
-      if (raw !== undefined && raw !== null) {
-        const n = Number(raw);
-        if (!Number.isNaN(n)) {
-          const zeroBased = Math.max(0, Math.floor(n) - 1);
-          return zeroBased;
-        }
-      }
-      // 2) 否則，用目前 work.id 在排程作品列表中的位置
-      if (scheduleWorks.value && scheduleWorks.value.length > 0) {
-        const idx = scheduleWorks.value.findIndex(w => String(w.id) === String(id));
-        if (idx >= 0) return idx;
-      }
-      // 3) 最後退回 0
-      return 0;
-    });
-
-    const artistAvatarUrlFromIndex = (idx) => {
-      const artist = artists.value && artists.value[idx] ? artists.value[idx] : null;
-      const path = artist?.avatar || '';
-      return path ? `https://unzip-clab-api.clab.org.tw/${path}` : '';
-    };
-
     const normalizeMediaUrl = (p) => {
       if (!p) return '';
       const s = String(p);
@@ -255,95 +222,6 @@ export default {
         normalized.includes('contributor.collective/47/image_1920')
       );
     };
-
-    const findArtistIndexByZhName = (zhName) => {
-      if (!Array.isArray(artists.value)) return -1;
-      return artists.value.findIndex(a => a?.artist_zh?.name === zhName);
-    };
-
-    const findArtistIndexByNames = (...names) => {
-      if (!Array.isArray(artists.value)) return -1;
-      const normalized = names
-        .filter(name => typeof name === 'string' && name.trim().length > 0)
-        .map(name => name.trim().toLowerCase());
-      if (!normalized.length) return -1;
-      return artists.value.findIndex(a => {
-        const zh = a?.artist_zh?.name?.trim()?.toLowerCase();
-        const en = a?.artist_en?.name?.trim()?.toLowerCase();
-        return normalized.includes(zh) || normalized.includes(en);
-      });
-    };
-
-    const overrideArtistIndexForWork = computed(() => {
-      const titleZh = work.value?.work_zh?.title || '';
-      const titleEn = work.value?.work_en?.title || '';
-      const titleAllLower = `${titleZh} ${titleEn}`.toLowerCase();
-      // 特例 1：奶油金剛 → 顯示「簡單映相」（僅單張）
-      if (titleZh.includes('奶油金剛')) {
-        const idx = findArtistIndexByZhName('簡單映相');
-        return idx >= 0 ? idx : null;
-      }
-      // 特例 2：《昌勳與他的打字機》或 Dome穴遇言 → 顯示「可揚與他的快樂夥伴」
-      if (titleZh.includes('昌勳與他的打字機') || titleZh.includes('Dome穴遇言')) {
-        const idx = findArtistIndexByZhName('可揚與他的快樂夥伴');
-        return idx >= 0 ? idx : null;
-      }
-      // 特例 3：簡單映相 → 強制使用藝術家清單第 5 筆（0-based: 4）
-      if (titleZh.includes('簡單映相')) {
-        return 4;
-      }
-      // 特例 X：「殘構重生」 → 顯示「黑川良一」
-      if (titleZh.includes('殘構重生')) {
-        const idx = findArtistIndexByZhName('黑川良一');
-        return idx >= 0 ? idx : null;
-      }
-      // 特例 4：thewhole → 僅顯示「謝杰樺 × 安娜琪舞蹈劇場」
-      if (titleAllLower.includes('thewhole')) {
-        const idx = findArtistIndexByZhName('謝杰樺 × 安娜琪舞蹈劇場');
-        return idx >= 0 ? idx : null;
-      }
-      return null;
-    });
-
-    const dualArtistOverrideIndices = computed(() => {
-      const titleZh = work.value?.work_zh?.title || '';
-      // 規則 A：作品需同頁顯示「王一鷗 × 阿利娜・托凡」
-      if (
-        titleZh.includes('王一鷗') ||
-        titleZh.includes('阿利娜') ||
-        titleZh.includes('阿利娜・托凡') ||
-        titleZh.includes('水深萬象') ||
-        titleZh.includes('水身萬象')
-      ) {
-        const a = findArtistIndexByZhName('王一鷗');
-        const b = findArtistIndexByZhName('阿利娜・托凡');
-        const indices = [a, b].filter(i => typeof i === 'number' && i >= 0);
-        if (indices.length === 2) return indices;
-      }
-
-      // 規則 B：類數交界 → 坂本茉奈美 × 浦野百合
-      if (titleZh.includes('類數交界')) {
-        const a = findArtistIndexByNames('坂本茉奈美', 'Manami SAKAMOTO');
-        const b = findArtistIndexByNames('浦野百合', 'Yuri URANO');
-        const indices = [a, b].filter(i => typeof i === 'number' && i >= 0);
-        if (indices.length === 2) return indices;
-      }
-
-  // 規則 B：「赫圖比斯：混沌的協奏」 → Normal Studio × 嬉皮萬歲
-  if (titleZh.includes('赫圖比斯') || titleZh.includes('混沌的協奏')) {
-    const a = findArtistIndexByZhName('Normal Studio');
-    const b = findArtistIndexByZhName('嬉皮萬歲');
-    const indices = [a, b].filter(i => typeof i === 'number' && i >= 0);
-    if (indices.length === 2) return indices;
-  }
-      return null;
-    });
-
-    const isDualArtistWork = computed(() => {
-      const titleZh = work.value?.work_zh?.title || '';
-      // 僅在標題明確為「赤聲之曙」時顯示兩位藝術家
-      return titleZh === '赤聲之曙';
-    });
 
     const artistAvatarUrls = computed(() => {
       // 新 API 優先：直接使用 contributors.image_1920_media.url
@@ -468,6 +346,38 @@ export default {
 
     const showMergedPhotos = computed(() => mergedPhotoItems.value.length > 0);
 
+    const extraProposalHtml = computed(() => {
+      const raw = isEnglish.value ? extraProposalEn.value : extraProposalZh.value;
+      return typeof raw === 'string' ? raw : '';
+    });
+
+    const showExtraProposal = computed(
+      () => stripHtml(extraProposalHtml.value || '').trim().length > 0,
+    );
+
+    const fetchExtraProposal = async (workIdStr) => {
+      const sid = String(workIdStr || '');
+      if (!EXTRA_PROPOSAL_WORK_IDS.has(sid)) {
+        extraProposalZh.value = '';
+        extraProposalEn.value = '';
+        return;
+      }
+      try {
+        const { data } = await axios.get(WORK_DETAIL_API(sid), {
+          headers: { Authorization: API_AUTH },
+        });
+        const entity = data?.data && typeof data.data === 'object' ? data.data : data;
+        const zh = entity?.proposal_zh_tw ?? entity?.proposalZhTw ?? '';
+        const en = entity?.proposal ?? '';
+        extraProposalZh.value = typeof zh === 'string' ? zh : '';
+        extraProposalEn.value = typeof en === 'string' ? en : '';
+      } catch (e) {
+        console.error('Failed to fetch work proposal (193/194):', e);
+        extraProposalZh.value = '';
+        extraProposalEn.value = '';
+      }
+    };
+
     const loadFromLocal = () => {
       try {
         const key = `work_${id}`;
@@ -475,23 +385,12 @@ export default {
         if (!raw) return false;
         const parsed = JSON.parse(raw);
         work.value = parsed;
-        if (typeof parsed?._listIndex === 'number') {
-          cachedListIndex.value = parsed._listIndex;
-        }
         recalcDerived();
         return true;
       } catch (e) {
         console.error('Failed to parse work data from localStorage:', e);
         return false;
       }
-    };
-
-    const extractEntity = (data) => {
-      if (!data) return null;
-      if (Array.isArray(data?.results)) return data.results[0] || null;
-      if (data?.data && typeof data.data === 'object') return data.data; // some APIs wrap in data
-      if (typeof data === 'object') return data;
-      return null;
     };
 
     const fetchFromApi = async () => {
@@ -559,8 +458,17 @@ export default {
         work.value.contributors.length > 0 &&
         (!Array.isArray(work.value.collectives) || work.value.collectives.length === 0);
       if (!ok || staleTeam) await fetchFromApi();
+      await fetchExtraProposal(id);
       window.addEventListener('storage', handleStorage);
     });
+
+    watch(
+      () => String(proxy.$route.params.id || ''),
+      (newId, oldId) => {
+        if (!newId || newId === oldId) return;
+        fetchExtraProposal(newId);
+      },
+    );
 
     onBeforeUnmount(() => {
       window.removeEventListener('storage', handleStorage);
@@ -584,6 +492,8 @@ export default {
       teamCollectivesTextRows,
       mergedPhotoItems,
       showMergedPhotos,
+      extraProposalHtml,
+      showExtraProposal,
     };
   }
 }
@@ -683,6 +593,38 @@ export default {
     color: #000000;
     white-space: pre-wrap;
     text-align: justify;
+  }
+
+  .work-proposal {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  .work-proposal-body {
+    font-size: 1.05rem;
+    line-height: 1.9;
+    color: #000000;
+    text-align: justify;
+
+    :deep(p) {
+      margin: 0 0 0.75em;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    :deep(ul),
+    :deep(ol) {
+      margin: 0 0 0.75em 1.25em;
+      padding: 0;
+    }
+
+    :deep(strong),
+    :deep(b) {
+      font-weight: 700;
+    }
   }
 }
 
