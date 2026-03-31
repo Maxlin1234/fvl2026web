@@ -1,5 +1,5 @@
 <template>
-  <section class="calendar2">
+  <section class="calendar2" :class="{ 'calendar2--en': isEnglish }">
     <div class="months-strip-hint">
       <button
         type="button"
@@ -76,15 +76,22 @@ const APR_BLOCK_A_ZH = `浮點設計 | 《萬象之初》 | 3 mins
 凱蒂．卡托納 ｜ 《藏識》 | 12 mins
 初未來 X 超維度 X 江戶未來世 X Kivi X 賴皮 X 林強 | 《新摩登時代》 | 20 mins`;
 
+/** 五月／六月等與四月主視覺一致之英文 A、B 塊（四月場次另外使用 APRIL_BLOCK_*） */
 const APR_BLOCK_A_EN = `FPA | Genesis | 3 mins
-Katie Katona | Alaya | 12 mins
-Hello World x Dimension Plus x Hello Ebol x Kivi x Mr. Skin x LIM Giong | NEW MODERN TIMES | 20 mins`;
+Kati KATONA | Substratum | 12 mins
+Hello World x Dimension Plus x Hello Edo! x Kivi x Mr. Skin x LIM
+Giong | NEW MODERN TIMES | 20 mins`;
 
 const APR_BLOCK_B_ZH = `浮點設計 | 《萬象之初》 | 3 mins
 PHOSPHEN | 《時空》 | 39 mins`;
 
 const APR_BLOCK_B_EN = `FPA | Genesis | 3 mins
-PHOSPHENE | Temporal | 39 mins`;
+PHOSPHEN | Temporal | 39 mins`;
+
+/** 4/18–4/26 英文（僅四月 aprEvt 引用） */
+const APRIL_BLOCK_A_EN = APR_BLOCK_A_EN;
+
+const APRIL_BLOCK_B_EN = APR_BLOCK_B_EN;
 
 const APR_BLOCK_C_ZH = `浮點設計 | 《萬象之初》 | 3 mins
 AINO X Yunyoung JANG | 《深層根木》 | 12 mins
@@ -95,20 +102,20 @@ barbe_generative_diary | 短篇集錦 - 《描繪寂靜》 | 5 mins
 琳恩．湯琳森 | 《山之夜曲》 | 3 mins`;
 
 const APR_BLOCK_C_EN = `FPA | Genesis | 3 mins
-AINO x Yunyoung JANG | Deep Rootwood | 12 mins
-barbe_generative_diary | Short Film Showcase — "Depicting Silence" | 5 mins
-Root LEE | Short Film Showcase — "Street Book: Caught in the Same Rain" | 5 mins
-Jimmy YU | Short Film Showcase — "Non-Body 1" | 5 mins
-Damonsari | Short Film Showcase — "Where Light Reaches" | 5 mins
-Lynn TOMLINSON | "Nocturne of the Mountain" | 3 mins`;
+AINO X Yunyoung JANG | Deep-Rooted | 12 mins
+barbe_generative_diary | Short Film Showcase – Drawing Silence | 5 mins
+Root LEE | Short Film Showcase – Shared Immersion: A Street's Archive | 5 mins
+Jimmy YU | Short Film Showcase – Biche 1 | 5 mins
+Damonxart | Short Film Showcase – Where Light Arrives | 5 mins
+Lynn TOMLINSON | Mountain Nocturne | 3 mins`;
 
 const APR_BLOCK_D_ZH = `浮點設計 | 《萬象之初》 | 3 mins
 桑德琳·德米耶 X 拉爾夫·基爾赫茲 | 《循鹿》 | 12 mins
 吳秉聖 X 劉承杰 | 《時間層理》 | 22 mins`;
 
 const APR_BLOCK_D_EN = `FPA | Genesis | 3 mins
-Sandrine Deumier x Ralf Kleinschmidt | Tying the Deer | 12 mins
-WU Ping-Sheng x LIU Cheng-Chieh | Strata of Time | 22 mins`;
+Sandrine DEUMIER x Ralph KILLHERTZ | Following the deer | 12 mins
+WU Ping-Sheng x Jie LIOU | Temporal Strata | 22 mins`;
 
 function aprEvt(id, date, time, zh, en, sortOrder) {
   return {
@@ -133,8 +140,8 @@ const MAY_BLOCK_D_ZH = `浮點設計 | 《萬象之初》 | 3 mins
 吳秉聖 X 劉承杰 | 《時間層理》 | 22 mins`;
 
 const MAY_BLOCK_D_EN = `FPA | Genesis | 3 mins
-Sandrine Deumier x Ralf Kleinschmidt | Following the Deer | 12 mins
-WU Ping-Sheng x LIU Cheng-Chieh | Strata of Time | 22 mins`;
+Sandrine DEUMIER x Ralph KILLHERTZ | Following the deer | 12 mins
+WU Ping-Sheng x Jie LIOU | Temporal Strata | 22 mins`;
 
 const MAY_BLOCK_C_ZH = `浮點設計 | 《萬象之初》 | 3 mins
 AINO X Yunyoung JANG | 《深層根本》 | 12 mins
@@ -145,18 +152,18 @@ barbe_generative_diary | 短篇集錦 - 《描繪寂靜》 | 5 mins
 琳恩．湯琳森 | 《山之夜曲》 | 3 mins`;
 
 const MAY_BLOCK_C_EN = `FPA | Genesis | 3 mins
-AINO x Yunyoung JANG | Deep Roots | 12 mins
-barbe_generative_diary | Short Film Showcase — "Depicting Silence" | 5 mins
-Root LEE | Short Film Showcase — "Street Book: Rain in the Same Grove" | 5 mins
-PANG Chih-Mei | Short Film Showcase — "Non-Body 1" | 5 mins
-HSIEH Chen-Lin | Short Film Showcase — "Where Light Reaches" | 5 mins
-Lynne Tomlinson | "Nocturne of the Mountain" | 3 mins`;
+AINO X Yunyoung JANG | Deep-Rooted | 12 mins
+barbe_generative_diary | Short Film Showcase – Drawing Silence | 5 mins
+Root LEE | Short Film Showcase – Shared Immersion: A Street's Archive | 5 mins
+Jimmy YU | Short Film Showcase – Biche 1 | 5 mins
+Damonxart | Short Film Showcase – Where Light Arrives | 5 mins
+Lynn TOMLINSON | Mountain Nocturne | 3 mins`;
 
 const MAY_KOHUI_ZH = `Kohui | 《眾聲場：環形運動》(現場演出) | 30 mins`;
-const MAY_KOHUI_EN = `Kaku | Periphery: Circular Movement (Live Performance) | 30 mins`;
+const MAY_KOHUI_EN = `Kohui | Panphony: Circular Movement (Live Performance) | 30 mins`;
 
 const MAY_PARTY_ZH = `《未來視覺派對#3》(現場售票演出) | 60 mins`;
-const MAY_PARTY_EN = `FUTURE VISION LAB Party #3 (Ticketed Live) | 60 mins`;
+const MAY_PARTY_EN = `Future Vision Party #3 (Paid Live Performance) | 60 mins`;
 
 const MAY_POND_ZH = `移動故事屋 | 《池塘國選舉》(現場演出) | 45 mins`;
 const MAY_POND_EN = `Telling Tent | The Pond Nation Election (Live Performance) | 45 mins`;
@@ -166,80 +173,50 @@ const MAY_517_A_ZH = `浮點設計 | 《萬象之初》 | 3 mins
 凱蒂．卡托納 ｜ 《藏識》 | 12 mins
 初未來 X 超維度 X 江戶未來世 X Kivi X 賴皮 X 林強 | 《新摩登時代》 | 20 mins`;
 
-const MAY_517_A_EN = `FPA | Genesis | 3 mins
-Katie Katona | Alaya | 12 mins
-Hello World x Dimension Plus x Hello Ebol x Kivi x Mr. Skin x LIM Giong | NEW MODERN TIMES | 20 mins`;
-
-/** 5/17 17:00 短片集錦／兪志美、謝鎮璘、琳恩·潘琳森 */
-const MAY_517_C17_ZH = `浮點設計 | 《萬象之初》 | 3 mins
-AINO X Yunyoung JANG | 《深層根本》 | 12 mins
-barbe_generative_diary | 短篇集錦 - 《描繪寂靜》 | 5 mins
-李根耀 | 短篇集錦 - 《街道之書：同淋一場雨》 | 5 mins
-兪志美 | 短篇集錦 - 《非體 1》 | 5 mins
-謝鎮璘 | 短篇集錦 - 《光所到之處》 | 5 mins
-琳恩·潘琳森 | 《山之夜曲》 | 3 mins`;
-
-const MAY_517_C17_EN = `FPA | Genesis | 3 mins
-AINO x Yunyoung JANG | Deep Roots | 12 mins
-barbe_generative_diary | Short Film Showcase — "Depicting Silence" | 5 mins
-Root LEE | Short Film Showcase — "Street Book: Caught in the Same Rain" | 5 mins
-CHAN Chih-Ying | Short Film Showcase — "Non-Body 1" | 5 mins
-HSIEH Chen-Lin | Short Film Showcase — "Where Light Reaches" | 5 mins
-Lynne Pan Lin-Sen | "Nocturne of the Mountain" | 3 mins`;
+const MAY_517_A_EN = APR_BLOCK_A_EN;
 
 const MAY_WEI_EXH_ZH = `魏廷宇 | 《誤差追獵》(展覽)`;
-const MAY_WEI_EXH_EN = `Tin Will | Seeking for Errors (Exhibition)`;
+const MAY_WEI_EXH_EN = `Tim WEI | Stalking for Errors (Exhibition)`;
 
 const MAY_YAO_EXH_ZH = `姚瑞中 X 郭一 X Meuko! Meuko! | 《虛迷山》(展覽)`;
-const MAY_YAO_EXH_EN = `YAO Jui-Chung x YIKUO x Meuko Meuko | Mount Fantasy (Exhibition)`;
+const MAY_YAO_EXH_EN = `YAO Jui-Chung x YI KUO x Meuko Meuko | Mount Ecstasy (Exhibition)`;
 
 const MAY_YAO_LIVE_ZH = `姚瑞中 X 郭一 X Meuko! Meuko! | 《虛迷山》(現場售票演出) | 60 mins`;
-const MAY_YAO_LIVE_EN = `YAO Jui-Chung x YIKUO x Meuko Meuko | Mount Fantasy (Live Performance) | 60 mins`;
+const MAY_YAO_LIVE_EN = `YAO Jui-Chung x YI KUO x Meuko Meuko | Mount Ecstasy (Paid Live Performance) | 60 mins`;
 
-/** 六月：沉浸式影音工作坊（三校輪播，依圖檔） */
+/** 六月：沉浸式影音工作坊（6/6，英文依主視覺全稱） */
 const JUN_WORKSHOP_TNUA_ZH = `《沉浸式影音工作坊—校際成果呈現》北藝大新媒系 | 55 mins`;
-const JUN_WORKSHOP_TNUA_EN = `Immersive Audio-Visual Workshop — The Joint Presentation | Department of New Media Art, TNUA | 55 mins`;
+const JUN_WORKSHOP_TNUA_EN = `Immersive Audiovisual Workshop - The Joint Presentation
+The Department of New Media Art of Taipei National University of the Arts
+｜55 mins`;
 
 const JUN_WORKSHOP_NTUST_ZH = `《沉浸式影音工作坊—校際成果呈現》北科大互動系 | 60 mins`;
-const JUN_WORKSHOP_NTUST_EN = `Immersive Audio-Visual Workshop — The Joint Presentation | NTUST Department of Interaction Design | 60 mins`;
+const JUN_WORKSHOP_NTUST_EN = `Immersive Audiovisual Workshop - The Joint Presentation
+The Department of Interaction Design of National Taipei University of Technology
+｜60 mins`;
 
 const JUN_WORKSHOP_NTHU_ZH = `《沉浸式影音工作坊—校際成果呈現》清大藝術學院科藝組 | 40 mins`;
-const JUN_WORKSHOP_NTHU_EN = `Immersive Audio-Visual Workshop — The Joint Presentation | NTHU College of Arts, Arts & Technology | 40 mins`;
+const JUN_WORKSHOP_NTHU_EN = `Immersive Audiovisual Workshop - The Joint Presentation
+NTHU College of Arts, Arts & Technology
+｜40 mins`;
 
-/** 6/7 14:00（圖檔：凱蒂《藏識》等） */
-const JUN_607_A_ZH = `浮點設計 | 《萬象之初》 | 3 mins
-凱蒂．卡托納 ｜ 《藏識》 | 12 mins
-初未來 X 超維度 X 江戶未來世 X Kivi X 賴皮 X 林強 | 《新摩登時代》 | 20 mins`;
+/** 6/7 14:00（DIMENSION Plus；Giong／節目／時長分行） */
+const JUN_607_A_ZH = MAY_517_A_ZH;
 
 const JUN_607_A_EN = `FPA | Genesis | 3 mins
-Katie Katona | Alaya | 12 mins
-Hello World x Ultra-Latitude x Hello Ebol x Kivi x Mr. Skin x LIM Giong | NEW MODERN TIMES | 20 mins`;
+Kati KATONA | Substratum | 12 mins
+Hello World x Dimension Plus x Hello Edo! x Kivi x Mr. Skin x LIM
+Giong | NEW MODERN TIMES | 20 mins`;
 
-/** 6/7 15:00／18:00 長節目單（深層根木、兪志美、琳恩．湯琳森） */
-const JUN_607_LONG_ZH = `浮點設計 | 《萬象之初》 | 3 mins
-AINO X Yunyoung JANG | 《深層根木》 | 12 mins
-barbe_generative_diary | 短篇集錦 - 《描繪寂靜》 | 5 mins
-李根耀 | 短篇集錦 - 《街道之書：同淋一場雨》 | 5 mins
-兪志美 | 短篇集錦 - 《非體 1》 | 5 mins
-謝鎮璘 | 短篇集錦 - 《光所到之處》 | 5 mins
-琳恩．湯琳森 | 《山之夜曲》 | 3 mins`;
+/** 6/7 15:00／18:00 — 與五月 C 塊主視覺一致 */
+const JUN_607_LONG_ZH = MAY_BLOCK_C_ZH;
 
-const JUN_607_LONG_EN = `FPA | Genesis | 3 mins
-AINO x Yunyoung JANG | Deep Rootwood | 12 mins
-barbe_generative_diary | Short Film Showcase — "Depicting Silence" | 5 mins
-Root LEE | Short Film Showcase — "Street Book: Caught in the Same Rain" | 5 mins
-Jimmy YU | Short Film Showcase — "Non-Body 1" | 5 mins
-Damonsari | Short Film Showcase — "Where Light Reaches" | 5 mins
-Lynn TOMLINSON | "Nocturne of the Mountain" | 3 mins`;
+const JUN_607_LONG_EN = MAY_BLOCK_C_EN;
 
-/** 6/7 17:00（拉圖夫·基爾赫茲、小寫 x） */
-const JUN_607_17_ZH = `浮點設計 | 《萬象之初》 | 3 mins
-桑德琳·德米耶 x 拉圖夫·基爾赫茲 | 《循鹿》 | 12 mins
-吳秉聖 x 劉承杰 | 《時間層理》 | 22 mins`;
+/** 6/7 17:00 — D 塊 */
+const JUN_607_17_ZH = APR_BLOCK_D_ZH;
 
-const JUN_607_17_EN = `FPA | Genesis | 3 mins
-Sandrine Deumier x Latuf Kleinschmidt | Following the Deer | 12 mins
-WU Ping-Sheng x LIU Cheng-Chieh | Strata of Time | 22 mins`;
+const JUN_607_17_EN = APR_BLOCK_D_EN;
 
 export default {
   name: 'Cal-endar2',
@@ -251,29 +228,29 @@ export default {
       /** 依「目前可見月份」量測，避免橫列被最長月份撑高造成 4/6 月下方空白 */
       monthsStripHeightPx: null,
       events: [
-        aprEvt(1, '2026-04-18', '14:00', APR_BLOCK_A_ZH, APR_BLOCK_A_EN, 1),
-        aprEvt(2, '2026-04-18', '15:00', APR_BLOCK_B_ZH, APR_BLOCK_B_EN, 2),
+        aprEvt(1, '2026-04-18', '14:00', APR_BLOCK_A_ZH, APRIL_BLOCK_A_EN, 1),
+        aprEvt(2, '2026-04-18', '15:00', APR_BLOCK_B_ZH, APRIL_BLOCK_B_EN, 2),
         aprEvt(3, '2026-04-18', '16:00', APR_BLOCK_C_ZH, APR_BLOCK_C_EN, 3),
         aprEvt(4, '2026-04-18', '17:00', APR_BLOCK_D_ZH, APR_BLOCK_D_EN, 4),
-        aprEvt(5, '2026-04-18', '18:00', APR_BLOCK_A_ZH, APR_BLOCK_A_EN, 5),
-        aprEvt(6, '2026-04-18', '19:00', APR_BLOCK_B_ZH, APR_BLOCK_B_EN, 6),
+        aprEvt(5, '2026-04-18', '18:00', APR_BLOCK_A_ZH, APRIL_BLOCK_A_EN, 5),
+        aprEvt(6, '2026-04-18', '19:00', APR_BLOCK_B_ZH, APRIL_BLOCK_B_EN, 6),
 
         aprEvt(7, '2026-04-19', '14:00', APR_BLOCK_C_ZH, APR_BLOCK_C_EN, 1),
         aprEvt(8, '2026-04-19', '15:00', APR_BLOCK_D_ZH, APR_BLOCK_D_EN, 2),
-        aprEvt(9, '2026-04-19', '16:00', APR_BLOCK_A_ZH, APR_BLOCK_A_EN, 3),
-        aprEvt(10, '2026-04-19', '17:00', APR_BLOCK_B_ZH, APR_BLOCK_B_EN, 4),
+        aprEvt(9, '2026-04-19', '16:00', APR_BLOCK_A_ZH, APRIL_BLOCK_A_EN, 3),
+        aprEvt(10, '2026-04-19', '17:00', APR_BLOCK_B_ZH, APRIL_BLOCK_B_EN, 4),
         aprEvt(11, '2026-04-19', '18:00', APR_BLOCK_C_ZH, APR_BLOCK_C_EN, 5),
 
         aprEvt(12, '2026-04-25', '14:00', APR_BLOCK_D_ZH, APR_BLOCK_D_EN, 1),
-        aprEvt(13, '2026-04-25', '15:00', APR_BLOCK_A_ZH, APR_BLOCK_A_EN, 2),
-        aprEvt(14, '2026-04-25', '16:00', APR_BLOCK_B_ZH, APR_BLOCK_B_EN, 3),
+        aprEvt(13, '2026-04-25', '15:00', APR_BLOCK_A_ZH, APRIL_BLOCK_A_EN, 2),
+        aprEvt(14, '2026-04-25', '16:00', APR_BLOCK_B_ZH, APRIL_BLOCK_B_EN, 3),
         aprEvt(15, '2026-04-25', '17:00', APR_BLOCK_C_ZH, APR_BLOCK_C_EN, 4),
         aprEvt(16, '2026-04-25', '18:00', APR_BLOCK_D_ZH, APR_BLOCK_D_EN, 5),
-        aprEvt(17, '2026-04-25', '19:00', APR_BLOCK_A_ZH, APR_BLOCK_A_EN, 6),
+        aprEvt(17, '2026-04-25', '19:00', APR_BLOCK_A_ZH, APRIL_BLOCK_A_EN, 6),
 
         aprEvt(18, '2026-04-26', '14:00', APR_BLOCK_D_ZH, APR_BLOCK_D_EN, 1),
-        aprEvt(19, '2026-04-26', '15:00', APR_BLOCK_B_ZH, APR_BLOCK_B_EN, 2),
-        aprEvt(20, '2026-04-26', '16:00', APR_BLOCK_A_ZH, APR_BLOCK_A_EN, 3),
+        aprEvt(19, '2026-04-26', '15:00', APR_BLOCK_B_ZH, APRIL_BLOCK_B_EN, 2),
+        aprEvt(20, '2026-04-26', '16:00', APR_BLOCK_A_ZH, APRIL_BLOCK_A_EN, 3),
         aprEvt(21, '2026-04-26', '17:00', APR_BLOCK_D_ZH, APR_BLOCK_D_EN, 4),
         aprEvt(22, '2026-04-26', '18:00', APR_BLOCK_C_ZH, APR_BLOCK_C_EN, 5),
 
@@ -305,7 +282,7 @@ export default {
         aprEvt(125, '2026-05-17', '14:00', MAY_517_A_ZH, MAY_517_A_EN, 3),
         aprEvt(126, '2026-05-17', '15:00', MAY_BLOCK_D_ZH, MAY_BLOCK_D_EN, 4),
         aprEvt(127, '2026-05-17', '16:00', APR_BLOCK_B_ZH, APR_BLOCK_B_EN, 5),
-        aprEvt(128, '2026-05-17', '17:00', MAY_517_C17_ZH, MAY_517_C17_EN, 6),
+        aprEvt(128, '2026-05-17', '17:00', MAY_BLOCK_C_ZH, MAY_BLOCK_C_EN, 6),
         aprEvt(129, '2026-05-17', '18:00', MAY_BLOCK_D_ZH, MAY_BLOCK_D_EN, 7),
 
         aprEvt(130, '2026-05-21', '17:00–19:00', MAY_WEI_EXH_ZH, MAY_WEI_EXH_EN, 1),
@@ -316,7 +293,7 @@ export default {
         aprEvt(134, '2026-05-28', '12:00–18:00', MAY_YAO_EXH_ZH, MAY_YAO_EXH_EN, 1),
         aprEvt(135, '2026-05-29', '12:00–18:00', MAY_YAO_EXH_ZH, MAY_YAO_EXH_EN, 1),
         aprEvt(136, '2026-05-30', '12:00–18:00', MAY_YAO_EXH_ZH, MAY_YAO_EXH_EN, 1),
-        aprEvt(137, '2026-05-30', '19:00–20:00', MAY_YAO_LIVE_ZH, MAY_YAO_LIVE_EN, 2),
+        aprEvt(137, '2026-05-30', '19:00', MAY_YAO_LIVE_ZH, MAY_YAO_LIVE_EN, 2),
         aprEvt(138, '2026-05-31', '12:00–18:00', MAY_YAO_EXH_ZH, MAY_YAO_EXH_EN, 1),
 
         aprEvt(139, '2026-06-06', '14:00', JUN_WORKSHOP_TNUA_ZH, JUN_WORKSHOP_TNUA_EN, 1),
@@ -487,6 +464,10 @@ export default {
   padding: 16px;
   overflow-x: hidden;
   overflow-y: visible;
+}
+
+.calendar2--en {
+  font-style: italic;
 }
 
 .months-strip-hint {

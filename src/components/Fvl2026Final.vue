@@ -132,6 +132,16 @@ export default {
       return imageMap[this.currentEventType] || img1;
     }
   },
+  watch: {
+    showLectureDrawer(isOpen) {
+      if (isOpen) return;
+      this.$nextTick(() => {
+        requestAnimationFrame(() => {
+          ScrollTrigger.refresh();
+        });
+      });
+    },
+  },
   async mounted() {
     try {
       this.removeStrayBodyCanvases();

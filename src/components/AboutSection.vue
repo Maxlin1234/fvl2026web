@@ -24,6 +24,12 @@ import axios from 'axios';
 
 const PROJECT_API_URL = 'https://unzip.clab.org.tw/api/v1/projects/21';
 const API_AUTH = 'Api-Key 1e801a8fbe21fe2bef15df853e62ec9dc5a1cd08';
+
+/** API 無法取得專案介紹時的備援（與 unzip 後台文案同步後可刪或留作離線保底） */
+const ABOUT_FALLBACK_ZH = `<p>自2020年起，C-LAB 未來視覺實驗室持續推動實驗展演計畫「FUTURE VISION LAB」，並以數位實驗建築為起點，打造穹形場域（DOME），持續探索科技媒體的視覺極限，過去六年已進行超過兩百件作品展演。2023年，在文化部支持下完成軟硬體升級，打造直徑15公尺、全臺唯一的巨型移動式戶外沉浸體驗空間「C-LAB穹頂劇場」。沉浸影像投影系統總運算可達 8K × 8K 超高解析度，並克服球形曲面投影在校正、融接、對位、播放控制與影像前製等多重技術挑戰。場域採雙層結構設計，搭配客製透聲投影膜片與25.4聲道環繞聲場環境，打造高規格沉浸式體驗。未來視覺實驗室持續優化穹形場域之創作環境，並向國際標準接軌，展現臺灣在科技藝術領域的創作能量。</p><p>「FUTURE VISION LAB 2026」將自 2026年4月18日至6月7日，連續8個週末登場，匯集來自臺灣、法國、西班牙、匈牙利、奧地利、韓國、日本、美國與加拿大等各地精彩作品，共呈現19件作品、16檔節目。透過展覽、播映與現場 Live 演出等多元形式，在跨國創作的交會之中，邀請觀眾走入C-LAB穹頂劇場，沉浸於多元文化交織的感官體驗。</p>`;
+
+const ABOUT_FALLBACK_EN = `<p>Since its launch in 2020, C-LAB Future Vision Lab has continuously developed FUTURE VISION LAB, an experimental exhibition and performance project dedicated to constructing a dome-based digital architectural environment, with the aim of exploring the visual limits of technological media. Over the past six years, the project has presented more than 200 works.</p><p>In 2023, with the support of the Ministry of Culture, it is able to expand and upgrade to “FVL DOME”. In terms of size, it is built as the only large-scale movable DOME with a diameter of 15 meters. The audio-visual hardware and software have undergone several iterations, overcoming the image warping, calibration, mapping, play control, and video pre-production. The immersive projection system achieves a total resolution of up to 8K × 8K. Internally, a double-layer structure conceals the equipment, and a custom-designed acoustically transparent projection membrane has been developed. A refined sound field has been established, featuring a 25.4-channel immersive surround sound system. Moving forward, Future Vision Lab will continue to advance dome-based immersive environments in alignment with international standards, showcasing Taiwan’s creative energy and offering audiences a superior immersive sensory experience.</p><p>FUTURE VISION LAB 2026 will take place from April 18 to June 7, 2026, over eight consecutive weekends. Bringing together works from Taiwan, France, Spain, Hungary, Austria, South Korea, Japan, U.S.A., and Canada, the event features a total of 19 works across 16 programs. Through various formats—including exhibitions, screenings, and live performances—the project creates a platform for domestic and international artistic exchange, inviting audiences to step into the FVL DOME and immerse themselves in a sensory experience shaped by the convergence of diverse cultures.</p>`;
+
 export default {
   name: 'AboutSection',
   data() {
@@ -57,13 +63,22 @@ export default {
         const { data } = await axios.get(PROJECT_API_URL, {
           headers: { Authorization: API_AUTH },
         });
+        if (data && typeof data === 'object' && 'error' in data && !data.data) {
+          this.descriptionZhTw = ABOUT_FALLBACK_ZH;
+          this.descriptionEn = ABOUT_FALLBACK_EN;
+          return;
+        }
         const entity = data?.data && typeof data.data === 'object' ? data.data : data;
-        const zh = entity?.description_zh_tw ?? entity?.descriptionZhTw ?? '';
-        const en = entity?.description ?? '';
-        this.descriptionZhTw = typeof zh === 'string' ? zh : '';
-        this.descriptionEn = typeof en === 'string' ? en : '';
+        const zhRaw = entity?.description_zh_tw ?? entity?.descriptionZhTw ?? '';
+        const enRaw = entity?.description ?? '';
+        const zh = typeof zhRaw === 'string' ? zhRaw.trim() : '';
+        const en = typeof enRaw === 'string' ? enRaw.trim() : '';
+        this.descriptionZhTw = zh || ABOUT_FALLBACK_ZH;
+        this.descriptionEn = en || ABOUT_FALLBACK_EN;
       } catch (e) {
         console.error('AboutSection: failed to load project intro', e);
+        this.descriptionZhTw = ABOUT_FALLBACK_ZH;
+        this.descriptionEn = ABOUT_FALLBACK_EN;
       }
     },
   },

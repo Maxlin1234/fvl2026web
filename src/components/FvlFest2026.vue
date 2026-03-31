@@ -133,6 +133,16 @@ export default {
       return this.currentEventType || EVENT_TYPES.EXHIBITION;
     }
   },
+  watch: {
+    showLectureDrawer(isOpen) {
+      if (isOpen) return;
+      this.$nextTick(() => {
+        requestAnimationFrame(() => {
+          ScrollTrigger.refresh();
+        });
+      });
+    },
+  },
   async mounted() {
     try {
       this.initLanguage();

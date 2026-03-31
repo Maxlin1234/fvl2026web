@@ -56,7 +56,10 @@
   </div>
 
   <!-- 講座 Drawer 結構 -->
-  <div class="lecture-drawer" :class="{ open: showLectureDrawer }">
+  <div
+    class="lecture-drawer"
+    :class="{ open: showLectureDrawer, 'lecture-drawer--fully-closed': lectureDrawerFullyClosed }"
+  >
     <button class="drawer-close" type="button" @click="closeLectureDrawer">×</button>
  
     <div class="drawer-content" style="background-color:black;color:white;">
@@ -126,34 +129,30 @@
           <div class="lecture-list" v-if="showContentC">
             <!-- <h2>{{ isEnglish ? 'Admission Information' : '入場方式' }}</h2> -->
             <h2 style="color: #81C1DF;">{{ isEnglish ? '【Screening & Live Performance】' : '【播映及現場演出】' }}</h2>
-            <h2>{{ isEnglish ? '⭓ Ticket required for entry. One person, one ticket admission.' : '⭓ 每場次皆需事先索票，一人一票憑票入場。' }}</h2>
-            <h2>{{ isEnglish ? '⭓ Please arrive at least 10 minutes before the performance or screening. Latecomers will not be admitted.' : '⭓ 每場播映/現場演出於開演前10分鐘開放入場，並不開放遲到觀眾入場。' }}</h2>
-            <h2>{{ isEnglish ? '⭓ From Apr. 7th, tickets for the following weekend’s screenings will be released every Monday.' : '⭓ 4/1(三) 中午12:00早鳥8折啟售；4/14(二) 中午12:00 正式啟售。' }}</h2>
             <h2>
               <span v-if="isEnglish">
                 ⭓ For detailed program registration information, please visit the
-                <a href="https://www.facebook.com/CLAB.FUTUREVISIONLAB/" style="color: pink;text-decoration:none" target="_blank" rel="noopener">C-LAB Future Vision Lab Facebook page</a>
+                <a href="https://www.facebook.com/CLAB.FUTUREVISIONLAB/" style="color: pink;text-decoration:none" target="_blank" rel="noopener">"C-LAB Future Vision Lab" Facebook page</a>
                 or the
-                <a href="https://www.accupass.com/organizer/detail/1807130939251014675956" style="color: pink;text-decoration:none" target="_blank" rel="noopener">C-LAB event page on ACCUPASS</a>.
+                <a href="https://www.accupass.com/organizer/detail/1807130939251014675956" style="color: pink;text-decoration:none" target="_blank" rel="noopener">event page of C-LAB on ACCUPASS</a>.
               </span>
               <span v-else>
-                ⭓ 節目索票資訊請鎖定「C-LAB 未來視覺實驗室」
-                <a href="https://www.facebook.com/CLAB.FUTUREVISIONLAB/" style="color: pink;text-decoration:none" target="_blank" rel="noopener">臉書</a>
-                或「臺灣當代文化實驗場C-LAB」
-                <a href="https://www.accupass.com/organizer/detail/1807130939251014675956" style="color: pink;text-decoration:none" target="_blank" rel="noopener">ACCUPASS</a>。
+                ⭓ 節目索票資訊請鎖定「C-LAB 未來視覺實驗室」 <a href="https://www.facebook.com/CLAB.FUTUREVISIONLAB/" style="color: pink;text-decoration:none" target="_blank" rel="noopener">臉書</a>
+                或「臺灣當代文化實驗場C-LAB」 <a href="https://www.accupass.com/organizer/detail/1807130939251014675956" style="color: pink;text-decoration:none" target="_blank" rel="noopener">ACCUPASS</a>。
               </span>
             </h2>
             <h2>
               <span v-if="isEnglish">
-                ⭓ For detailed program information, please visit the
-                <a href="https://fvl.clab.org.tw/" style="color: pink;text-decoration:none" target="_blank" rel="noopener">FUTURE VISION LAB official website</a>.
+                ⭓  For detailed program information, please visit FUTURE VISION LAB 2026 official website:
+                <a href="https://fvl.clab.org.tw/festival/2026" style="color: pink;text-decoration:none" target="_blank" rel="noopener">https://fvl.clab.org.tw/festival/2026</a>
               </span>
               <span v-else>
-                ⭓ 詳細節目資訊請至
-                <a href="https://fvl.clab.org.tw/" style="color: pink;text-decoration:none" target="_blank" rel="noopener">FUTURE VISION LAB 官網</a>
-                查詢。
+                ⭓ 詳細節目資訊請至 <a href="https://fvl.clab.org.tw/festival/2026" style="color: pink;text-decoration:none" target="_blank" rel="noopener">FUTURE VISION LAB 官網</a> 查詢。
               </span>
             </h2>
+            <h2>{{ isEnglish ? '⭓ Ticket required for entry. One person, one ticket admission.' : '⭓ 每場次皆需事先索票，一人一票憑票入場。' }}</h2>
+            <h2>{{ isEnglish ? '⭓ Please arrive at least 10 minutes before the performance or screening. Latecomers will not be admitted.' : '⭓ 每場播映/現場演出於開演前10分鐘開放入場，並不開放遲到觀眾入場。' }}</h2>
+            <h2>{{ isEnglish ? '⭓ From April 7 (Tue.) onward, tickets for alternating weekend screening sessions will open every Monday. Stay tuned and secure your tickets in time.' : '⭓ 4/7 (二)起，每週一將開放〔隔週末展映場次〕索票，請密切追蹤把握。' }}</h2>
 
             <h2 style="color: #81C1DF;margin-top: 1em;">{{ isEnglish ? '【Paid Programs】' : '【售票節目】' }}</h2>
             <h2 v-if="!isEnglish">售票節目共2檔：5/13(三) 19:30｜《未來視覺派對#3》、5/30(六) 19:00–20:00｜姚瑞中 X 郭一 X Meuko! Meuko《虛迷山》派對場</h2>
@@ -269,21 +268,26 @@ export default {
   emits: ['close-drawer', 'event-type-changed'],
   watch: {
     showLectureDrawer(open) {
-      const v = this.$refs.lectureVideo;
-      if (!v) return;
       if (open) {
+        this.lectureDrawerFullyClosed = false;
+        const v = this.$refs.lectureVideo;
+        if (!v) return;
         this.$nextTick(() => {
           const p = v.play();
           if (p && typeof p.catch === 'function') p.catch(() => {});
         });
-      } else {
-        // 同步暫停：勿等 nextTick，否則 scale 關閉動畫會與影片解碼疊加易掉幀
+        return;
+      }
+      const v = this.$refs.lectureVideo;
+      if (v) {
         try {
           v.pause();
         } catch (e) {
           console.warn('講座背景影片暫停失敗', e);
         }
       }
+      // 立即隱藏並釋放點擊區（關閉不加 delay；關閉動畫已由 :not(.open) transition:none 關掉）
+      this.lectureDrawerFullyClosed = true;
     },
   },
   data() {
@@ -294,10 +298,13 @@ export default {
       showContentC: false,
       currentImageIndex: 0,
       carouselImages: [...FALLBACK_SCHEDULE_CAROUSEL_IMAGES],
-      carouselTimer: null
+      carouselTimer: null,
+      /** 關閉入場須知後為 true，配合 CSS 完全不參與 hit-testing */
+      lectureDrawerFullyClosed: true,
     }
   },
   mounted() {
+    this.lectureDrawerFullyClosed = !this.showLectureDrawer;
     this.loadScheduleCarouselImages().then(() => {
       this.startCarousel();
     });
@@ -375,6 +382,22 @@ export default {
   },
   methods: {
     closeLectureDrawer() {
+      try {
+        const ae = typeof document !== 'undefined' ? document.activeElement : null;
+        if (ae && typeof ae.blur === 'function') ae.blur();
+      } catch (e) {
+        /* ignore */
+      }
+      const scroller = typeof document !== 'undefined'
+        ? document.querySelector('.lecture-drawer .all-content')
+        : null;
+      if (scroller) {
+        try {
+          scroller.scrollTop = 0;
+        } catch (e) {
+          /* ignore */
+        }
+      }
       const v = this.$refs.lectureVideo;
       if (v) {
         try {
@@ -536,6 +559,17 @@ export default {
   transform: scale(1);
   border-radius: 0;
   pointer-events: auto;
+}
+
+/* 關閉不要漸變，直接收起（開啟仍保留 transition） */
+.lecture-drawer:not(.open) {
+  transition: none;
+}
+
+/* 整層隱藏，避免 fixed 全螢幕容器仍攔截觸控／捲動 */
+.lecture-drawer.lecture-drawer--fully-closed {
+  visibility: hidden;
+  pointer-events: none !important;
 }
 
 .drawer-close {

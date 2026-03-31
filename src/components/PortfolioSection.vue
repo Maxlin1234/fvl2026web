@@ -1,7 +1,7 @@
 <template>
   <section id="portfolio" class="portfolio">
     <div class="container">
-      <h2 class="section-title">{{ isEnglish ? 'Works' : '播映作品' }}</h2>
+      <h2 class="section-title">{{ isEnglish ? 'Works' : '作品介紹' }}</h2>
       <div class="portfolio-grid" ref="grid">
         <div class="portfolio-item" v-for="(item, idx) in portfolioList" :key="idx">
           <router-link
@@ -10,8 +10,13 @@
             class="portfolio-link"
             @click="cacheWork(item, idx)"
           >
-            <div class="portfolio-image" style="height: 100%;">
-              <img :src="getPhotoSrc(item)" :alt="getWorkTitle(item)" loading="lazy" decoding="async" style="width: 100%;height: 100%;">
+            <div class="portfolio-image">
+              <img
+                :src="getPhotoSrc(item)"
+                :alt="getWorkTitle(item)"
+                loading="lazy"
+                decoding="async"
+              >
             </div>
 
             <div class="portfolio-overlay">
@@ -22,8 +27,13 @@
             </div>
           </router-link>
           <div v-else class="portfolio-link portfolio-link--disabled">
-            <div class="portfolio-image" style="height: 100%;">
-              <img :src="getPhotoSrc(item)" :alt="getWorkTitle(item)" loading="lazy" decoding="async" style="width: 100%;height: 100%;">
+            <div class="portfolio-image">
+              <img
+                :src="getPhotoSrc(item)"
+                :alt="getWorkTitle(item)"
+                loading="lazy"
+                decoding="async"
+              >
             </div>
 
             <div class="portfolio-overlay">
@@ -356,17 +366,21 @@ export default {
 }
 
 .portfolio-item {
-  height: 250px;
+  display: flex;
+  flex-direction: column;
+  min-height: 250px;
   position: relative;
-  // border-radius: 15px;
-  overflow: hidden;
+  overflow: visible;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   /* 初始淡入狀態由JS設定 */
 }
 
 .portfolio-link {
-  display: block;
-  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  min-height: 100%;
   text-decoration: none;
   color: inherit;
 }
@@ -377,14 +391,22 @@ export default {
 }
 
 .portfolio-image {
-  height: 100%;
+  width: min(220px, 75%);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  margin: 6px auto 0;
+  background: #141414;
   transition: filter 0.3s ease;
+  /* 圓形遮罩；方形／矩形圖片以 cover 在圓內滿版 */
 }
 
 .portfolio-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   filter: brightness(0.7);
   transition: filter 0.3s ease;
 }
@@ -394,13 +416,12 @@ export default {
 }
 
 .portfolio-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  position: relative;
+  width: 100%;
+  margin-top: auto;
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.55) 30%, rgba(0, 0, 0, 0.88));
   color: white;
-  padding: 30px 20px 20px;
+  padding: 24px 12px 16px;
   transform: translateY(0);
   transition: transform 0.3s ease;
   text-align: left;
@@ -413,6 +434,7 @@ export default {
 
 .portfolio-overlay h3 {
   margin-bottom: 10px;
+  font-weight: 800;
 }
 
 .portfolio-overlay p {
@@ -422,7 +444,12 @@ export default {
   .portfolio-grid{
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   }
-  .portfolio-item { height:180px; }
+  .portfolio-item { min-height: 0; }
+  .portfolio-image {
+    width: min(140px, 82%);
+    margin-top: 4px;
+  }
+  .portfolio-overlay { padding: 16px 8px 12px; }
   .portfolio-overlay h3{ font-size: 0.95em; margin-bottom: 6px; }
   .portfolio-overlay p{ font-size: 0.8em; line-height: 1.4; }
 }
@@ -431,7 +458,11 @@ export default {
   max-width:60%;
 }
 .portfolio-item{
-  height: 600px;
+  min-height: 600px;
+}
+.portfolio-image {
+  width: min(420px, 72%);
+  margin-top: 12px;
 }
 .portfolio-grid{
   grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));

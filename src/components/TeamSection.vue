@@ -12,7 +12,7 @@
                 <div class="role">{{ isEnglish ? row.roleEn : row.roleZh }}</div>
                 <div class="sep">|</div>
               </template>
-              <div class="value" :class="{ 'value-only': !row.roleZh && !row.roleEn }" v-html="isEnglish ? row.valueEn : row.valueZh"></div>
+              <div class="value" :class="{ 'value-only': !row.roleZh && !row.roleEn }" v-html="teamValueHtml(row)"></div>
             </div>
           </div>
           <!-- 右欄 -->
@@ -20,7 +20,7 @@
             <div v-for="(row, idx) in rightColumn" :key="idx" class="row">
               <div class="role">{{ isEnglish ? row.roleEn : row.roleZh }}</div>
               <div class="sep">|</div>
-              <div class="value" v-html="isEnglish ? row.valueEn : row.valueZh"></div>
+              <div class="value" v-html="teamValueHtml(row)"></div>
             </div>
           </div>
         </div>
@@ -31,7 +31,7 @@
               <div class="row">
                 <div class="role">{{ isEnglish ? 'Artist' : '參與藝術家' }}</div>
                 <div class="sep">|</div>
-                <div class="value artists-value" v-html="participatingArtistsHtml"></div>
+                <div class="value artists-value" v-html="participatingArtistsDisplay"></div>
               </div>
             </div>
           </div>
@@ -119,12 +119,13 @@ export default {
     }
   },
   computed: {
-    participatingArtistsHtml() {
+    participatingArtistsDisplay() {
       const zh =
         '江戶未來世、初未來、吳秉聖、李根耀、拉爾夫．基爾赫茲、林強、姚瑞中、兪志美、浮點設計、桑德琳．德米耶、郭一、移動故事屋、凱蒂．卡托納、超維度、琳恩．湯琳森、劉承杰、劉東昱、賴皮、蔡奇宏、謝鎮璘、魏廷宇、AINO X Yunyoung JANG, barbe_generative_diary, Kohui, Kivi, MONOCOLOR, Meuko! Meuko!, PHOSPHEN';
       const en =
         'AINO X Yunyoung JANG, barbe_generative_diary, Damonxart, Sandrine DEUMIER, Dimension Plus, Floating Point Art, Hello Edo!, Hello World, Ralph KILLHERTZ, Root LEE, LIU Tung-Yu, Jie LIOU, Kati KATONA, Kivi, Kohui, Yi KUO, LIM Giong, Meuko Meuko, MONOCOLOR, Mr. Skin, PHOSPHEN, Telling Tent, Lynn TOMLINSON, Warrick TSAI, Tim WEI, WU Ping-Sheng, YAO Jui-Chung, Jimmy YU';
-      return this.isEnglish ? en : zh;
+      if (!this.isEnglish) return zh;
+      return this.formatTeamValueEn(en);
     },
     // 左欄：9 列（計畫主持人到音響系統統籌；建築概念含 JHStudio 換行）
     leftColumn() {
@@ -154,7 +155,49 @@ export default {
         { roleZh: '前導影片剪輯', roleEn: 'Trailer Editing', valueZh: '浮石影像工作室', valueEn: 'FUSHIDA FILM STUDIO' }
       ];
     }
-  }
+  },
+  methods: {
+    teamValueHtml(row) {
+      if (!this.isEnglish) return row.valueZh || '';
+      return this.formatTeamValueEn(row.valueEn || '');
+    },
+    /** 英文：依逗號分段，每段 nowrap，避免連字號姓名與機構名被拆斷（v-html 需跳脫） */
+    formatTeamValueEn(raw) {
+      if (!raw) return '';
+      const chunks = String(raw).split(/<br\s*\/?>/i);
+      return chunks
+        .map((c) => this.formatEnCommaLine(c.trim()))
+        .filter(Boolean)
+        .join('<br>');
+    },
+    formatEnCommaLine(line) {
+      if (!line) return '';
+      const placeholders = [];
+      const t = line.replace(/\bCo\.,\s*Ltd\./gi, (m) => {
+        const i = placeholders.length;
+        placeholders.push(m);
+        return `§PH${i}§`;
+      });
+      const parts = t.split(/,\s+/).map((p) => p.trim()).filter(Boolean);
+      return parts
+        .map((p) => {
+          const phMatch = /^§PH(\d+)§$/.exec(p);
+          if (phMatch) {
+            const text = placeholders[Number(phMatch[1])];
+            return `<span class="team-name-segment">${this.escapeHtmlForTeam(text)}</span>`;
+          }
+          return `<span class="team-name-segment">${this.escapeHtmlForTeam(p)}</span>`;
+        })
+        .join('<span class="team-name-comma">, </span>');
+    },
+    escapeHtmlForTeam(text) {
+      return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    },
+  },
 }
 </script>
 
@@ -252,6 +295,12 @@ export default {
   white-space: normal;
 }
 
+.team.en .artists-value {
+  word-break: normal;
+  overflow-wrap: normal;
+  hyphens: none;
+}
+
 .team.en .artists-column {
   /* 英文標題為「Artist」 */
   --team-role-w: 5em;
@@ -283,6 +332,11 @@ export default {
   line-height: 1.85;
   word-break: break-word;
   overflow-wrap: anywhere;
+}
+
+/* v-html 插入的 span，需 :deep 才套用 scoped 樣式 */
+.team .value :deep(.team-name-segment) {
+  white-space: nowrap;
 }
 
 .value-only {
@@ -483,8 +537,10 @@ export default {
 
 .team.en .value {
   font-size: 14px;
-  word-break: break-word;
+  word-break: normal;
+  overflow-wrap: normal;
   white-space: normal;
+  hyphens: none;
 }
 
 @media (max-width: 768px) {
