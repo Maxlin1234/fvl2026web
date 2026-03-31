@@ -1,7 +1,7 @@
 <template>
   <section id="portfolio" class="portfolio">
     <div class="container">
-      <h2 class="section-title">{{ isEnglish ? 'Works' : '作品介紹' }}</h2>
+      <h2 class="section-title">{{ isEnglish ? 'Work Information' : '作品資訊' }}</h2>
       <div class="portfolio-grid" ref="grid">
         <div class="portfolio-item" v-for="(item, idx) in portfolioList" :key="idx">
           <router-link
