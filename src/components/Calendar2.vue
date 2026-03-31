@@ -485,7 +485,8 @@ export default {
   color: #000;
   /* border-radius: 16px; */
   padding: 16px;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: visible;
 }
 
 .months-strip-hint {
@@ -554,7 +555,8 @@ export default {
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
-  touch-action: pan-x;
+  /* pan-x 會讓行動裝置無法把垂直滑動交給外層抽屜；需同時允許 pan-y */
+  touch-action: pan-x pan-y;
   gap: 0;
   width: 100%;
   margin: 0;

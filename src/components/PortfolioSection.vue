@@ -80,15 +80,26 @@ export default {
     let scrollTriggerInstance = null;
     let resizeTimer = null;
     let activeTimeline = null;
+    /** 播映區入場動畫只跑一次；完成後不可再 gsap.set(opacity:0) 以免上下捲動時閃爍 */
+    const introAnimationCompleted = ref(false);
 
     const isMobileLayout = () =>
       typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches;
+
+    const markIntroComplete = () => {
+      introAnimationCompleted.value = true;
+    };
 
     const buildRowFadeIn = () => {
       const container = grid.value;
       if (!container) return;
       const items = Array.from(container.querySelectorAll('.portfolio-item'));
       if (!items.length) return;
+
+      if (introAnimationCompleted.value) {
+        ScrollTrigger.refresh();
+        return;
+      }
 
       if (activeTimeline) {
         activeTimeline.kill();
@@ -106,6 +117,7 @@ export default {
       if (mobile) {
         gsap.set(items, { opacity: 0 });
         const tl = gsap.timeline({
+          onComplete: markIntroComplete,
           scrollTrigger: {
             trigger: '#portfolio',
             start: 'top 85%',
@@ -138,6 +150,7 @@ export default {
         .forEach((k) => rows.push(rowMap.get(k)));
 
       const tl = gsap.timeline({
+        onComplete: markIntroComplete,
         scrollTrigger: {
           trigger: '#portfolio',
           start: 'top 80%',
@@ -164,6 +177,10 @@ export default {
     };
 
     const scheduleBuild = async () => {
+      if (introAnimationCompleted.value) {
+        ScrollTrigger.refresh();
+        return;
+      }
       await nextTick();
       const container = grid.value;
       if (!container) return;
@@ -174,6 +191,10 @@ export default {
     };
 
     const handleResize = () => {
+      if (introAnimationCompleted.value) {
+        ScrollTrigger.refresh();
+        return;
+      }
       if (resizeTimer) {
         clearTimeout(resizeTimer);
       }
@@ -188,7 +209,6 @@ export default {
         if (!list || list.length === 0) return;
         scheduleBuild();
       },
-      { deep: true },
     );
 
     onMounted(() => {

@@ -70,6 +70,19 @@ const EVENT_TYPES = {
   PERFORMANCE: 'performance'
 };
 
+/** API 回傳順序不定，播映作品／首圖依作品 id 遞增排列 */
+function sortWorksById(works) {
+  if (!Array.isArray(works)) return [];
+  return [...works].sort((a, b) => {
+    const idA = a?.id;
+    const idB = b?.id;
+    const nA = Number(idA);
+    const nB = Number(idB);
+    if (Number.isFinite(nA) && Number.isFinite(nB)) return nA - nB;
+    return String(idA ?? '').localeCompare(String(idB ?? ''), undefined, { numeric: true });
+  });
+}
+
 export default {
   name: 'fvl-fest-2026',
   components: { 
@@ -161,7 +174,8 @@ export default {
           headers: { Authorization: API_AUTH },
         });
         const payload = response?.data;
-        const works = Array.isArray(payload) ? payload : payload?.data || payload?.results || [];
+        const rawWorks = Array.isArray(payload) ? payload : payload?.data || payload?.results || [];
+        const works = sortWorksById(rawWorks);
 
         if (process.env.NODE_ENV === 'development') {
           console.log('[Fvl2026Final] works loaded', {

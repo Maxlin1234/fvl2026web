@@ -86,7 +86,7 @@
   您的瀏覽器不支援影片播放。
 </video>
       <!-- <video autoplay muted loop src="../assets/circle.mp4" style="position: absolute;z-index: 1;right:0%;width:100%;height:100%; float: left;clip-path: ellipse(70% 80% at 100% 30%);opacity: 0.5;object-fit:cover;"></video> -->
-      <div class="all-content" style="position: absolute;z-index: 999;height: 100%;width: 100%; flex-direction: column;display: flex;justify-content: center;align-items:flex-start;">
+      <div class="all-content">
         <h2 style="color:gainsboro;border-bottom: 2px solid white;padding: 20px;margin-left: 60px;font-size: 1.2em;font-weight: 900;">{{ isEnglish ? 'Visitor Guidelines' : '入場須知' }}</h2>
         <div class="list-text">
           <button class="list-btn1" @click="toggleContent()"><h2>{{ isEnglish ? ' Notices for entry ' : '注意事項' }}</h2></button>
@@ -213,6 +213,18 @@ function resolveWorkFeaturedPhotoUrl(w) {
   const s = String(directUrl);
   if (/^https?:\/\//i.test(s)) return s;
   return `https://unzip-clab-api.clab.org.tw/${s.replace(/^\/+/, '')}`;
+}
+
+function sortWorksById(works) {
+  if (!Array.isArray(works)) return [];
+  return [...works].sort((a, b) => {
+    const idA = a?.id;
+    const idB = b?.id;
+    const nA = Number(idA);
+    const nB = Number(idB);
+    if (Number.isFinite(nA) && Number.isFinite(nB)) return nA - nB;
+    return String(idA ?? '').localeCompare(String(idB ?? ''), undefined, { numeric: true });
+  });
 }
 
 const FALLBACK_SCHEDULE_CAROUSEL_IMAGES = [
@@ -378,8 +390,9 @@ export default {
         const { data } = await axios.get(SCHEDULE_WORKS_API_URL, {
           headers: { Authorization: SCHEDULE_WORKS_API_AUTH },
         });
-        const list = Array.isArray(data) ? data : (data?.data || data?.results || []);
-        // 8 張輪播：前 6 件為 API 第 1–6 件；第 7 張改為第 9 件的 featured；第 8 張為第 8 件
+        const rawList = Array.isArray(data) ? data : (data?.data || data?.results || []);
+        const list = sortWorksById(rawList);
+        // 8 張輪播：依 id 排序後取第 1–6、9、8 件之 featured（與先前「第 7 張用第 9 件」邏輯相同）
         const workIndices = [0, 1, 2, 3, 4, 5, 8, 7];
         const urls = [];
         for (let slot = 0; slot < workIndices.length; slot++) {
@@ -517,11 +530,13 @@ export default {
 
 .drawer-content2 {
   width: 100vw;
-  height: 100vh;
+  flex: 1 1 0;
+  min-height: 0;
   color: #222;
   padding: 0px;
-  flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
   margin-bottom: 0;
 }
 
@@ -622,6 +637,20 @@ export default {
   overflow-y: auto;
   color: white;
   padding-bottom: 96px; /* 底部留白：避免文字貼齊視窗底部 */
+}
+
+.all-content {
+  position: absolute;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 .list-text {
@@ -805,15 +834,56 @@ export default {
 }
 
 @media (max-width: 768px) {
+  /* 入場須知：長文置中會超出影片上下邊界，改為靠上＋在抽屜內捲動 */
+  .lecture-drawer .drawer-content {
+    justify-content: flex-start;
+    align-items: stretch;
+    padding-top: 48px;
+    box-sizing: border-box;
+  }
+
+  .lecture-drawer .all-content {
+    position: relative;
+    height: auto;
+    max-height: calc(100vh - 48px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    justify-content: flex-start;
+    align-items: stretch;
+    padding: 0 8px 32px;
+    overscroll-behavior: contain;
+  }
+
+  .lecture-drawer .content-container {
+    height: auto;
+    min-height: 0;
+    width: 100%;
+    max-width: 100%;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    padding-bottom: 24px;
+    box-sizing: border-box;
+  }
+
   /* 入場須知主標 */
   .lecture-drawer .all-content > h2:first-of-type {
     font-size: 1em !important;
+    margin-left: 12px !important;
+    margin-right: 12px;
+    padding: 12px 8px !important;
+    box-sizing: border-box;
   }
 
   /* 注意事項／入場方式 點開後的內文列表 */
   .lecture-list {
     margin: 0;
     font-size: 0.7em;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    word-break: break-word;
+    overflow-wrap: anywhere;
   }
 
   .lecture-list h2 {

@@ -1,2 +1,0 @@
-# Third-party / minified / copied scripts (not project source — ESLint rules break on bundles)
-src/assets/**/*.js
