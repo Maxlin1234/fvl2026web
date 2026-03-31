@@ -121,16 +121,10 @@ export default {
   computed: {
     participatingArtistsHtml() {
       const zh =
-        '江戶未來世、初未來、吳秉聖、李根耀、拉爾夫．基爾赫茲、林強、姚瑞中、兪志美、浮點設計、桑德琳．德米耶、郭一、移動故事屋、凱蒂．卡托納、超維度、劉承杰、劉東昱、賴皮、蔡奇宏、謝鎮璘、魏廷宇';
-      const enZhPage =
-        'AINO X Yunyoung JANG, barbe_generative_diary, Kohui, Kivi, MONOCOLOR, Meuko! Meuko!, PHOSPHENE';
-      const enEnglishPage =
-        'AINO X Yunyoung JANG, barbe_generative_diary, Damonxart, Dimension Plus, Floating Point Art, Hello Edo!, Hello World, LIU Tung-Yu, Jie LIOU, Jimmy YU, Kati KATONA, Kivi, Kohui, Yi KUO, LIM Giong, Meuko Meuko, MONOCOLOR, Mr. Skin, PHOSPHEN, Ralph KILLHERTZ, Root LEE, Sandrine DEUMIER, Telling Tent, Tim WEI, Warrick TSAI, WU Ping-Sheng, YAO Jui-Chung';
-      if (this.isEnglish) {
-        return enEnglishPage;
-      }
-      // 中文版：英文名單與中文同一行接續（不換行）
-      return `${zh} ${enZhPage}`;
+        '江戶未來世、初未來、吳秉聖、李根耀、拉爾夫．基爾赫茲、林強、姚瑞中、兪志美、浮點設計、桑德琳．德米耶、郭一、移動故事屋、凱蒂．卡托納、超維度、琳恩．湯琳森、劉承杰、劉東昱、賴皮、蔡奇宏、謝鎮璘、魏廷宇、AINO X Yunyoung JANG, barbe_generative_diary, Kohui, Kivi, MONOCOLOR, Meuko! Meuko!, PHOSPHEN';
+      const en =
+        'AINO X Yunyoung JANG, barbe_generative_diary, Damonxart, Sandrine DEUMIER, Dimension Plus, Floating Point Art, Hello Edo!, Hello World, Ralph KILLHERTZ, Root LEE, LIU Tung-Yu, Jie LIOU, Kati KATONA, Kivi, Kohui, Yi KUO, LIM Giong, Meuko Meuko, MONOCOLOR, Mr. Skin, PHOSPHEN, Telling Tent, Lynn TOMLINSON, Warrick TSAI, Tim WEI, WU Ping-Sheng, YAO Jui-Chung, Jimmy YU';
+      return this.isEnglish ? en : zh;
     },
     // 左欄：9 列（計畫主持人到音響系統統籌；建築概念含 JHStudio 換行）
     leftColumn() {

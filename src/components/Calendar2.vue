@@ -73,7 +73,7 @@
 <script>
 /** FVL 2026 / 四月節目表（與主視覺檔期一致：4/18 起） */
 const APR_BLOCK_A_ZH = `浮點設計 | 《萬象之初》 | 3 mins
-凱蒂·卡托納 | 《藏識》 | 12 mins
+凱蒂．卡托納 ｜ 《藏識》 | 12 mins
 初未來 X 超維度 X 江戶未來世 X Kivi X 賴皮 X 林強 | 《新摩登時代》 | 20 mins`;
 
 const APR_BLOCK_A_EN = `FPA | Genesis | 3 mins
@@ -89,9 +89,9 @@ PHOSPHENE | Temporal | 39 mins`;
 const APR_BLOCK_C_ZH = `浮點設計 | 《萬象之初》 | 3 mins
 AINO X Yunyoung JANG | 《深層根木》 | 12 mins
 barbe_generative_diary | 短篇集錦 - 《描繪寂靜》 | 5 mins
-李根耀 | 《街道之書：同淋一場雨》 | 5 mins
-兪志美 | 《非體 1》 | 5 mins
-謝鎮璘 | 《光所到之處》 | 5 mins
+李根耀 | 短篇集錦 - 《街道之書：同淋一場雨》 | 5 mins
+兪志美 | 短篇集錦 - 《非體 1》 | 5 mins
+謝鎮璘 | 短篇集錦 - 《光所到之處》 | 5 mins
 琳恩．湯琳森 | 《山之夜曲》 | 3 mins`;
 
 const APR_BLOCK_C_EN = `FPA | Genesis | 3 mins
@@ -138,10 +138,10 @@ WU Ping-Sheng x LIU Cheng-Chieh | Strata of Time | 22 mins`;
 
 const MAY_BLOCK_C_ZH = `浮點設計 | 《萬象之初》 | 3 mins
 AINO X Yunyoung JANG | 《深層根本》 | 12 mins
-barbe_generative_diary | 短篇集錦 —《描繪寂靜》 | 5 mins
-李根耀 | 《街道之書：同林一場雨》 | 5 mins
-龐志美 | 《非體 1》 | 5 mins
-謝韻琪 | 《光所到之處》 | 5 mins
+barbe_generative_diary | 短篇集錦 - 《描繪寂靜》 | 5 mins
+李根耀 | 短篇集錦 - 《街道之書：同淋一場雨》 | 5 mins
+兪志美 | 短篇集錦 - 《非體 1》 | 5 mins
+謝鎮璘 | 短篇集錦 - 《光所到之處》 | 5 mins
 琳恩．湯琳森 | 《山之夜曲》 | 3 mins`;
 
 const MAY_BLOCK_C_EN = `FPA | Genesis | 3 mins
@@ -149,7 +149,7 @@ AINO x Yunyoung JANG | Deep Roots | 12 mins
 barbe_generative_diary | Short Film Showcase — "Depicting Silence" | 5 mins
 Root LEE | Short Film Showcase — "Street Book: Rain in the Same Grove" | 5 mins
 PANG Chih-Mei | Short Film Showcase — "Non-Body 1" | 5 mins
-HSIEH Yun-Chi | Short Film Showcase — "Where Light Reaches" | 5 mins
+HSIEH Chen-Lin | Short Film Showcase — "Where Light Reaches" | 5 mins
 Lynne Tomlinson | "Nocturne of the Mountain" | 3 mins`;
 
 const MAY_KOHUI_ZH = `Kohui | 《眾聲場：環形運動》(現場演出) | 30 mins`;
@@ -161,22 +161,22 @@ const MAY_PARTY_EN = `FUTURE VISION LAB Party #3 (Ticketed Live) | 60 mins`;
 const MAY_POND_ZH = `移動故事屋 | 《池塘國選舉》(現場演出) | 45 mins`;
 const MAY_POND_EN = `Telling Tent | The Pond Nation Election (Live Performance) | 45 mins`;
 
-/** 5/17 場次：《藏識》改《離魂》 */
+/** 5/17 場次：凱蒂．卡托納《藏識》 */
 const MAY_517_A_ZH = `浮點設計 | 《萬象之初》 | 3 mins
-凱蒂·卡托納 | 《離魂》 | 12 mins
+凱蒂．卡托納 ｜ 《藏識》 | 12 mins
 初未來 X 超維度 X 江戶未來世 X Kivi X 賴皮 X 林強 | 《新摩登時代》 | 20 mins`;
 
 const MAY_517_A_EN = `FPA | Genesis | 3 mins
-Katie Katona | Soul Departure | 12 mins
+Katie Katona | Alaya | 12 mins
 Hello World x Dimension Plus x Hello Ebol x Kivi x Mr. Skin x LIM Giong | NEW MODERN TIMES | 20 mins`;
 
 /** 5/17 17:00 短片集錦／兪志美、謝鎮璘、琳恩·潘琳森 */
 const MAY_517_C17_ZH = `浮點設計 | 《萬象之初》 | 3 mins
 AINO X Yunyoung JANG | 《深層根本》 | 12 mins
-barbe_generative_diary | 短篇集錦 — 《描繪寂靜》 | 5 mins
-李根耀 | 短篇集錦 — 《街道之書：同淋一場雨》 | 5 mins
-兪志美 | 短篇集錦 — 《非體 1》 | 5 mins
-謝鎮璘 | 短篇集錦 — 《光所到之處》 | 5 mins
+barbe_generative_diary | 短篇集錦 - 《描繪寂靜》 | 5 mins
+李根耀 | 短篇集錦 - 《街道之書：同淋一場雨》 | 5 mins
+兪志美 | 短篇集錦 - 《非體 1》 | 5 mins
+謝鎮璘 | 短篇集錦 - 《光所到之處》 | 5 mins
 琳恩·潘琳森 | 《山之夜曲》 | 3 mins`;
 
 const MAY_517_C17_EN = `FPA | Genesis | 3 mins
@@ -206,23 +206,23 @@ const JUN_WORKSHOP_NTUST_EN = `Immersive Audio-Visual Workshop — The Joint Pre
 const JUN_WORKSHOP_NTHU_ZH = `《沉浸式影音工作坊—校際成果呈現》清大藝術學院科藝組 | 40 mins`;
 const JUN_WORKSHOP_NTHU_EN = `Immersive Audio-Visual Workshop — The Joint Presentation | NTHU College of Arts, Arts & Technology | 40 mins`;
 
-/** 6/7 14:00（圖檔用字：藏端、超緯度） */
+/** 6/7 14:00（圖檔：凱蒂《藏識》等） */
 const JUN_607_A_ZH = `浮點設計 | 《萬象之初》 | 3 mins
-凱蒂·卡托納 | 《藏端》 | 12 mins
+凱蒂．卡托納 ｜ 《藏識》 | 12 mins
 初未來 X 超維度 X 江戶未來世 X Kivi X 賴皮 X 林強 | 《新摩登時代》 | 20 mins`;
 
 const JUN_607_A_EN = `FPA | Genesis | 3 mins
-Katie Katona | Terminal | 12 mins
+Katie Katona | Alaya | 12 mins
 Hello World x Ultra-Latitude x Hello Ebol x Kivi x Mr. Skin x LIM Giong | NEW MODERN TIMES | 20 mins`;
 
-/** 6/7 15:00／18:00 長節目單（深層根木、兪志美、琳恩·馮琳森） */
+/** 6/7 15:00／18:00 長節目單（深層根木、兪志美、琳恩．湯琳森） */
 const JUN_607_LONG_ZH = `浮點設計 | 《萬象之初》 | 3 mins
 AINO X Yunyoung JANG | 《深層根木》 | 12 mins
-barbe_generative_diary | 短篇集錦 — 《描繪寂靜》 | 5 mins
-李根耀 | 短篇集錦 — 《街道之書：同淋一場雨》 | 5 mins
-兪志美 | 短篇集錦 — 《非體 1》 | 5 mins
-謝鎮璘 | 短篇集錦 — 《光所到之處》 | 5 mins
-琳恩·馮琳森 | 《山之夜曲》 | 3 mins`;
+barbe_generative_diary | 短篇集錦 - 《描繪寂靜》 | 5 mins
+李根耀 | 短篇集錦 - 《街道之書：同淋一場雨》 | 5 mins
+兪志美 | 短篇集錦 - 《非體 1》 | 5 mins
+謝鎮璘 | 短篇集錦 - 《光所到之處》 | 5 mins
+琳恩．湯琳森 | 《山之夜曲》 | 3 mins`;
 
 const JUN_607_LONG_EN = `FPA | Genesis | 3 mins
 AINO x Yunyoung JANG | Deep Rootwood | 12 mins
