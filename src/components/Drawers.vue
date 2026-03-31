@@ -266,6 +266,25 @@ export default {
     }
   },
   emits: ['close-drawer', 'event-type-changed'],
+  watch: {
+    showLectureDrawer(open) {
+      // 關閉時暫停背景影片，避免 scale 動畫與連續解碼/合成搶資源造成卡頓
+      this.$nextTick(() => {
+        const v = this.$refs.lectureVideo;
+        if (!v) return;
+        if (open) {
+          const p = v.play();
+          if (p && typeof p.catch === 'function') p.catch(() => {});
+        } else {
+          try {
+            v.pause();
+          } catch (e) {
+            console.warn('講座背景影片暫停失敗', e);
+          }
+        }
+      });
+    },
+  },
   data() {
     return {
       isScheduleComingSoon: false,
@@ -488,12 +507,16 @@ export default {
   transform: scale(0);
   border-radius: 50%;
   transform-origin: bottom left;
-  transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  /* 勿用 transition: all（易與子層屬性一併插值）；略過尾端回彈 easing，關閉較流暢 */
+  transition:
+    transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1),
+    border-radius 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
   display: flex;
   flex-direction: column;
   padding: 0;
   overflow: hidden;
   pointer-events: none;
+  backface-visibility: hidden;
 }
 
 .lecture-drawer.open {
