@@ -10,7 +10,7 @@
              <p><router-link :to="{ name: 'Home' }">Dome2.0</router-link></p>
           </div> -->
 
-          <div class="column has-text-centered">
+          <!-- <div class="column has-text-centered">
             <p style="text-align: left;">
               <b>聯絡我們:</b>
               <br>
@@ -20,7 +20,7 @@
               <span style="text-align: left;font-size: 12px;">Fax : +886 2 87735035</span>
               &nbsp;&nbsp;&nbsp;
             </p>
-          </div>
+          </div> -->
           <!-- <div class="column is-2  has-text-centered">
             <h4>關於未來實驗室
             </h4>
@@ -89,7 +89,7 @@ export default {
 }
 .column{
   flex: 1 1 260px;
-  max-width: 360px;
+  // max-width: 360px;
   padding: 0 !important; /* override bulma column padding */
 }
 .column p{
