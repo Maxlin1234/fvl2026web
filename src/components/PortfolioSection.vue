@@ -435,6 +435,9 @@ export default {
 .portfolio-overlay h3 {
   margin-bottom: 10px;
   font-weight: 800;
+  border-bottom: solid;
+  border-width: thin;
+  padding-bottom: 2px;
 }
 
 .portfolio-overlay p {

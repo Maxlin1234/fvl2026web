@@ -892,7 +892,7 @@ h2.admission-section-title:first-of-type {
   /* 注意事項／入場方式 點開後的內文列表 */
   .lecture-list {
     margin: 0;
-    font-size: 0.7em;
+    font-size: 0.9em;
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
@@ -962,7 +962,7 @@ h2.admission-section-title:first-of-type {
     top: 12%;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 0.8em;
+    font-size: 1em;
     padding: 16px;
     z-index: 1001;
     text-align: center;

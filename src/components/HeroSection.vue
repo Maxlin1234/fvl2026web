@@ -384,24 +384,24 @@ html, body {
    * width 先縮短再 scale，視覺寬度仍為 100%，左右不會被切掉。
    */
   .banner-title {
-    left: 50%;
+    left: 100%;
     right: auto;
-    bottom: 24%;
-    width: calc(100% / 1.38);
-    max-width: calc(100% - env(safe-area-inset-left) - env(safe-area-inset-right));
+    bottom: 19%;
+    width: calc(150%);
+    max-width: calc(150% - env(safe-area-inset-left) - env(safe-area-inset-right));
     padding: 0 env(safe-area-inset-right) 0 env(safe-area-inset-left);
     transform: translateX(-50%) scale(1.38);
     transform-origin: center bottom;
   }
 
   .banner-title2 {
-    left: 50%;
+    left: 19%;
     right: auto;
-    bottom: 19%;
-    width: calc(100% / 1.30);
-    max-width: calc(100% - env(safe-area-inset-left) - env(safe-area-inset-right));
+    bottom: 4%;
+    width: 150%;
+    max-width: calc(150% - env(safe-area-inset-left) - env(safe-area-inset-right));
     padding: 0 env(safe-area-inset-right) 0 env(safe-area-inset-left);
-    transform: translateX(-50%) scale(1.3);
+    transform: translateX(-50%) scale(1.1);
     transform-origin: center bottom;
   }
 }

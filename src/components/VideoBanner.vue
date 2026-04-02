@@ -143,7 +143,7 @@ export default {
 
 .banner {
   width: 100%;
-  height:120vh;
+  height:100vh;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -195,7 +195,7 @@ export default {
 
 @media (max-width:768px){
   .banner{
-    height: 50vh;
+    height: 60vh;
   }
   .banner h2{
     font-size: 5em;

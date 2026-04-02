@@ -116,7 +116,28 @@ const routes = [
     path: '/festival/2026',
     name: 'fvl-fest-2026',
     alias: ['/fvl-fest-2026', '/festival/fvl-fest-2026'],
-    meta: { keepAlive: true },
+    meta: { 
+      keepAlive: true,
+      title: 'FUTURE VISION LAB 2026',
+      metaTags: [
+        {
+          name: 'description',
+          content: 'FUTURE VISION LAB 2026 結合創新科技與藝術，探索未來視覺可能性的沉浸式影音展演。'
+        },
+        {
+          property: 'og:title',
+          content: 'FUTURE VISION LAB 2026'
+        },
+        {
+          property: 'og:description',
+          content: 'FUTURE VISION LAB 2026 結合創新科技與藝術，探索未來視覺可能性的沉浸式影音展演。'
+        },
+        {
+          property: 'og:type',
+          content: 'website'
+        }
+      ]
+    },
     // FvlFest2026.vue is under components, not views.
     component: () => import(/* webpackChunkName: 'fvl-fest-2026' */ '../components/Fvl2026Final.vue'),
   },
@@ -150,6 +171,35 @@ const router = new VueRouter({
     }
     return { x: 0, y: 0 };
   },
+});
+
+router.beforeEach((to, from, next) => {
+  const nearestWithTitle = to.matched.slice().reverse().find(r => r.meta && r.meta.title);
+  const nearestWithMeta = to.matched.slice().reverse().find(r => r.meta && r.meta.metaTags);
+
+  if (nearestWithTitle) {
+    document.title = nearestWithTitle.meta.title;
+  } else {
+    document.title = 'FUTURE VISION LAB'; // 預設標題
+  }
+
+  // 移除上一個路由留下的 SEO meta 標籤
+  Array.from(document.querySelectorAll('[data-vue-router-controlled]')).map(el => el.parentNode.removeChild(el));
+
+  if (!nearestWithMeta) return next();
+
+  // 將 metaTags 內的屬性注入到 <head> 之中
+  nearestWithMeta.meta.metaTags.map(tagDef => {
+    const tag = document.createElement('meta');
+    Object.keys(tagDef).forEach(key => {
+      tag.setAttribute(key, tagDef[key]);
+    });
+    // 加上自訂屬性以便下一次跳轉時能方便移除
+    tag.setAttribute('data-vue-router-controlled', '');
+    return tag;
+  }).forEach(tag => document.head.appendChild(tag));
+
+  next();
 });
 
 export default router;

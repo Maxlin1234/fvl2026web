@@ -137,6 +137,18 @@ export default {
     /** 指定作品：藝術家／團體顯示與介紹順序（依 API name / name_zh_tw 比對） */
     const CUSTOM_DISPLAY_ORDER_RULES = [
       {
+        nameOrder: ['Kohui', '劉東昱', '蔡奇宏'],
+        test: ({ zh, en }) =>
+          String(zh).includes('未來視覺派對 #3')
+          || /future\s*vision\s*party\s*#3/i.test(String(en)),
+      },
+      {
+        nameOrder: ['國立清華大學藝術學院學士班 / 科藝所', '國立臺北藝術大學新媒體藝術學系', '臺北科技大學互動系'],
+        test: ({ zh, en }) =>
+          String(zh).includes('校際成果呈現')
+          || /joint\s*presentation/i.test(String(en)),
+      },
+      {
         nameOrder: ['初未來', '超維度', '江戶未來世', 'Kivi', '賴皮', '林強'],
         test: ({ zh, en }) =>
           String(zh).includes('新摩登時代')
