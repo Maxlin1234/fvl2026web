@@ -55,8 +55,8 @@
             >
               <div class="event-content">
                 <div class="titles">
-                  <div v-if="!isEnglish" class="title-zh">{{ evt.titleZh }}</div>
-                  <div v-else class="title-en">{{ evt.titleEn }}</div>
+                  <div v-if="!isEnglish" class="title-zh" v-html="evt.titleZh"></div>
+                  <div v-else class="title-en" v-html="evt.titleEn"></div>
                 </div>
                 <div class="meta">
                   <span class="time">{{ isEnglish ? (evt.timeEn || evt.time) : evt.time }}</span>
@@ -72,50 +72,50 @@
 
 <script>
 /** FVL 2026 / 四月節目表（與主視覺檔期一致：4/18 起） */
-const APR_BLOCK_A_ZH = `浮點設計 | 《萬象之初》 | 3 mins
-凱蒂．卡托納 ｜ 《藏識》 | 12 mins
-初未來 X 超維度 X 江戶未來世 X Kivi X 賴皮 X 林強 | 《新摩登時代》 | 20 mins`;
+const APR_BLOCK_A_ZH = `浮點設計 | <i>《萬象之初》</i> | 3 mins
+凱蒂．卡托納 ｜ <i>《藏識》</i> | 12 mins
+初未來 X 超維度 X 江戶未來世 X Kivi X 賴皮 X 林強 | <i>《新摩登時代》</i> | 20 mins`;
 
 /** 五月／六月等與四月主視覺一致之英文 A、B 塊（四月場次另外使用 APRIL_BLOCK_*） */
-const APR_BLOCK_A_EN = `FPA | Genesis | 3 mins
-Kati KATONA | Substratum | 12 mins
+const APR_BLOCK_A_EN = `FPA | <i>Genesis</i> | 3 mins
+Kati KATONA | <i>Substratum</i> | 12 mins
 Hello World x Dimension Plus x Hello Edo! x Kivi x Mr. Skin x LIM
-Giong | NEW MODERN TIMES | 20 mins`;
+Giong | <i>NEW MODERN TIMES</i> | 20 mins`;
 
-const APR_BLOCK_B_ZH = `浮點設計 | 《萬象之初》 | 3 mins
-PHOSPHEN | 《時空》 | 39 mins`;
+const APR_BLOCK_B_ZH = `浮點設計 | <i>《萬象之初》</i> | 3 mins
+PHOSPHEN | <i>《時空》</i> | 39 mins`;
 
-const APR_BLOCK_B_EN = `FPA | Genesis | 3 mins
-PHOSPHEN | Temporal | 39 mins`;
+const APR_BLOCK_B_EN = `FPA | <i>Genesis</i> | 3 mins
+PHOSPHEN | <i>Temporal</i> | 39 mins`;
 
 /** 4/18–4/26 英文（僅四月 aprEvt 引用） */
 const APRIL_BLOCK_A_EN = APR_BLOCK_A_EN;
 
 const APRIL_BLOCK_B_EN = APR_BLOCK_B_EN;
 
-const APR_BLOCK_C_ZH = `浮點設計 | 《萬象之初》 | 3 mins
-AINO X Yunyoung JANG | 《深層根木》 | 12 mins
-barbe_generative_diary | 短篇集錦 - 《描繪寂靜》 | 5 mins
-李根耀 | 短篇集錦 - 《街道之書：同淋一場雨》 | 5 mins
-兪志美 | 短篇集錦 - 《非體 1》 | 5 mins
-謝鎮璘 | 短篇集錦 - 《光所到之處》 | 5 mins
-琳恩．湯琳森 | 《山之夜曲》 | 3 mins`;
+const APR_BLOCK_C_ZH = `浮點設計 | <i>《萬象之初》</i> | 3 mins
+AINO X Yunyoung JANG | <i>《深層根木》</i> | 12 mins
+barbe_generative_diary | <i>短篇集錦 - 《描繪寂靜》</i> | 5 mins
+李根耀 | <i>短篇集錦 - 《街道之書：同淋一場雨》</i> | 5 mins
+兪志美 | <i>短篇集錦 - 《非體 1》</i> | 5 mins
+謝鎮璘 | <i>短篇集錦 - 《光所到之處》</i> | 5 mins
+琳恩．湯琳森 | <i>《山之夜曲》</i> | 3 mins`;
 
-const APR_BLOCK_C_EN = `FPA | Genesis | 3 mins
-AINO X Yunyoung JANG | Deep-Rooted | 12 mins
-barbe_generative_diary | Short Film Showcase – Drawing Silence | 5 mins
-Root LEE | Short Film Showcase – Shared Immersion: A Street's Archive | 5 mins
-Jimmy YU | Short Film Showcase – Biche 1 | 5 mins
-Damonxart | Short Film Showcase – Where Light Arrives | 5 mins
-Lynn TOMLINSON | Mountain Nocturne | 3 mins`;
+const APR_BLOCK_C_EN = `FPA | <i>Genesis</i> | 3 mins
+AINO X Yunyoung JANG | <i>Deep-Rooted</i> | 12 mins
+barbe_generative_diary | <i>Short Film Showcase – Drawing Silence</i> | 5 mins
+Root LEE | <i>Short Film Showcase – Shared Immersion: A Street's Archive</i> | 5 mins
+Jimmy YU | <i>Short Film Showcase – Biche 1</i> | 5 mins
+Damonxart | <i>Short Film Showcase – Where Light Arrives</i> | 5 mins
+Lynn TOMLINSON | <i>Mountain Nocturne</i> | 3 mins`;
 
-const APR_BLOCK_D_ZH = `浮點設計 | 《萬象之初》 | 3 mins
-桑德琳．德米耶 X 拉爾夫．基爾赫茲 | 《循鹿》 | 12 mins
-吳秉聖 X 劉承杰 | 《時間層理》 | 22 mins`;
+const APR_BLOCK_D_ZH = `浮點設計 | <i>《萬象之初》</i> | 3 mins
+桑德琳．德米耶 X 拉爾夫．基爾赫茲 | <i>《循鹿》</i> | 12 mins
+吳秉聖 X 劉承杰 | <i>《時間層理》</i> | 22 mins`;
 
-const APR_BLOCK_D_EN = `FPA | Genesis | 3 mins
-Sandrine DEUMIER x Ralph KILLHERTZ | Following the deer | 12 mins
-WU Ping-Sheng x Jie LIOU | Temporal Strata | 22 mins`;
+const APR_BLOCK_D_EN = `FPA | <i>Genesis</i> | 3 mins
+Sandrine DEUMIER x Ralph KILLHERTZ | <i>Following the deer</i> | 12 mins
+WU Ping-Sheng x Jie LIOU | <i>Temporal Strata</i> | 22 mins`;
 
 function aprEvt(id, date, time, zh, en, sortOrder) {
   return {
@@ -131,82 +131,82 @@ function aprEvt(id, date, time, zh, en, sortOrder) {
   };
 }
 
-/** 五月：表定《循鹿》文案與短片塊（深層根本／同林一場雨等依圖檔） */
-const MAY_MONOCOLOR_ZH = `MONOCOLOR | 《意識之維》(現場演出) | 35 mins`;
-const MAY_MONOCOLOR_EN = `MONOCOLOR | NOOSPHERE (Live Performance) | 35 mins`;
+/** 五月：表定《循鹿》文案與短片塊（深層根木／同林一場雨等依圖檔） */
+const MAY_MONOCOLOR_ZH = `MONOCOLOR | <i>《意識之維》</i>(現場演出) | 35 mins`;
+const MAY_MONOCOLOR_EN = `MONOCOLOR | <i>NOOSPHERE</i> (Live Performance) | 35 mins`;
 
-const MAY_BLOCK_D_ZH = `浮點設計 | 《萬象之初》 | 3 mins
-桑德琳．德米耶 X 拉爾夫．基爾赫茲 | 《循鹿》 | 12 mins
-吳秉聖 X 劉承杰 | 《時間層理》 | 22 mins`;
+const MAY_BLOCK_D_ZH = `浮點設計 | <i>《萬象之初》</i> | 3 mins
+桑德琳．德米耶 X 拉爾夫．基爾赫茲 | <i>《循鹿》</i> | 12 mins
+吳秉聖 X 劉承杰 | <i>《時間層理》</i> | 22 mins`;
 
-const MAY_BLOCK_D_EN = `FPA | Genesis | 3 mins
-Sandrine DEUMIER x Ralph KILLHERTZ | Following the deer | 12 mins
-WU Ping-Sheng x Jie LIOU | Temporal Strata | 22 mins`;
+const MAY_BLOCK_D_EN = `FPA | <i>Genesis</i> | 3 mins
+Sandrine DEUMIER x Ralph KILLHERTZ | <i>Following the deer</i> | 12 mins
+WU Ping-Sheng x Jie LIOU | <i>Temporal Strata</i> | 22 mins`;
 
-const MAY_BLOCK_C_ZH = `浮點設計 | 《萬象之初》 | 3 mins
-AINO X Yunyoung JANG | 《深層根本》 | 12 mins
-barbe_generative_diary | 短篇集錦 - 《描繪寂靜》 | 5 mins
-李根耀 | 短篇集錦 - 《街道之書：同淋一場雨》 | 5 mins
-兪志美 | 短篇集錦 - 《非體 1》 | 5 mins
-謝鎮璘 | 短篇集錦 - 《光所到之處》 | 5 mins
-琳恩．湯琳森 | 《山之夜曲》 | 3 mins`;
+const MAY_BLOCK_C_ZH = `浮點設計 | <i>《萬象之初》</i> | 3 mins
+AINO X Yunyoung JANG | <i>《深層根木》</i> | 12 mins
+barbe_generative_diary | <i>短篇集錦 - 《描繪寂靜》</i> | 5 mins
+李根耀 | <i>短篇集錦 - 《街道之書：同淋一場雨》</i> | 5 mins
+兪志美 | <i>短篇集錦 - 《非體 1》</i> | 5 mins
+謝鎮璘 | <i>短篇集錦 - 《光所到之處》</i> | 5 mins
+琳恩．湯琳森 | <i>《山之夜曲》</i> | 3 mins`;
 
-const MAY_BLOCK_C_EN = `FPA | Genesis | 3 mins
-AINO X Yunyoung JANG | Deep-Rooted | 12 mins
-barbe_generative_diary | Short Film Showcase – Drawing Silence | 5 mins
-Root LEE | Short Film Showcase – Shared Immersion: A Street's Archive | 5 mins
-Jimmy YU | Short Film Showcase – Biche 1 | 5 mins
-Damonxart | Short Film Showcase – Where Light Arrives | 5 mins
-Lynn TOMLINSON | Mountain Nocturne | 3 mins`;
+const MAY_BLOCK_C_EN = `FPA | <i>Genesis</i> | 3 mins
+AINO X Yunyoung JANG | <i>Deep-Rooted</i> | 12 mins
+barbe_generative_diary | <i>Short Film Showcase – Drawing Silence</i> | 5 mins
+Root LEE | <i>Short Film Showcase – Shared Immersion: A Street's Archive</i> | 5 mins
+Jimmy YU | <i>Short Film Showcase – Biche 1</i> | 5 mins
+Damonxart | <i>Short Film Showcase – Where Light Arrives</i> | 5 mins
+Lynn TOMLINSON | <i>Mountain Nocturne</i> | 3 mins`;
 
-const MAY_KOHUI_ZH = `Kohui | 《眾聲場：環形運動》(現場演出) | 30 mins`;
-const MAY_KOHUI_EN = `Kohui | Panphony: Circular Movement (Live Performance) | 30 mins`;
+const MAY_KOHUI_ZH = `Kohui | <i>《眾聲場：環形運動》</i>(現場演出) | 30 mins`;
+const MAY_KOHUI_EN = `Kohui | <i>Panphony: Circular Movement</i> (Live Performance) | 30 mins`;
 
-const MAY_PARTY_ZH = `《未來視覺派對#3》(現場售票演出) | 60 mins`;
-const MAY_PARTY_EN = `Future Vision Party #3 (Paid Live Performance) | 60 mins`;
+const MAY_PARTY_ZH = `<i>《未來視覺派對#3》</i>(現場售票演出) | 60 mins`;
+const MAY_PARTY_EN = `<i>Future Vision Party #3</i> (Paid Live Performance) | 60 mins`;
 
-const MAY_POND_ZH = `移動故事屋 | 《池塘國選舉》(現場演出) | 45 mins`;
-const MAY_POND_EN = `Telling Tent | The Pond Nation Election (Live Performance) | 45 mins`;
+const MAY_POND_ZH = `移動故事屋 | <i>《池塘國選舉》</i>(現場演出) | 45 mins`;
+const MAY_POND_EN = `Telling Tent | <i>The Pond Nation Election</i> (Live Performance) | 45 mins`;
 
 /** 5/17 場次：凱蒂．卡托納《藏識》 */
-const MAY_517_A_ZH = `浮點設計 | 《萬象之初》 | 3 mins
-凱蒂．卡托納 ｜ 《藏識》 | 12 mins
-初未來 X 超維度 X 江戶未來世 X Kivi X 賴皮 X 林強 | 《新摩登時代》 | 20 mins`;
+const MAY_517_A_ZH = `浮點設計 | <i>《萬象之初》</i> | 3 mins
+凱蒂．卡托納 ｜ <i>《藏識》</i> | 12 mins
+初未來 X 超維度 X 江戶未來世 X Kivi X 賴皮 X 林強 | <i>《新摩登時代》</i> | 20 mins`;
 
 const MAY_517_A_EN = APR_BLOCK_A_EN;
 
-const MAY_WEI_EXH_ZH = `魏廷宇 | 《誤差追獵》(展覽)`;
-const MAY_WEI_EXH_EN = `Tim WEI | Stalking for Errors (Exhibition)`;
+const MAY_WEI_EXH_ZH = `魏廷宇 | <i>《誤差追獵》</i>(展覽)`;
+const MAY_WEI_EXH_EN = `Tim WEI | <i>Stalking for Errors</i> (Exhibition)`;
 
-const MAY_YAO_EXH_ZH = `姚瑞中 X 郭一 X Meuko! Meuko! | 《虛迷山》(展覽)`;
-const MAY_YAO_EXH_EN = `YAO Jui-Chung x YI KUO x Meuko Meuko | Mount Ecstasy (Exhibition)`;
+const MAY_YAO_EXH_ZH = `姚瑞中 X 郭一 X Meuko! Meuko! | <i>《虛迷山》</i>(展覽)`;
+const MAY_YAO_EXH_EN = `YAO Jui-Chung x YI KUO x Meuko Meuko | <i>Mount Ecstasy</i> (Exhibition)`;
 
-const MAY_YAO_LIVE_ZH = `姚瑞中 X 郭一 X Meuko! Meuko! | 《虛迷山》(現場售票演出) | 60 mins`;
-const MAY_YAO_LIVE_EN = `YAO Jui-Chung x YI KUO x Meuko Meuko | Mount Ecstasy (Paid Live Performance) | 60 mins`;
+const MAY_YAO_LIVE_ZH = `姚瑞中 X 郭一 X Meuko! Meuko! | <i>《虛迷山》</i>(現場售票演出) | 60 mins`;
+const MAY_YAO_LIVE_EN = `YAO Jui-Chung x YI KUO x Meuko Meuko | <i>Mount Ecstasy</i> (Paid Live Performance) | 60 mins`;
 
 /** 六月：沉浸式影音工作坊（6/6，英文依主視覺全稱） */
-const JUN_WORKSHOP_TNUA_ZH = `《沉浸式影音工作坊—校際成果呈現》北藝大新媒系 | 55 mins`;
-const JUN_WORKSHOP_TNUA_EN = `Immersive Audiovisual Workshop - The Joint Presentation
+const JUN_WORKSHOP_TNUA_ZH = `<i>《沉浸式影音工作坊—校際成果呈現》</i>北藝大新媒系 | 55 mins`;
+const JUN_WORKSHOP_TNUA_EN = `<i>Immersive Audiovisual Workshop - The Joint Presentation</i>
 The Department of New Media Art of Taipei National University of the Arts
 ｜55 mins`;
 
-const JUN_WORKSHOP_NTUST_ZH = `《沉浸式影音工作坊—校際成果呈現》北科大互動系 | 60 mins`;
-const JUN_WORKSHOP_NTUST_EN = `Immersive Audiovisual Workshop - The Joint Presentation
+const JUN_WORKSHOP_NTUST_ZH = `<i>《沉浸式影音工作坊—校際成果呈現》</i>北科大互動系 | 60 mins`;
+const JUN_WORKSHOP_NTUST_EN = `<i>Immersive Audiovisual Workshop - The Joint Presentation</i>
 The Department of Interaction Design of National Taipei University of Technology
 ｜60 mins`;
 
-const JUN_WORKSHOP_NTHU_ZH = `《沉浸式影音工作坊—校際成果呈現》清大藝術學院科藝組 | 40 mins`;
-const JUN_WORKSHOP_NTHU_EN = `Immersive Audiovisual Workshop - The Joint Presentation
+const JUN_WORKSHOP_NTHU_ZH = `<i>《沉浸式影音工作坊—校際成果呈現》</i>清大藝術學院科藝組 | 40 mins`;
+const JUN_WORKSHOP_NTHU_EN = `<i>Immersive Audiovisual Workshop - The Joint Presentation</i>
 NTHU College of Arts, Arts & Technology
 ｜40 mins`;
 
 /** 6/7 14:00（DIMENSION Plus；Giong／節目／時長分行） */
 const JUN_607_A_ZH = MAY_517_A_ZH;
 
-const JUN_607_A_EN = `FPA | Genesis | 3 mins
-Kati KATONA | Substratum | 12 mins
+const JUN_607_A_EN = `FPA | <i>Genesis</i> | 3 mins
+Kati KATONA | <i>Substratum</i> | 12 mins
 Hello World x Dimension Plus x Hello Edo! x Kivi x Mr. Skin x LIM
-Giong | NEW MODERN TIMES | 20 mins`;
+Giong | <i>NEW MODERN TIMES</i> | 20 mins`;
 
 /** 6/7 15:00／18:00 — 與五月 C 塊主視覺一致 */
 const JUN_607_LONG_ZH = MAY_BLOCK_C_ZH;
@@ -466,9 +466,7 @@ export default {
   overflow-y: visible;
 }
 
-.calendar2--en {
-  font-style: italic;
-}
+
 
 .months-strip-hint {
   display: flex;
@@ -478,7 +476,7 @@ export default {
   margin: 0 0 12px 0;
   padding: 6px 8px;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: normal;
   line-height: 1.35;
   color: #222;
   text-align: center;
@@ -487,6 +485,9 @@ export default {
 
 .months-strip-hint__text {
   flex: 0 1 auto;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  font-weight: bold;
 }
 
 .months-strip-hint__btn {
@@ -498,7 +499,7 @@ export default {
   padding: 4px 10px;
   font: inherit;
   font-size: 20px;
-  font-weight: 800;
+  font-weight: normal;
   line-height: 1;
   color: #444;
   background: transparent;
@@ -557,7 +558,7 @@ export default {
 }
 
 .month-title {
-  font-weight: 800;
+  font-weight: normal;
   font-size: 24px;
   margin: 0 0 12px 0;
 }
@@ -571,7 +572,7 @@ export default {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 8px 10px;
+  gap: 8px 6px;
   margin: 0 0 8px 0;
   padding: 8px 0 10px;
   border-bottom: 2px solid #0060b9;
@@ -585,9 +586,9 @@ export default {
 }
 
 .day-subtitle__weekday {
-  font-size: 16px;
-  font-weight: 700;
-  color: #555;
+  font-size: 18px;
+  font-weight: 800;
+  color: #000;
 }
 
 .event-list { list-style: none; padding: 0; margin: 0; }
@@ -624,8 +625,8 @@ export default {
 }
 .title-zh {
   font-size: 16px;
-  font-weight: 700;
-  line-height: 1.45;
+  font-weight: normal;
+  line-height: 1.8;
   /* pre-wrap：資料裡的換行仍保留；單行太長則在欄寬內自動折行 */
   white-space: pre-wrap;
   word-break: break-word;
@@ -633,12 +634,17 @@ export default {
 }
 .title-en {
   font-size: 14px;
-  font-weight: 600;
+  font-weight: normal;
   color: #333;
-  line-height: 1.45;
+  line-height: 1.8;
   white-space: pre-wrap;
   word-break: break-word;
   overflow-wrap: anywhere;
+}
+
+.titles :deep(i) {
+  font-style: italic;
+  font-weight: bold;
 }
 
 .meta {
@@ -658,7 +664,7 @@ export default {
     margin-bottom: 6px;
   }
   .day-subtitle__date { font-size: 16px; font-weight: 800; }
-  .day-subtitle__weekday { font-size: 14px; font-weight: 700; }
+  .day-subtitle__weekday { font-size: 16px; font-weight: 800; }
   .day-block + .day-block { margin-top: 16px; }
 
   .event-item { flex-direction: column; align-items: stretch; gap: 8px; }
@@ -669,8 +675,8 @@ export default {
     gap: 8px;
   }
   .titles { font-size: inherit; }
-  .title-zh { font-size: 15px; font-weight: 700; }
-  .title-en { font-size: 13px; font-weight: 600; }
+  .title-zh { font-size: 15px; font-weight: normal; }
+  .title-en { font-size: 13px; font-weight: normal; }
   .meta { font-size: 14px; font-weight: 600; }
 }
 </style>

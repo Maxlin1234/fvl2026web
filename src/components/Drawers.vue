@@ -154,14 +154,14 @@
             <h2 class="admission-section-title">{{ isEnglish ? '【Paid Programs】' : '【售票節目】' }}</h2>
             <h2 v-if="!isEnglish">售票節目共2檔：</h2>
             <h2 v-if="!isEnglish">5/13(三) 19:30｜<b><i>《未來視覺派對#3》</i></b></h2>
-            <h2 v-if="!isEnglish">5/30(六) 19:00–20:00｜<b><i>姚瑞中 X 郭一 X Meuko! Meuko《虛迷山》派對場</i></b></h2>
+            <h2 v-if="!isEnglish">5/30(六) 19:00–20:00｜姚瑞中 X 郭一 X Meuko! Meuko<b><i>《虛迷山》</i></b>派對場</h2>
             <h2 v-if="!isEnglish">⭓ 一人一票憑票入場。</h2>
             <h2 v-if="!isEnglish">⭓ 開演前10分鐘開放入場，並不開放遲到觀眾入場。</h2>
             <h2 v-if="!isEnglish">⭓ 4/10(五) 中午12:00早鳥8折啟售；4/20(一) 中午12:00 正式啟售。</h2>
 
             <h2 v-if="isEnglish">Ticketed programs include:</h2>
-            <h2 v-if="isEnglish">May 13 (Wed.) 7:30 p.m. “Future Vision Party #3”</h2>
-            <h2 v-if="isEnglish">May 30 (Sat.) 7:00–8:00 p.m. “YAO Jui-Chung × KUO Yi × Meuko Meuko, Mount Ecstasy“</h2>
+            <h2 v-if="isEnglish">May 13 (Wed.) 7:30 p.m. <b><i>“Future Vision Party #3”</i></b></h2>
+            <h2 v-if="isEnglish">May 30 (Sat.) 7:00–8:00 p.m. YAO Jui-Chung × KUO Yi × Meuko Meuko<b><i>“Mount Ecstasy”</i></b></h2>
             <h2 v-if="isEnglish">⭓ One person, one ticket admission.</h2>
             <h2 v-if="isEnglish">⭓ Please arrive at least 10 minutes before the performance or screening. Latecomers will not be admitted.</h2>
             <h2 v-if="isEnglish">⭓ Early Bird 20% Off starts at 12:00 p.m. on April 10 (Fri.)</h2>
@@ -175,18 +175,19 @@
               <h2>⭓ 若想要再次體驗作品，需於前一梯次結束後先離場並重新排隊依序等候入場。</h2>
               <h2>⭓ 開放入場時若排隊人員不在現場即視同放棄，需重新排隊依序等候入場。</h2>
               <h2></h2>
-              <h2>5/28(四)-5/31(日)｜<b><i>姚瑞中 X 郭一 X Meuko! Meuko《虛迷山》</i></b></h2>
+              <h2>5/28(四)-5/31(日)｜姚瑞中 X 郭一 X Meuko! Meuko<b><i>《虛迷山》</i></b></h2>
               <h2>⭓ 採現場排隊依序入場，場內人數額滿為止。</h2>
               <h2>⭓ 場內人數上限為100人，若額滿請等候場內觀眾離場後，依現場人數管制進場。</h2>
               <h2>⭓ 開放入場時若排隊人員不在現場即視同放棄，需重新排隊依序等候入場。</h2>
             </div>
             <div v-else class="exhibition-info">
-              <h2>May 21-24 “Tim WEI, Stalking for Errors“</h2>
+              <h2>May 21-24 Tim WEI, <b><i>“Stalking for Errors“</i></b></h2>
               <h2>⭓ Each session lasts 12 minutes, with a maximum of 30 participants per session.</h2>
               <h2>⭓ Entry will be granted in order of on-site queue until capacity is reached.</h2>
               <h2>⭓ To experience the work again, you must leave after the current session ends and rejoin the queue for the next session.</h2>
               <h2>⭓ If individuals in the queue are not present when entry opens, they will be considered to have forfeited their places and must rejoin the line in order to wait for entry.</h2>
-              <h2>May 28-31 “YAO Jui-Chung × KUO Yi × Meuko Meuko, Mount Ecstasy“.</h2>
+              <h2></h2>
+              <h2>May 28-31 YAO Jui-Chung × KUO Yi × Meuko Meuko, <b><i>“Mount Ecstasy“</i></b></h2>
               <h2>⭓ Entry will be granted in order of on-site queue until capacity is reached.</h2>
               <h2>⭓ The maximum capacity is 100 people. If the venue is full, please wait for audiences exiting before entering according to the capacity control.</h2>
               <h2>⭓ If individuals in the queue are not present when entry opens, they will be considered to have forfeited their places and must rejoin the line in order to wait for entry.</h2>

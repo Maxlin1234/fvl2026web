@@ -181,12 +181,11 @@ export default {
       const parts = t.split(/,\s+/).map((p) => p.trim()).filter(Boolean);
       return parts
         .map((p) => {
-          const phMatch = /^§PH(\d+)§$/.exec(p);
-          if (phMatch) {
-            const text = placeholders[Number(phMatch[1])];
-            return `<span class="team-name-segment">${this.escapeHtmlForTeam(text)}</span>`;
-          }
-          return `<span class="team-name-segment">${this.escapeHtmlForTeam(p)}</span>`;
+          let escapedText = this.escapeHtmlForTeam(p);
+          escapedText = escapedText.replace(/§PH(\d+)§/g, (match, idx) => {
+            return this.escapeHtmlForTeam(placeholders[Number(idx)]);
+          });
+          return `<span class="team-name-segment">${escapedText}</span>`;
         })
         .join('<span class="team-name-comma">, </span>');
     },
