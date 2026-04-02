@@ -143,7 +143,7 @@ export default {
 
 .banner {
   width: 100%;
-  height:100vh;
+  height:70vh;
   position: relative;
   overflow: hidden;
   display: flex;

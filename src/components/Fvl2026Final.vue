@@ -228,12 +228,17 @@ export default {
     },
     // 語言管理
     initLanguage() {
-      // 依需求：初次載入預設為中文
-      this.isEnglish = false;
       try {
-        localStorage.setItem(LOCAL_STORAGE_KEYS.LANG, 'zh');
+        const savedLang = localStorage.getItem(LOCAL_STORAGE_KEYS.LANG);
+        if (savedLang === 'en') {
+          this.isEnglish = true;
+        } else {
+          this.isEnglish = false;
+          localStorage.setItem(LOCAL_STORAGE_KEYS.LANG, 'zh');
+        }
       } catch (error) {
-        console.warn("Failed to persist default language:", error);
+        console.warn("Failed to read/persist default language:", error);
+        this.isEnglish = false;
       }
     },
 
