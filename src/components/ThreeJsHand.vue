@@ -178,7 +178,8 @@ let heroIntersectionObserver = null;
 let visibilityChangeHandler = null;
 
 function shouldRenderWebgl() {
-  return heroInView && documentVisible;
+  const isPaused = typeof window !== 'undefined' ? window.isThreeJsPaused : false;
+  return heroInView && documentVisible && !isPaused;
 }
 
 /** 球體 Shader 材質（避免每幀 scene.traverse） */

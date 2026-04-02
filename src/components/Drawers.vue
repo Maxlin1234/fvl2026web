@@ -64,15 +64,14 @@
  
     <div class="drawer-content" style="background-color:black;color:white;">
       <video
-  ref="lectureVideo"
+  v-if="showLectureDrawer"
   autoplay
   muted
   loop
   playsinline
   webkit-playsinline
   x5-playsinline
-  :preload="showLectureDrawer ? 'auto' : 'none'"
-  :class="{ 'lecture-video--idle': !showLectureDrawer }"
+  preload="auto"
   style="
     position: absolute;
     top: 0;
@@ -82,8 +81,6 @@
     z-index: 1;
     object-fit: cover;
     opacity: 0.5;
-    /* 暫時移除 clip-path 測試 */
-    /* clip-path: ellipse(70% 80% at 100% 30%); */
   "
 >
   <source src="../assets/dome.mp4" type="video/mp4">
@@ -128,8 +125,7 @@
           </div>
           <div class="lecture-list" v-if="showContentC">
             <!-- <h2>{{ isEnglish ? 'Admission Information' : '入場方式' }}</h2> -->
-            <h2 class="admission-section-title">{{ isEnglish ? '【Screening & Live Performance】' : '【播映及現場演出】' }}</h2>
-            <h2>
+             <h2>
               <span v-if="isEnglish">
                 ⭓ For detailed program registration information, please visit the
                 <a href="https://www.facebook.com/CLAB.FUTUREVISIONLAB/" style="color: pink;text-decoration:none" target="_blank" rel="noopener">"C-LAB Future Vision Lab" Facebook page</a>
@@ -150,17 +146,22 @@
                 ⭓ 詳細節目資訊請至 <a href="https://fvl.clab.org.tw/festival/2026" style="color: pink;text-decoration:none" target="_blank" rel="noopener">FUTURE VISION LAB 官網</a> 查詢。
               </span>
             </h2>
+            <h2 class="admission-section-title">{{ isEnglish ? '【Screening & Live Performance】' : '【播映及現場演出】' }}</h2>
             <h2>{{ isEnglish ? '⭓ Ticket required for entry. One person, one ticket admission.' : '⭓ 每場次皆需事先索票，一人一票憑票入場。' }}</h2>
             <h2>{{ isEnglish ? '⭓ Please arrive at least 10 minutes before the performance or screening. Latecomers will not be admitted.' : '⭓ 每場播映/現場演出於開演前10分鐘開放入場，並不開放遲到觀眾入場。' }}</h2>
             <h2>{{ isEnglish ? '⭓ From April 7 (Tue.) onward, tickets for alternating weekend screening sessions will open every Monday. Stay tuned and secure your tickets in time.' : '⭓ 4/7 (二)起，每週一將開放〔隔週末展映場次〕索票，請密切追蹤把握。' }}</h2>
 
             <h2 class="admission-section-title">{{ isEnglish ? '【Paid Programs】' : '【售票節目】' }}</h2>
-            <h2 v-if="!isEnglish">售票節目共2檔：5/13(三) 19:30｜《未來視覺派對#3》、5/30(六) 19:00–20:00｜姚瑞中 X 郭一 X Meuko! Meuko《虛迷山》派對場</h2>
+            <h2 v-if="!isEnglish">售票節目共2檔：</h2>
+            <h2 v-if="!isEnglish">5/13(三) 19:30｜<b><i>《未來視覺派對#3》</i></b></h2>
+            <h2 v-if="!isEnglish">5/30(六) 19:00–20:00｜<b><i>姚瑞中 X 郭一 X Meuko! Meuko《虛迷山》派對場</i></b></h2>
             <h2 v-if="!isEnglish">⭓ 一人一票憑票入場。</h2>
             <h2 v-if="!isEnglish">⭓ 開演前10分鐘開放入場，並不開放遲到觀眾入場。</h2>
             <h2 v-if="!isEnglish">⭓ 4/10(五) 中午12:00早鳥8折啟售；4/20(一) 中午12:00 正式啟售。</h2>
 
-            <h2 v-if="isEnglish">Ticketed programs include: May 13 (Wed.) 7:30 p.m. “Future Vision Party #3”, May 30 (Sat.) 7:00–8:00 p.m. “YAO Jui-Chung × KUO Yi × Meuko Meuko, Mount Ecstasy“</h2>
+            <h2 v-if="isEnglish">Ticketed programs include:</h2>
+            <h2 v-if="isEnglish">May 13 (Wed.) 7:30 p.m. “Future Vision Party #3”</h2>
+            <h2 v-if="isEnglish">May 30 (Sat.) 7:00–8:00 p.m. “YAO Jui-Chung × KUO Yi × Meuko Meuko, Mount Ecstasy“</h2>
             <h2 v-if="isEnglish">⭓ One person, one ticket admission.</h2>
             <h2 v-if="isEnglish">⭓ Please arrive at least 10 minutes before the performance or screening. Latecomers will not be admitted.</h2>
             <h2 v-if="isEnglish">⭓ Early Bird 20% Off starts at 12:00 p.m. on April 10 (Fri.)</h2>
@@ -168,12 +169,13 @@
 
             <h2 class="admission-section-title">{{ isEnglish ? '【Exhibition】' : '【展覽】' }}</h2>
             <div v-if="!isEnglish" class="exhibition-info">
-              <h2>5/21-24｜魏廷宇《誤差追獵》</h2>
+              <h2>5/21(四)-5/24(日)｜<b><i>魏廷宇《誤差追獵》</i></b></h2>
               <h2>⭓ 每12分鐘為一梯次，每梯次開放30人進場體驗。</h2>
               <h2>⭓ 進場方式採現場排隊依序入場，直到該梯次人數額滿為止。</h2>
               <h2>⭓ 若想要再次體驗作品，需於前一梯次結束後先離場並重新排隊依序等候入場。</h2>
               <h2>⭓ 開放入場時若排隊人員不在現場即視同放棄，需重新排隊依序等候入場。</h2>
-              <h2>5/28-31｜姚瑞中 X 郭一 X Meuko! Meuko《虛迷山》</h2>
+              <h2></h2>
+              <h2>5/28(四)-5/31(日)｜<b><i>姚瑞中 X 郭一 X Meuko! Meuko《虛迷山》</i></b></h2>
               <h2>⭓ 採現場排隊依序入場，場內人數額滿為止。</h2>
               <h2>⭓ 場內人數上限為100人，若額滿請等候場內觀眾離場後，依現場人數管制進場。</h2>
               <h2>⭓ 開放入場時若排隊人員不在現場即視同放棄，需重新排隊依序等候入場。</h2>
@@ -268,24 +270,14 @@ export default {
     showLectureDrawer(open) {
       if (open) {
         this.lectureDrawerFullyClosed = false;
-        const v = this.$refs.lectureVideo;
-        if (!v) return;
-        this.$nextTick(() => {
-          const p = v.play();
-          if (p && typeof p.catch === 'function') p.catch(() => {});
-        });
         return;
       }
-      const v = this.$refs.lectureVideo;
-      if (v) {
-        try {
-          v.pause();
-        } catch (e) {
-          console.warn('講座背景影片暫停失敗', e);
+      // 等待 320ms 動畫結束再完全隱藏
+      setTimeout(() => {
+        if (!this.showLectureDrawer) {
+          this.lectureDrawerFullyClosed = true;
         }
-      }
-      // 立即隱藏並釋放點擊區（關閉不加 delay；關閉動畫已由 :not(.open) transition:none 關掉）
-      this.lectureDrawerFullyClosed = true;
+      }, 350);
     },
   },
   data() {
@@ -306,77 +298,9 @@ export default {
     this.loadScheduleCarouselImages().then(() => {
       this.startCarousel();
     });
-    // 行動裝置自動播放處理
-    const video = this.$refs.lectureVideo;
-    if (video) {
-      try {
-        video.muted = true;
-        video.playsInline = true;
-        video.autoplay = true;
-        video.setAttribute('muted', '');
-        video.setAttribute('playsinline', '');
-        video.setAttribute('webkit-playsinline', '');
-        video.setAttribute('x5-playsinline', '');
-        video.setAttribute('preload', 'auto');
-        video.setAttribute('autoplay', '');
-        // 確保不顯示控制列，避免干擾自動播放
-        video.removeAttribute('controls');
-        video.controls = false;
-      } catch (err) {
-        console.warn('設定講座背景影片屬性時發生錯誤', err);
-      }
-
-      const tryPlay = () => {
-        try { video.load(); } catch (e) { console.warn('講座影片重新載入失敗', e); }
-        const p = video.play();
-        if (p && typeof p.then === 'function') {
-          p.catch((err) => {
-            console.log('講座背景影片自動播放被阻止:', err);
-          });
-        }
-      };
-
-      if (video.readyState >= 2) {
-        tryPlay();
-      } else {
-        video.addEventListener('canplay', tryPlay, { once: true });
-        setTimeout(tryPlay, 500);
-      }
-
-      // 使用者首次互動後再補嘗一次（若初次被阻擋）
-      const resumeOnGesture = () => {
-        if (video && video.paused) {
-          tryPlay();
-        }
-        window.removeEventListener('touchstart', resumeOnGesture, true);
-        window.removeEventListener('pointerdown', resumeOnGesture, true);
-        window.removeEventListener('scroll', resumeOnGesture, true);
-        window.removeEventListener('visibilitychange', onVis, true);
-      };
-      const onVis = () => { if (!document.hidden) resumeOnGesture(); };
-      window.addEventListener('touchstart', resumeOnGesture, true);
-      window.addEventListener('pointerdown', resumeOnGesture, true);
-      window.addEventListener('scroll', resumeOnGesture, true);
-      window.addEventListener('visibilitychange', onVis, true);
-
-      // 記錄清理函式
-      this._cleanupLectureVideo = () => {
-        try {
-          window.removeEventListener('touchstart', resumeOnGesture, true);
-          window.removeEventListener('pointerdown', resumeOnGesture, true);
-          window.removeEventListener('scroll', resumeOnGesture, true);
-          window.removeEventListener('visibilitychange', onVis, true);
-          video.removeEventListener('canplay', tryPlay, { once: true });
-        } catch (err) { console.warn('清理講座影片事件失敗', err); }
-      };
-    }
   },
   beforeUnmount() {
     this.stopCarousel();
-    if (this._cleanupLectureVideo) {
-      this._cleanupLectureVideo();
-      this._cleanupLectureVideo = null;
-    }
   },
   methods: {
     closeLectureDrawer() {
@@ -394,14 +318,6 @@ export default {
           scroller.scrollTop = 0;
         } catch (e) {
           /* ignore */
-        }
-      }
-      const v = this.$refs.lectureVideo;
-      if (v) {
-        try {
-          v.pause();
-        } catch (e) {
-          console.warn('講座背景影片暫停失敗', e);
         }
       }
       this.$emit('close-drawer', 'lecture');
@@ -559,11 +475,6 @@ export default {
   pointer-events: auto;
 }
 
-/* 關閉不要漸變，直接收起（開啟仍保留 transition） */
-.lecture-drawer:not(.open) {
-  transition: none;
-}
-
 /* 整層隱藏，避免 fixed 全螢幕容器仍攔截觸控／捲動 */
 .lecture-drawer.lecture-drawer--fully-closed {
   visibility: hidden;
@@ -627,11 +538,10 @@ export default {
 }
 
 .cal-title {
-  width: 50%;
+  width: 54%;
   min-height: 0;
   height: auto;
-  padding: 30px;
-  padding-bottom: 24px;
+  padding: 30px 10px 24px 30px;
   box-sizing: border-box;
   z-index: 1;
 }
@@ -821,9 +731,14 @@ export default {
   margin: 0;
 }
 
-.admission-section-title {
+h2.admission-section-title {
   margin: 0;
+  margin-top: 2rem !important;
   color: #81c1df;
+}
+
+h2.admission-section-title:first-of-type {
+  margin-top: 0 !important;
 }
 
 .exhibition-info {
@@ -840,7 +755,7 @@ export default {
   position: fixed;
   right: 0;
   top: 0;
-  width: 50%;
+  width: 48%;
   height: 100vh;
   overflow: hidden;
   z-index: 0;

@@ -110,7 +110,7 @@ Damonxart | Short Film Showcase – Where Light Arrives | 5 mins
 Lynn TOMLINSON | Mountain Nocturne | 3 mins`;
 
 const APR_BLOCK_D_ZH = `浮點設計 | 《萬象之初》 | 3 mins
-桑德琳·德米耶 X 拉爾夫·基爾赫茲 | 《循鹿》 | 12 mins
+桑德琳．德米耶 X 拉爾夫．基爾赫茲 | 《循鹿》 | 12 mins
 吳秉聖 X 劉承杰 | 《時間層理》 | 22 mins`;
 
 const APR_BLOCK_D_EN = `FPA | Genesis | 3 mins
@@ -136,7 +136,7 @@ const MAY_MONOCOLOR_ZH = `MONOCOLOR | 《意識之維》(現場演出) | 35 mins
 const MAY_MONOCOLOR_EN = `MONOCOLOR | NOOSPHERE (Live Performance) | 35 mins`;
 
 const MAY_BLOCK_D_ZH = `浮點設計 | 《萬象之初》 | 3 mins
-桑德琳·德米耶 X 拉爾夫·基爾赫茲 | 《循鹿》 | 12 mins
+桑德琳．德米耶 X 拉爾夫．基爾赫茲 | 《循鹿》 | 12 mins
 吳秉聖 X 劉承杰 | 《時間層理》 | 22 mins`;
 
 const MAY_BLOCK_D_EN = `FPA | Genesis | 3 mins
@@ -557,8 +557,8 @@ export default {
 }
 
 .month-title {
-  font-weight: 700;
-  font-size: 20px;
+  font-weight: 800;
+  font-size: 24px;
   margin: 0 0 12px 0;
 }
 
@@ -578,15 +578,15 @@ export default {
 }
 
 .day-subtitle__date {
-  font-weight: 700;
-  font-size: 14px;
+  font-weight: 800;
+  font-size: 18px;
   line-height: 1.3;
   color: #000;
 }
 
 .day-subtitle__weekday {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
   color: #555;
 }
 
@@ -623,8 +623,8 @@ export default {
   overflow-x: visible;
 }
 .title-zh {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
   line-height: 1.45;
   /* pre-wrap：資料裡的換行仍保留；單行太長則在欄寬內自動折行 */
   white-space: pre-wrap;
@@ -632,7 +632,8 @@ export default {
   overflow-wrap: anywhere;
 }
 .title-en {
-  font-size: 12px;
+  font-size: 14px;
+  font-weight: 600;
   color: #333;
   line-height: 1.45;
   white-space: pre-wrap;
@@ -642,7 +643,8 @@ export default {
 
 .meta {
   color: #111;
-  font-size: 12px;
+  font-size: 15px;
+  font-weight: 600;
   white-space: nowrap;
   display: flex;
   align-items: flex-start;
@@ -655,8 +657,8 @@ export default {
     padding: 6px 0 8px;
     margin-bottom: 6px;
   }
-  .day-subtitle__date { font-size: 13px; }
-  .day-subtitle__weekday { font-size: 11px; }
+  .day-subtitle__date { font-size: 16px; font-weight: 800; }
+  .day-subtitle__weekday { font-size: 14px; font-weight: 700; }
   .day-block + .day-block { margin-top: 16px; }
 
   .event-item { flex-direction: column; align-items: stretch; gap: 8px; }
@@ -667,8 +669,8 @@ export default {
     gap: 8px;
   }
   .titles { font-size: inherit; }
-  .title-zh { font-size: 12px; }
-  .title-en { font-size: 11px; }
-  .meta { font-size: 11px; }
+  .title-zh { font-size: 15px; font-weight: 700; }
+  .title-en { font-size: 13px; font-weight: 600; }
+  .meta { font-size: 14px; font-weight: 600; }
 }
 </style>

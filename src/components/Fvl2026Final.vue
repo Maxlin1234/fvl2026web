@@ -134,13 +134,14 @@ export default {
   },
   watch: {
     showLectureDrawer(isOpen) {
-      if (isOpen) return;
-      this.$nextTick(() => {
-        requestAnimationFrame(() => {
-          ScrollTrigger.refresh();
-        });
-      });
+      if (typeof window !== 'undefined') window.isThreeJsPaused = isOpen;
     },
+    showDrawer(isOpen) {
+      if (typeof window !== 'undefined') window.isThreeJsPaused = isOpen;
+    },
+    showLiveDrawer(isOpen) {
+      if (typeof window !== 'undefined') window.isThreeJsPaused = isOpen;
+    }
   },
   async mounted() {
     try {

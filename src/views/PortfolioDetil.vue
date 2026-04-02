@@ -90,7 +90,7 @@ import axios from 'axios';
 export default {
   name: 'PortfolioDetil',
   setup() {
-    const WORKS_API_URL = 'https://unzip.clab.org.tw/api/v1/projects/21/works';
+    const WORKS_API_URL = 'https://unzip.clab.org.tw/api/v1/projects/21/works?level=detail&limit=500';
     const WORK_DETAIL_API = (workId) => `https://unzip.clab.org.tw/api/v1/works/${workId}`;
     const API_AUTH = 'Api-Key 1e801a8fbe21fe2bef15df853e62ec9dc5a1cd08';
     /** 需額外顯示 proposal_zh_tw / proposal 的作品 id（單筆 works API） */
@@ -341,7 +341,7 @@ export default {
       }
 
       const langBlock = isEnglish.value ? work.value?.work_en : work.value?.work_zh;
-      const source = pickFirstNonEmpty(langBlock || {}, ['note', 'artist']);
+      const source = pickFirstNonEmpty(langBlock || {}, ['artist']);
       return stripHtml(source);
     });
 
@@ -635,14 +635,9 @@ export default {
 
     onMounted(async () => {
       isEnglish.value = resolveInitialLang();
-      const ok = loadFromLocal();
-      const staleTeam =
-        ok &&
-        work.value &&
-        Array.isArray(work.value.contributors) &&
-        work.value.contributors.length > 0 &&
-        (!Array.isArray(work.value.collectives) || work.value.collectives.length === 0);
-      if (!ok || staleTeam) await fetchFromApi();
+      loadFromLocal();
+      // 確保每次都能拿到最新帶有 level=detail 的資料
+      await fetchFromApi();
       await fetchExtraProposal(id);
       window.addEventListener('storage', handleStorage);
     });
