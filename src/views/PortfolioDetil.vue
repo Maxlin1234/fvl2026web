@@ -120,12 +120,20 @@
                   :key="'custom-intro-' + i"
                   class="team-blurb"
                 >
-                  <h3 v-if="row.name" class="team-blurb-title">{{ row.name }}</h3>
+                  <h3 v-if="row.name && row.description" class="team-blurb-title">{{ row.name }}</h3>
                   <p v-if="row.description">{{ row.description }}</p>
                 </div>
               </template>
               <template v-else>
-                <p v-if="artistIntroText">{{ artistIntroText }}</p>
+                <!-- 多位 contributor：分別顯示名稱 + 對應介紹 -->
+                <div
+                  v-for="(row, i) in artistIntroRows"
+                  :key="'intro-row-' + i"
+                  class="team-blurb"
+                >
+                  <h3 v-if="row.name" class="team-blurb-title">{{ row.name }}</h3>
+                  <p v-if="row.description">{{ row.description }}</p>
+                </div>
                 <!-- 只有 collectives（無 contributors）時，也顯示成員 -->
                 <template v-if="!showTeamSection && collectivesMembersRows.length">
                   <div
@@ -153,7 +161,7 @@
                     :key="i"
                     class="team-blurb"
                   >
-                    <h3 v-if="row.name" class="team-blurb-title">{{ row.name }}</h3>
+                    <h3 v-if="row.name && row.description" class="team-blurb-title">{{ row.name }}</h3>
                     <p v-if="row.description">{{ row.description }}</p>
                     <!-- collective 的成員 -->
                     <template v-if="row.members && row.members.length">
@@ -258,6 +266,12 @@ export default {
         test: ({ zh, en }) =>
           String(zh).includes('校際成果呈現')
           || /joint\s*presentation/i.test(String(en)),
+      },
+      {
+        nameOrder: ['姚瑞中', '郭一', 'Meuko! Meuko'],
+        test: ({ zh, en }) =>
+          String(zh).includes('虛迷山')
+          || /mount\s*ecstasy/i.test(String(en)),
       },
       {
         nameOrder: ['初未來', '超維度', '江戶未來世', 'Kivi', '賴皮', '林強'],
@@ -411,26 +425,65 @@ export default {
       descriptionText.value = stripHtml(raw);
     };
 
+    /** 判斷 contributor 是否有介紹內容 */
+    const contributorHasIntro = (c) => {
+      const raw = isEnglish.value
+        ? (c?.introduction || '')
+        : (c?.introduction_zh_tw || c?.introductionZhTw || c?.introduction || '');
+      return stripHtml(raw).trim().length > 0;
+    };
+
+    /** 判斷 collective 是否有介紹內容 */
+    const collectiveHasDesc = (c) => {
+      const raw = isEnglish.value
+        ? (c?.description || '')
+        : (c?.description_zh_tw || c?.descriptionZhTw || c?.description || '');
+      return stripHtml(raw).trim().length > 0;
+    };
+
     const artistHeadingText = computed(() => {
       if (activeCustomDisplayRule.value && customDisplayOrdered.value.length > 0) {
+        // 客製順序：只包含有 intro/description 的名稱
         const names = customDisplayOrdered.value
+          .filter(({ kind, item }) =>
+            kind === 'contributor' ? contributorHasIntro(item) : collectiveHasDesc(item),
+          )
           .map(({ item }) => (isEnglish.value ? item?.name : (item?.name_zh_tw || item?.name)))
           .filter((v) => typeof v === 'string' && v.trim().length > 0);
         if (names.length) return names.join(' × ');
+        // 若全部無 intro，回退到顯示全部名稱（至少要有個標題）
+        const allNames = customDisplayOrdered.value
+          .map(({ item }) => (isEnglish.value ? item?.name : (item?.name_zh_tw || item?.name)))
+          .filter((v) => typeof v === 'string' && v.trim().length > 0);
+        if (allNames.length) return allNames.join(' × ');
       }
 
       const contributorList = Array.isArray(work.value?.contributors) ? work.value.contributors : [];
       if (contributorList.length > 0) {
-        const names = contributorList
+        // 只把有 intro 的 contributor 放進標題
+        const withIntro = contributorList.filter(contributorHasIntro);
+        const source = withIntro.length > 0 ? withIntro : [];
+        const names = source
+          .map((c) => (isEnglish.value ? c?.name : (c?.name_zh_tw || c?.name)))
+          .filter((v) => typeof v === 'string' && v.trim().length > 0);
+        // 若 contributors 都無 intro，嘗試從 collectives 中有 description 的補充
+        if (names.length) return names.join(' × ');
+      }
+
+      // collectives：只包含有 description 的
+      const collectiveList = Array.isArray(work.value?.collectives) ? work.value.collectives : [];
+      if (collectiveList.length > 0) {
+        const withDesc = collectiveList.filter(collectiveHasDesc);
+        const names = withDesc
           .map((c) => (isEnglish.value ? c?.name : (c?.name_zh_tw || c?.name)))
           .filter((v) => typeof v === 'string' && v.trim().length > 0);
         if (names.length) return names.join(' × ');
       }
 
-      // 若無 contributors，改用 collectives 名稱
-      const collectiveList = Array.isArray(work.value?.collectives) ? work.value.collectives : [];
-      if (collectiveList.length > 0) {
-        const names = collectiveList
+      // 最終安全網：contributors 存在但全無 intro，且 collectives 也無 description
+      // 此時至少顯示所有 contributors 的名稱，避免標題退化為「藝術家」
+      if (contributorList.length > 0) {
+        const names = contributorList
           .map((c) => (isEnglish.value ? c?.name : (c?.name_zh_tw || c?.name)))
           .filter((v) => typeof v === 'string' && v.trim().length > 0);
         if (names.length) return names.join(' × ');
@@ -440,48 +493,60 @@ export default {
       return (isEnglish.value ? langBlock?.interactive_description : langBlock?.interactive_description) || (isEnglish.value ? 'About Artist' : '藝術家');
     });
 
-    const artistIntroText = computed(() => {
+    /**
+     * 藝術家介紹列（結構化）
+     * - 多位 contributor 各有介紹 → [{name, description}]，含名稱標簽
+     * - 單位 contributor 或單一簡介 → [{name: '', description}]，不顯示名稱
+     * - 只有 collectives （無 contributors）→ [{name: '', description}] 用 collective description
+     */
+    const artistIntroRows = computed(() => {
       if (activeCustomDisplayRule.value && customOrderIntroRows.value.length > 0) {
-        return '';
+        return [];
       }
 
-      const firstContributor = Array.isArray(work.value?.contributors) ? work.value.contributors[0] : null;
       const contributorList = Array.isArray(work.value?.contributors) ? work.value.contributors : [];
       if (contributorList.length > 0) {
-        const intros = contributorList
+        const rows = contributorList
           .map((c) => {
-            if (isEnglish.value) return c?.introduction || '';
-            return c?.introduction_zh_tw || c?.introductionZhTw || c?.introduction || '';
+            const raw = isEnglish.value
+              ? (c?.introduction || '')
+              : (c?.introduction_zh_tw || c?.introductionZhTw || c?.introduction || '');
+            const description = stripHtml(raw).trim();
+            return { c, description };
           })
-          .map((s) => stripHtml(s))
-          .filter((s) => typeof s === 'string' && s.trim().length > 0);
-        if (intros.length) return intros.join('\n\n');
+          .filter(({ description }) => description.length > 0);
+
+        if (rows.length > 0) {
+          // 多位時附上名稱；單位不顯示名稱
+          const showNames = rows.length > 1;
+          return rows.map(({ c, description }) => ({
+            name: showNames
+              ? (isEnglish.value ? (c?.name || '') : (c?.name_zh_tw || c?.name || '')).trim()
+              : '',
+            description,
+          }));
+        }
       }
 
-      // 若無 contributors，改用 collectives.description_zh_tw / description
-      const collectiveList = Array.isArray(work.value?.collectives) ? work.value.collectives : [];
-      if (collectiveList.length > 0) {
-        const intros = collectiveList
+      // 只有 collectives（無 contributors）時，用 collective description
+      if (contributorList.length === 0) {
+        const collectiveList = Array.isArray(work.value?.collectives) ? work.value.collectives : [];
+        const rows = collectiveList
           .map((c) => {
-            if (isEnglish.value) return c?.description || '';
-            return c?.description_zh_tw || c?.descriptionZhTw || c?.description || '';
+            const raw = isEnglish.value
+              ? (c?.description || '')
+              : (c?.description_zh_tw || c?.descriptionZhTw || c?.description || '');
+            return stripHtml(raw).trim();
           })
-          .map((s) => stripHtml(s))
-          .filter((s) => typeof s === 'string' && s.trim().length > 0);
-        if (intros.length) return intros.join('\n\n');
-      }
-
-      if (firstContributor) {
-        const intro = isEnglish.value
-          ? (firstContributor.introduction || firstContributor.introduction_en || '')
-          : (firstContributor.introduction_zh_tw || firstContributor.introductionZhTw || firstContributor.introduction || '');
-        const introText = stripHtml(intro);
-        if (introText) return introText;
+          .filter((s) => s.length > 0);
+        if (rows.length > 0) {
+          return rows.map((description) => ({ name: '', description }));
+        }
       }
 
       const langBlock = isEnglish.value ? work.value?.work_en : work.value?.work_zh;
-      const source = pickFirstNonEmpty(langBlock || {}, ['artist']);
-      return stripHtml(source);
+      const source = stripHtml(pickFirstNonEmpty(langBlock || {}, ['artist'])).trim();
+      return source ? [{ name: '', description: source }] : [];
     });
 
     const normalizeMediaUrl = (p) => {
@@ -915,7 +980,7 @@ export default {
       descriptionText,
       errorText,
       artistHeadingText,
-      artistIntroText,
+      artistIntroRows,
       artistAvatarUrls,
       hideArtistPhoto,
       isLogoArtistWork,
