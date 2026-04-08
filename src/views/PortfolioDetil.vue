@@ -295,6 +295,12 @@ export default {
           || /following\s*the\s*deer/i.test(String(en))
           || /tying\s*the\s*deer/i.test(String(en)),
       },
+      {
+        nameOrder: ['李根耀', '金泰淵'],
+        test: ({ zh, en }) =>
+          String(zh).includes('街道之書')
+          || /archive/i.test(String(en)),
+      },
     ];
 
     const entityMatchesCustomOrderKey = (entity, orderKey) => {
