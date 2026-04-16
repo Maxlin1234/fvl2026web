@@ -105,8 +105,8 @@
               '⭓ Due to limited space inside the venue, picnic mats and chairs are not allowed. If you have other needs, please contact the staff for assistance.' : 
               '⭓ 因場內空間有限，禁止鋪設野餐墊、椅子；若有其他需求，請洽詢現場工作人員協助。' }}</h2>
             <h2>{{ isEnglish ? 
-              '⭓ Photography and reels recording are allowed during the screening, but the use of flash is prohibited.' : 
-              '⭓ 播映過程可拍照、即時動態拍攝，但禁止使用閃光燈。' }}</h2>
+              '⭓ Photography and reels recording are allowed during the screening, but the use of flash and tripods is prohibited.' : 
+              '⭓ 播映過程可拍照、即時動態拍攝，但禁止使用閃光燈及腳架。' }}</h2>
             <h2>{{ isEnglish ? 
               '⭓ Programs may be subject to change.' : 
               '⭓ 主辦單位保有調整與變更活動之權利。' }}</h2>
