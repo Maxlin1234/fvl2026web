@@ -152,15 +152,15 @@
             <h2>{{ isEnglish ? '⭓ From April 7 (Tue.) onward, tickets for alternating weekend screening sessions will open every Monday. Stay tuned and secure your tickets in time.' : '⭓ 4/7 (二)起，每週一將開放〔隔週末展映場次〕索票，請密切追蹤把握。' }}</h2>
 
             <h2 class="admission-section-title">{{ isEnglish ? '【Paid Programs】' : '【售票節目】' }}</h2>
-            <h2 v-if="!isEnglish">售票節目共2檔：</h2>
-            <h2 v-if="!isEnglish">5/13(三) 19:30｜<b><i>《未來視覺派對#3》</i></b></h2>
+            <!-- <h2 v-if="!isEnglish">售票節目共2檔：</h2> -->
+            <!-- <h2 v-if="!isEnglish">5/13(三) 19:30｜<b><i>《未來視覺派對#3》</i></b></h2> -->
             <h2 v-if="!isEnglish">5/30(六) 19:00–20:00｜姚瑞中 X 郭一 X Meuko! Meuko<b><i>《虛迷山》</i></b>派對場</h2>
             <h2 v-if="!isEnglish">⭓ 一人一票憑票入場。</h2>
             <h2 v-if="!isEnglish">⭓ 開演前10分鐘開放入場，並不開放遲到觀眾入場。</h2>
             <h2 v-if="!isEnglish">⭓ 4/10(五) 中午12:00早鳥8折啟售；4/20(一) 中午12:00 正式啟售。</h2>
 
-            <h2 v-if="isEnglish">Ticketed programs include:</h2>
-            <h2 v-if="isEnglish">May 13 (Wed.) 7:30 p.m. <b><i>“Future Vision Party #3”</i></b></h2>
+            <!-- <h2 v-if="isEnglish">Ticketed programs include:</h2> -->
+            <!-- <h2 v-if="isEnglish">May 13 (Wed.) 7:30 p.m. <b><i>“Future Vision Party #3”</i></b></h2> -->
             <h2 v-if="isEnglish">May 30 (Sat.) 7:00–8:00 p.m. YAO Jui-Chung × KUO Yi × Meuko Meuko<b><i>“Mount Ecstasy”</i></b></h2>
             <h2 v-if="isEnglish">⭓ One person, one ticket admission.</h2>
             <h2 v-if="isEnglish">⭓ Please arrive at least 10 minutes before the performance or screening. Latecomers will not be admitted.</h2>
