@@ -223,6 +223,46 @@ html, body {
   pointer-events: auto;
 }
 
+.hero-social-links {
+  position: absolute;
+  left: 50%;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 55;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+  align-items: center;
+  pointer-events: auto;
+}
+
+.hero-social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #000;
+  color: #fff;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.hero-social-link:hover {
+  transform: scale(1.08);
+  background: rgba(255, 255, 255, 0.95);
+  color: #111;
+}
+
+.hero-social-icon {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
 .banner-title picture img {
   display: block;
   width: 100%;
