@@ -195,6 +195,16 @@ export default {
       const container = grid.value;
       if (!container) return;
       if (!props.portfolioList || props.portfolioList.length === 0) return;
+
+      const items = Array.from(container.querySelectorAll('.portfolio-item'));
+      if (items.length > 0) {
+        if (isMobileLayout()) {
+          gsap.set(items, { opacity: 0 });
+        } else {
+          gsap.set(items, { opacity: 0, y: 24 });
+        }
+      }
+
       await waitForGridImages(container);
       buildRowFadeIn();
       ScrollTrigger.refresh();
