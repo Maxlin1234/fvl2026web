@@ -121,9 +121,9 @@ export default {
   computed: {
     participatingArtistsDisplay() {
       const zh =
-        '江戶未來世、初未來、吳秉聖、李根耀、拉爾夫．基爾赫茲、林強、姚瑞中、兪志美、浮點設計、桑德琳．德米耶、郭一、移動故事屋、凱蒂．卡托納、超維度、琳恩．湯琳森、劉承杰、劉東昱、賴皮、蔡奇宏、謝鎮璘、魏廷宇、AINO X Yunyoung JANG, barbe_generative_diary, Kohui, Kivi, MONOCOLOR, Meuko! Meuko!, PHOSPHEN';
+        '江戶未來世、初未來、吳秉聖、李根耀、拉爾夫．基爾赫茲、林強、林育德、姚瑞中、兪志美、浮點設計、桑德琳．德米耶、郭一、移動故事屋、凱蒂．卡托納、超維度、琳恩．湯琳森、劉承杰、劉東昱、賴皮、蔡奇宏、謝鎮璘、魏廷宇、AINO X Yunyoung JANG, barbe_generative_diary, Kohui, Kivi, MONOCOLOR, Meuko! Meuko!, PHOSPHEN';
       const en =
-        'AINO X Yunyoung JANG, barbe_generative_diary, Damonxart, Sandrine DEUMIER, Dimension Plus, Floating Point Art, Hello Edo!, Hello World, Ralph KILLHERTZ, Root LEE, LIU Tung-Yu, Jie LIOU, Kati KATONA, Kivi, Kohui, Yi KUO, LIM Giong, Meuko Meuko, MONOCOLOR, Mr. Skin, PHOSPHEN, Telling Tent, Lynn TOMLINSON, Warrick TSAI, Tim WEI, WU Ping-Sheng, YAO Jui-Chung, Jimmy YU';
+        'AINO X Yunyoung JANG, barbe_generative_diary, Damonxart, Sandrine DEUMIER, Dimension Plus, Floating Point Art, Hello Edo!, Hello World, Ralph KILLHERTZ, Root LEE, LIU Tung-Yu, Jie LIOU, Kati KATONA, Kivi, Kohui, Yi KUO, LIM Giong, LIN Yu-Te, Meuko! Meuko!, MONOCOLOR, Mr. Skin, PHOSPHEN, Telling Tent, Lynn TOMLINSON, Warrick TSAI, Tim WEI, WU Ping-Sheng, YAO Jui-Chung, Jimmy YU';
       if (!this.isEnglish) return zh;
       return this.formatTeamValueEn(en);
     },

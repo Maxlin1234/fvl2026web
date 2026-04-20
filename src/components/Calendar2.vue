@@ -93,8 +93,26 @@ const APRIL_BLOCK_A_EN = APR_BLOCK_A_EN;
 
 const APRIL_BLOCK_B_EN = APR_BLOCK_B_EN;
 
+/** 5/3 14:00 專用：A 塊第二段改為 AINO《深層根木》（其餘場次仍用 APR_BLOCK_A_*） */
+const APR_BLOCK_A_503_1400_ZH = `浮點設計 | <i>《萬象之初》</i> | 3 mins
+AINO X Yunyoung JANG | <i>《深層根木》</i> | 20 mins
+初未來 X 超維度 X 江戶未來世 X Kivi X 賴皮 X 林強 | <i>《新摩登時代》</i> | 20 mins`;
+
+const APR_BLOCK_A_503_1400_EN = `FPA | <i>Genesis</i> | 3 mins
+AINO X Yunyoung JANG | <i>Deep-Rooted</i> | 20 mins
+Hello World x Dimension Plus x Hello Edo! x Kivi x Mr. Skin x LIM
+Giong | <i>NEW MODERN TIMES</i> | 20 mins`;
+
+/** 5/16 15:00：與 5/3 14:00 同一 A 塊文案（第二段 AINO《深層根木》） */
+const APR_BLOCK_A_516_1500_ZH = APR_BLOCK_A_503_1400_ZH;
+const APR_BLOCK_A_516_1500_EN = APR_BLOCK_A_503_1400_EN;
+
+/** 5/16 18:00：A 塊第二段 AINO《深層根木》（同 5/3 14:00） */
+const APR_BLOCK_A_516_1800_ZH = APR_BLOCK_A_503_1400_ZH;
+const APR_BLOCK_A_516_1800_EN = APR_BLOCK_A_503_1400_EN;
+
 const APR_BLOCK_C_ZH = `浮點設計 | <i>《萬象之初》</i> | 3 mins
-AINO X Yunyoung JANG | <i>《深層根木》</i> | 12 mins
+AINO X Yunyoung JANG | <i>《深層根木》</i> | 20 mins
 barbe_generative_diary | <i>短篇集錦 - 《描繪寂靜》</i> | 5 mins
 李根耀 | <i>短篇集錦 - 《街道之書：同淋一場雨》</i> | 5 mins
 兪志美 | <i>短篇集錦 - 《非體 1》</i> | 5 mins
@@ -102,7 +120,7 @@ barbe_generative_diary | <i>短篇集錦 - 《描繪寂靜》</i> | 5 mins
 琳恩．湯琳森 | <i>《山之夜曲》</i> | 3 mins`;
 
 const APR_BLOCK_C_EN = `FPA | <i>Genesis</i> | 3 mins
-AINO X Yunyoung JANG | <i>Deep-Rooted</i> | 12 mins
+AINO X Yunyoung JANG | <i>Deep-Rooted</i> | 20 mins
 barbe_generative_diary | <i>Short Film Showcase – Drawing Silence</i> | 5 mins
 Root LEE | <i>Short Film Showcase – Shared Immersion: A Street's Archive</i> | 5 mins
 Jimmy YU | <i>Short Film Showcase – Biche 1</i> | 5 mins
@@ -143,21 +161,30 @@ const MAY_BLOCK_D_EN = `FPA | <i>Genesis</i> | 3 mins
 Sandrine DEUMIER x Ralph KILLHERTZ | <i>Following the deer</i> | 12 mins
 WU Ping-Sheng x Jie LIOU | <i>Temporal Strata</i> | 22 mins`;
 
-const MAY_BLOCK_C_ZH = `浮點設計 | <i>《萬象之初》</i> | 3 mins
-AINO X Yunyoung JANG | <i>《深層根木》</i> | 12 mins
+/** 5/3 15:00 專用：C 塊第二段改為凱蒂《藏識》；預設 AINO 短片集文案見 APR_BLOCK_C_* */
+const MAY_BLOCK_C_503_1500_ZH = `浮點設計 | <i>《萬象之初》</i> | 3 mins
+凱蒂．卡托納 ｜ <i>《藏識》</i> | 12 mins
 barbe_generative_diary | <i>短篇集錦 - 《描繪寂靜》</i> | 5 mins
 李根耀 | <i>短篇集錦 - 《街道之書：同淋一場雨》</i> | 5 mins
 兪志美 | <i>短篇集錦 - 《非體 1》</i> | 5 mins
 謝鎮璘 | <i>短篇集錦 - 《光所到之處》</i> | 5 mins
 琳恩．湯琳森 | <i>《山之夜曲》</i> | 3 mins`;
 
-const MAY_BLOCK_C_EN = `FPA | <i>Genesis</i> | 3 mins
-AINO X Yunyoung JANG | <i>Deep-Rooted</i> | 12 mins
+const MAY_BLOCK_C_503_1500_EN = `FPA | <i>Genesis</i> | 3 mins
+Kati KATONA | <i>Substratum</i> | 12 mins
 barbe_generative_diary | <i>Short Film Showcase – Drawing Silence</i> | 5 mins
 Root LEE | <i>Short Film Showcase – Shared Immersion: A Street's Archive</i> | 5 mins
 Jimmy YU | <i>Short Film Showcase – Biche 1</i> | 5 mins
 Damonxart | <i>Short Film Showcase – Where Light Arrives</i> | 5 mins
 Lynn TOMLINSON | <i>Mountain Nocturne</i> | 3 mins`;
+
+/** 5/16 17:00：與 5/3 15:00 同一 C 塊文案（第二段凱蒂《藏識》） */
+const MAY_BLOCK_C_516_1700_ZH = MAY_BLOCK_C_503_1500_ZH;
+const MAY_BLOCK_C_516_1700_EN = MAY_BLOCK_C_503_1500_EN;
+
+/** 5/17 17:00：C 塊第二段凱蒂《藏識》（同 5/3 15:00） */
+const MAY_BLOCK_C_517_1700_ZH = MAY_BLOCK_C_503_1500_ZH;
+const MAY_BLOCK_C_517_1700_EN = MAY_BLOCK_C_503_1500_EN;
 
 const MAY_KOHUI_ZH = `Kohui | <i>《眾聲場：環形運動》</i>(現場演出) | 30 mins`;
 const MAY_KOHUI_EN = `Kohui | <i>Panphony: Circular Movement</i> (Live Performance) | 30 mins`;
@@ -168,12 +195,9 @@ const MAY_PARTY_EN = `<i>Future Vision Party #3</i> (Paid Live Performance) | 60
 const MAY_POND_ZH = `移動故事屋 | <i>《池塘國選舉》</i>(現場演出) | 45 mins`;
 const MAY_POND_EN = `Telling Tent | <i>The Pond Nation Election</i> (Live Performance) | 45 mins`;
 
-/** 5/17 場次：凱蒂．卡托納《藏識》 */
-const MAY_517_A_ZH = `浮點設計 | <i>《萬象之初》</i> | 3 mins
-凱蒂．卡托納 ｜ <i>《藏識》</i> | 12 mins
-初未來 X 超維度 X 江戶未來世 X Kivi X 賴皮 X 林強 | <i>《新摩登時代》</i> | 20 mins`;
-
-const MAY_517_A_EN = APR_BLOCK_A_EN;
+/** 5/17 14:00：A 塊第二段改為 AINO《深層根木》（同 APR_BLOCK_A_503_1400_*）；凱蒂《藏識》A 塊同 APR_BLOCK_A_* */
+const MAY_517_A_1400_ZH = APR_BLOCK_A_503_1400_ZH;
+const MAY_517_A_1400_EN = APR_BLOCK_A_503_1400_EN;
 
 const MAY_WEI_EXH_ZH = `魏廷宇 | <i>《誤差追獵》</i>(展覽)`;
 const MAY_WEI_EXH_EN = `Tim WEI | <i>Stalking for Errors</i> (Exhibition)`;
@@ -200,18 +224,13 @@ const JUN_WORKSHOP_NTHU_EN = `<i>Immersive Audiovisual Workshop - The Joint Pres
 NTHU College of Arts, Arts & Technology
 ｜40 mins`;
 
-/** 6/7 14:00（DIMENSION Plus；Giong／節目／時長分行） */
-const JUN_607_A_ZH = MAY_517_A_ZH;
+/** 6/7 14:00：A 塊第二段 AINO《深層根木》（同 APR_BLOCK_A_503_1400_*） */
+const JUN_607_A_ZH = APR_BLOCK_A_503_1400_ZH;
+const JUN_607_A_EN = APR_BLOCK_A_503_1400_EN;
 
-const JUN_607_A_EN = `FPA | <i>Genesis</i> | 3 mins
-Kati KATONA | <i>Substratum</i> | 12 mins
-Hello World x Dimension Plus x Hello Edo! x Kivi x Mr. Skin x LIM
-Giong | <i>NEW MODERN TIMES</i> | 20 mins`;
-
-/** 6/7 15:00／18:00 — 與五月 C 塊主視覺一致 */
-const JUN_607_LONG_ZH = MAY_BLOCK_C_ZH;
-
-const JUN_607_LONG_EN = MAY_BLOCK_C_EN;
+/** 6/7 15:00、18:00：C 塊第二段凱蒂《藏識》（同 MAY_BLOCK_C_503_1500_*） */
+const JUN_607_15_ZH = MAY_BLOCK_C_503_1500_ZH;
+const JUN_607_15_EN = MAY_BLOCK_C_503_1500_EN;
 
 /** 6/7 17:00 — D 塊 */
 const JUN_607_17_ZH = APR_BLOCK_D_ZH;
@@ -258,8 +277,8 @@ export default {
         aprEvt(102, '2026-05-01', '19:00', MAY_MONOCOLOR_ZH, MAY_MONOCOLOR_EN, 2),
         aprEvt(103, '2026-05-02', '15:00', MAY_MONOCOLOR_ZH, MAY_MONOCOLOR_EN, 1),
         aprEvt(104, '2026-05-02', '19:00', MAY_MONOCOLOR_ZH, MAY_MONOCOLOR_EN, 2),
-        aprEvt(105, '2026-05-03', '14:00', APR_BLOCK_A_ZH, APR_BLOCK_A_EN, 1),
-        aprEvt(106, '2026-05-03', '15:00', MAY_BLOCK_C_ZH, MAY_BLOCK_C_EN, 2),
+        aprEvt(105, '2026-05-03', '14:00', APR_BLOCK_A_503_1400_ZH, APR_BLOCK_A_503_1400_EN, 1),
+        aprEvt(106, '2026-05-03', '15:00', MAY_BLOCK_C_503_1500_ZH, MAY_BLOCK_C_503_1500_EN, 2),
         aprEvt(107, '2026-05-03', '16:00', MAY_BLOCK_D_ZH, MAY_BLOCK_D_EN, 3),
         aprEvt(108, '2026-05-03', '17:00', APR_BLOCK_B_ZH, APR_BLOCK_B_EN, 4),
         aprEvt(109, '2026-05-03', '18:00', APR_BLOCK_A_ZH, APR_BLOCK_A_EN, 5),
@@ -271,18 +290,18 @@ export default {
         aprEvt(115, '2026-05-16', '10:00', MAY_POND_ZH, MAY_POND_EN, 1),
         aprEvt(116, '2026-05-16', '11:30', MAY_POND_ZH, MAY_POND_EN, 2),
         aprEvt(117, '2026-05-16', '14:00', MAY_BLOCK_D_ZH, MAY_BLOCK_D_EN, 3),
-        aprEvt(118, '2026-05-16', '15:00', APR_BLOCK_A_ZH, APR_BLOCK_A_EN, 4),
+        aprEvt(118, '2026-05-16', '15:00', APR_BLOCK_A_516_1500_ZH, APR_BLOCK_A_516_1500_EN, 4),
         aprEvt(119, '2026-05-16', '16:00', APR_BLOCK_B_ZH, APR_BLOCK_B_EN, 5),
-        aprEvt(120, '2026-05-16', '17:00', MAY_BLOCK_C_ZH, MAY_BLOCK_C_EN, 6),
-        aprEvt(121, '2026-05-16', '18:00', APR_BLOCK_A_ZH, APR_BLOCK_A_EN, 7),
+        aprEvt(120, '2026-05-16', '17:00', MAY_BLOCK_C_516_1700_ZH, MAY_BLOCK_C_516_1700_EN, 6),
+        aprEvt(121, '2026-05-16', '18:00', APR_BLOCK_A_516_1800_ZH, APR_BLOCK_A_516_1800_EN, 7),
         aprEvt(122, '2026-05-16', '19:00', APR_BLOCK_B_ZH, APR_BLOCK_B_EN, 8),
 
         aprEvt(123, '2026-05-17', '10:00', MAY_POND_ZH, MAY_POND_EN, 1),
         aprEvt(124, '2026-05-17', '11:30', MAY_POND_ZH, MAY_POND_EN, 2),
-        aprEvt(125, '2026-05-17', '14:00', MAY_517_A_ZH, MAY_517_A_EN, 3),
+        aprEvt(125, '2026-05-17', '14:00', MAY_517_A_1400_ZH, MAY_517_A_1400_EN, 3),
         aprEvt(126, '2026-05-17', '15:00', MAY_BLOCK_D_ZH, MAY_BLOCK_D_EN, 4),
         aprEvt(127, '2026-05-17', '16:00', APR_BLOCK_B_ZH, APR_BLOCK_B_EN, 5),
-        aprEvt(128, '2026-05-17', '17:00', MAY_BLOCK_C_ZH, MAY_BLOCK_C_EN, 6),
+        aprEvt(128, '2026-05-17', '17:00', MAY_BLOCK_C_517_1700_ZH, MAY_BLOCK_C_517_1700_EN, 6),
         aprEvt(129, '2026-05-17', '18:00', MAY_BLOCK_D_ZH, MAY_BLOCK_D_EN, 7),
 
         aprEvt(130, '2026-05-21', '17:00–19:00', MAY_WEI_EXH_ZH, MAY_WEI_EXH_EN, 1),
@@ -304,10 +323,10 @@ export default {
         aprEvt(144, '2026-06-06', '20:00', JUN_WORKSHOP_NTHU_ZH, JUN_WORKSHOP_NTHU_EN, 6),
 
         aprEvt(145, '2026-06-07', '14:00', JUN_607_A_ZH, JUN_607_A_EN, 1),
-        aprEvt(146, '2026-06-07', '15:00', JUN_607_LONG_ZH, JUN_607_LONG_EN, 2),
+        aprEvt(146, '2026-06-07', '15:00', JUN_607_15_ZH, JUN_607_15_EN, 2),
         aprEvt(147, '2026-06-07', '16:00', APR_BLOCK_B_ZH, APR_BLOCK_B_EN, 3),
         aprEvt(148, '2026-06-07', '17:00', JUN_607_17_ZH, JUN_607_17_EN, 4),
-        aprEvt(149, '2026-06-07', '18:00', JUN_607_LONG_ZH, JUN_607_LONG_EN, 5),
+        aprEvt(149, '2026-06-07', '18:00', JUN_607_15_ZH, JUN_607_15_EN, 5),
       ]
     }
   },
