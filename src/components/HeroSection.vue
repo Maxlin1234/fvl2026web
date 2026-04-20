@@ -46,7 +46,7 @@
           class="corner-btn bottom-left"
           @click="$emit('show-drawer', 'lecture')"
         >
-          <span class="btn-zh">入場須知</span>
+          <span class="btn-zh">索票 / 購票</span>
         
         </button>
       </div>

@@ -91,7 +91,7 @@
         <h2 style="color:gainsboro;border-bottom: 2px solid white;padding: 20px;margin-left: 60px;font-size: 1.2em;font-weight: 900;">{{ isEnglish ? 'Visitor Guidelines' : '入場須知' }}</h2>
         <div class="list-text">
           <button class="list-btn1" @click="toggleContent()"><h2>{{ isEnglish ? ' Notices for entry ' : '注意事項' }}</h2></button>
-          <button class="list-btn3" @click="toggleContent3()"><h2>{{ isEnglish ? 'Admission Information' : '入場方式' }}</h2></button>
+          <button class="list-btn3" @click="toggleContent3()"><h2>{{ isEnglish ? 'Ticket Request / Ticket Purchase / Admission Information' : '索票 / 購票 / 入場方式' }}</h2></button>
         </div>
         <div class="content-container">
           <div class="lecture-list" v-if="showContentA">
@@ -128,22 +128,22 @@
              <h2>
               <span v-if="isEnglish">
                 ⭓ For detailed program registration information, please visit the
-                <a href="https://www.facebook.com/CLAB.FUTUREVISIONLAB/" style="color: pink;text-decoration:none" target="_blank" rel="noopener">"C-LAB Future Vision Lab" Facebook page</a>
+                <a href="https://www.facebook.com/CLAB.FUTUREVISIONLAB/" style="color: pink;font-size: 1.5em;" target="_blank" rel="noopener">"C-LAB Future Vision Lab" Facebook page</a>
                 or the
-                <a href="https://www.accupass.com/organizer/detail/1807130939251014675956" style="color: pink;text-decoration:none" target="_blank" rel="noopener">event page of C-LAB on ACCUPASS</a>.
+                <a href="https://www.accupass.com/organizer/detail/1807130939251014675956" style="color: pink;font-size: 1.5em;" target="_blank" rel="noopener">event page of C-LAB on ACCUPASS</a>.
               </span>
               <span v-else>
-                ⭓ 節目索票資訊請鎖定「C-LAB 未來視覺實驗室」 <a href="https://www.facebook.com/CLAB.FUTUREVISIONLAB/" style="color: pink;text-decoration:none" target="_blank" rel="noopener">臉書</a>
-                或「臺灣當代文化實驗場C-LAB」 <a href="https://www.accupass.com/organizer/detail/1807130939251014675956" style="color: pink;text-decoration:none" target="_blank" rel="noopener">ACCUPASS</a>。
+                ⭓ 節目索票資訊請鎖定「C-LAB 未來視覺實驗室」 <a href="https://www.facebook.com/CLAB.FUTUREVISIONLAB/" style="color: pink;font-size: 1.5em;" target="_blank" rel="noopener">臉書</a>
+                或「臺灣當代文化實驗場C-LAB」 <a href="https://www.accupass.com/organizer/detail/1807130939251014675956" style="color: pink; font-size: 1.5em;" target="_blank" rel="noopener">ACCUPASS</a>。
               </span>
             </h2>
             <h2>
               <span v-if="isEnglish">
                 ⭓  For detailed program information, please visit FUTURE VISION LAB 2026 official website:
-                <a href="https://fvl.clab.org.tw/festival/2026" style="color: pink;text-decoration:none" target="_blank" rel="noopener">https://fvl.clab.org.tw/festival/2026</a>
+                <a href="https://fvl.clab.org.tw/festival/2026" style="color: pink;text-decoration:none" rel="noopener">https://fvl.clab.org.tw/festival/2026</a>
               </span>
               <span v-else>
-                ⭓ 詳細節目資訊請至 <a href="https://fvl.clab.org.tw/festival/2026" style="color: pink;text-decoration:none" target="_blank" rel="noopener">FUTURE VISION LAB 官網</a> 查詢。
+                ⭓ 詳細節目資訊請至 <a href="https://fvl.clab.org.tw/festival/2026" style="color: pink;text-decoration:none" rel="noopener">FUTURE VISION LAB 官網 場次表</a> 查詢。
               </span>
             </h2>
             <h2 class="admission-section-title">{{ isEnglish ? '【Screening & Live Performance】' : '【播映及現場演出】' }}</h2>
