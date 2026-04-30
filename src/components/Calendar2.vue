@@ -149,6 +149,9 @@ function aprEvt(id, date, time, zh, en, sortOrder) {
   };
 }
 
+/** 橫向月份列初次載入時預設捲到哪個月（與 groupedByMonth 項目的 ym 一致，例如 5 月 = 2026-05） */
+const INITIAL_CALENDAR_MONTH_YM = '2026-05';
+
 /** 五月：表定《循鹿》文案與短片塊（深層根木／同林一場雨等依圖檔） */
 const MAY_MONOCOLOR_ZH = `MONOCOLOR | <i>《意識之維》</i>(現場演出) | 35 mins`;
 const MAY_MONOCOLOR_EN = `MONOCOLOR | <i>NOOSPHERE</i> (Live Performance) | 35 mins`;
@@ -394,6 +397,11 @@ export default {
         strip.addEventListener('scrollend', this._onMonthsStripScrollEnd);
       }
       this.updateMonthsStripHeight();
+      /** 再等一個 tick，讓 slides 與 strip.clientWidth 就緒後再捲到預設月 */
+      this.$nextTick(() => {
+        this.scrollMonthsStripToYm(INITIAL_CALENDAR_MONTH_YM);
+        this.updateMonthsStripHeight();
+      });
     });
   },
   beforeDestroy() {
@@ -407,6 +415,14 @@ export default {
     }
   },
   methods: {
+    /** 將橫列捲到指定 YYYY-MM；每欄寬等同 strip.clientWidth（scroll-snap 一個月一屏） */
+    scrollMonthsStripToYm(ym) {
+      const strip = this.$refs.monthsStrip;
+      if (!strip || strip.clientWidth <= 0) return;
+      const idx = this.groupedByMonth.findIndex((m) => m.ym === ym);
+      if (idx < 0) return;
+      strip.scrollLeft = idx * strip.clientWidth;
+    },
     monthSlideEls() {
       const raw = this.$refs.monthSlides;
       if (!raw) return [];
