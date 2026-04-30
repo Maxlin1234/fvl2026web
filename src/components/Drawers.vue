@@ -159,7 +159,7 @@
             <h2 v-if="!isEnglish">⭓ 開演前10分鐘開放入場，並不開放遲到觀眾入場。</h2>
             <h2 v-if="!isEnglish">⭓ 4/10(五) 中午12:00早鳥8折啟售；4/20(一) 中午12:00 正式啟售。</h2>
 
-            <h2 v-if="!isEnglish" class="admission-paid-next">5/13(三) 19:30｜<b><i>《未來視覺派對#3》</i></b></h2>
+            <h2 v-if="!isEnglish" class="admission-paid-next">5/13(三) 19:30｜<b><i>《未來視覺派對#3》</i></b>（<span class="admission-sold-out">已完售</span>）</h2>
             <h2 v-if="!isEnglish">⭓ 一人一票憑票入場。</h2>
             <h2 v-if="!isEnglish">⭓ 開演前10分鐘開放入場，並不開放遲到觀眾入場。</h2>
             <h2 v-if="!isEnglish">⭓ 4/20(一) 晚上8:00早鳥8折啟售；4/26(日) 中午12:00 正式啟售。</h2>
@@ -172,7 +172,7 @@
             <h2 v-if="isEnglish">⭓ Early Bird 20% Off starts at 12:00 p.m. on April 10 (Fri.)</h2>
             <h2 v-if="isEnglish">⭓ General Sale starts at 12:00 p.m. on April 20 (Mon.)</h2>
 
-            <h2 v-if="isEnglish" class="admission-paid-next">May 13 (Wed.) 7:30 p.m. <b><i>“Future Vision Party #3”</i></b></h2>
+            <h2 v-if="isEnglish" class="admission-paid-next">May 13 (Wed.) 7:30 p.m. <b><i>“Future Vision Party #3”</i></b> (<span class="admission-sold-out">Sold out</span>)</h2>
             <h2 v-if="isEnglish">⭓ One person, one ticket admission.</h2>
             <h2 v-if="isEnglish">⭓ Please arrive at least 10 minutes before the performance or screening. Latecomers will not be admitted.</h2>
             <h2 v-if="isEnglish">⭓ Early bird tickets (20% off) go on sale Apr. 20th at 8pm; general sales begin Apr. 26th.</h2>
