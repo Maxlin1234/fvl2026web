@@ -304,7 +304,6 @@ export default {
         aprEvt(128, '2026-05-17', '17:00', MAY_BLOCK_C_517_1700_ZH, MAY_BLOCK_C_517_1700_EN, 6),
         aprEvt(129, '2026-05-17', '18:00', MAY_BLOCK_D_ZH, MAY_BLOCK_D_EN, 7),
 
-        aprEvt(130, '2026-05-21', '17:00–19:00', MAY_WEI_EXH_ZH, MAY_WEI_EXH_EN, 1),
         aprEvt(131, '2026-05-22', '12:00–19:00', MAY_WEI_EXH_ZH, MAY_WEI_EXH_EN, 1),
         aprEvt(132, '2026-05-23', '12:00–19:00', MAY_WEI_EXH_ZH, MAY_WEI_EXH_EN, 1),
         aprEvt(133, '2026-05-24', '12:00–19:00', MAY_WEI_EXH_ZH, MAY_WEI_EXH_EN, 1),

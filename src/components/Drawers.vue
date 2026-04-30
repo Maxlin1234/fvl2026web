@@ -179,7 +179,7 @@
 
             <h2 class="admission-section-title">{{ isEnglish ? '【Exhibition】' : '【展覽】' }}</h2>
             <div v-if="!isEnglish" class="exhibition-info">
-              <h2>5/21(四)-5/24(日)｜<b><i>魏廷宇《誤差追獵》</i></b></h2>
+              <h2>5/22(五)-5/24(日)｜<b><i>魏廷宇《誤差追獵》</i></b></h2>
               <h2>⭓ 每12分鐘為一梯次，每梯次開放30人進場體驗。</h2>
               <h2>⭓ 進場方式採現場排隊依序入場，直到該梯次人數額滿為止。</h2>
               <h2>⭓ 若想要再次體驗作品，需於前一梯次結束後先離場並重新排隊依序等候入場。</h2>
@@ -191,7 +191,7 @@
               <h2>⭓ 開放入場時若排隊人員不在現場即視同放棄，需重新排隊依序等候入場。</h2>
             </div>
             <div v-else class="exhibition-info">
-              <h2>May 21-24 Tim WEI, <b><i>“Stalking for Errors“</i></b></h2>
+              <h2>May 22-24 Tim WEI, <b><i>“Stalking for Errors“</i></b></h2>
               <h2>⭓ Each session lasts 12 minutes, with a maximum of 30 participants per session.</h2>
               <h2>⭓ Entry will be granted in order of on-site queue until capacity is reached.</h2>
               <h2>⭓ To experience the work again, you must leave after the current session ends and rejoin the queue for the next session.</h2>
