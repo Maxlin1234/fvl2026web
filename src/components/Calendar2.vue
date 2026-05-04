@@ -103,6 +103,10 @@ AINO X Yunyoung JANG | <i>Deep-Rooted</i> | 20 mins
 Hello World x Dimension Plus x Hello Edo! x Kivi x Mr. Skin x LIM
 Giong | <i>NEW MODERN TIMES</i> | 20 mins`;
 
+/** 5/3 18:00：與 5/3 14:00 同一 A 塊文案（第二段 AINO《深層根木》） */
+const APR_BLOCK_A_503_1800_ZH = APR_BLOCK_A_503_1400_ZH;
+const APR_BLOCK_A_503_1800_EN = APR_BLOCK_A_503_1400_EN;
+
 /** 5/16 15:00：與 5/3 14:00 同一 A 塊文案（第二段 AINO《深層根木》） */
 const APR_BLOCK_A_516_1500_ZH = APR_BLOCK_A_503_1400_ZH;
 const APR_BLOCK_A_516_1500_EN = APR_BLOCK_A_503_1400_EN;
@@ -284,7 +288,7 @@ export default {
         aprEvt(106, '2026-05-03', '15:00', MAY_BLOCK_C_503_1500_ZH, MAY_BLOCK_C_503_1500_EN, 2),
         aprEvt(107, '2026-05-03', '16:00', MAY_BLOCK_D_ZH, MAY_BLOCK_D_EN, 3),
         aprEvt(108, '2026-05-03', '17:00', APR_BLOCK_B_ZH, APR_BLOCK_B_EN, 4),
-        aprEvt(109, '2026-05-03', '18:00', APR_BLOCK_A_ZH, APR_BLOCK_A_EN, 5),
+        aprEvt(109, '2026-05-03', '18:00', APR_BLOCK_A_503_1800_ZH, APR_BLOCK_A_503_1800_EN, 5),
         aprEvt(110, '2026-05-08', '19:30', MAY_KOHUI_ZH, MAY_KOHUI_EN, 1),
         aprEvt(111, '2026-05-09', '15:00', MAY_KOHUI_ZH, MAY_KOHUI_EN, 1),
         aprEvt(112, '2026-05-09', '19:00', MAY_KOHUI_ZH, MAY_KOHUI_EN, 2),
