@@ -1,9 +1,6 @@
 <template>
   <div class="language-switch">
-    <button 
-      @click="toggleLanguage" 
-      :style="{ border: '1px solid rgba(255, 255, 255, 0.3)' }"
-    >
+    <button type="button" class="language-switch__btn" @click="toggleLanguage">
       {{ isEnglish ? '繁中' : 'EN' }}
     </button>
   </div>
@@ -44,26 +41,36 @@ export default {
   z-index: 9999;
 }
 
-.language-switch button {
-  background-color: transparent;
-  color: rgb(255, 255, 255);
-  padding: 15px;
-  width: 8rem;
-  height: 3rem;
-  font-size: 1rem;
-  font-weight: 600;
+/* 與首頁 Hero 四角 EN／中文按鈕一致：黑色圓形 */
+.language-switch__btn {
+  box-sizing: border-box;
+  width: 6.5em;
+  height: 6.5em;
+  min-width: 3.25rem;
+  min-height: 3.25rem;
+  max-width: 5.5rem;
+  max-height: 5.5rem;
+  padding: 0.35em;
+  margin: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: #000;
+  color: #fff;
+  font-size: clamp(14px, 1.05vw, 18px);
+  font-weight: 700;
+  line-height: 1.15;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.3);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.language-switch button:hover {
-  transform: translateY(-2px);
-  text-shadow: 0 0 10px rgba(74, 158, 255, 0.5);
-  box-shadow: 0 0 10px rgba(74, 158, 255, 0.3);
-  background-color: rgba(74, 158, 255, 0.1);
+.language-switch__btn:hover {
+  transform: scale(1.1) rotate(5deg);
+  background: rgba(255, 255, 255, 0.95);
+  color: #000;
 }
 
 @media only screen and (max-width: 1200px) {

@@ -1,6 +1,7 @@
 <!-- src/views/PortfolioDetil.vue -->
 <template>
   <div class="work-detail" v-if="work">
+    <language-switch v-model="isEnglish" />
     <!-- 作品圖片區塊：根據圖片數量自適應排版 -->
     <!-- 1張：滿寬 -->
     <div v-if="bannerImages.length === 1" class="work-hero work-hero--single">
@@ -193,15 +194,20 @@
       </div>
     </div>
   </div>
-  <div v-else class="work-detail loading">{{ errorText || 'Loading...' }}</div>
+  <div v-else class="work-detail loading">
+    <language-switch v-model="isEnglish" />
+    {{ errorText || 'Loading...' }}
+  </div>
 </template>
 
 <script>
 import { ref, onMounted, onBeforeUnmount, computed, watch, getCurrentInstance, nextTick } from 'vue';
 import axios from 'axios';
+import LanguageSwitch from '../components/LanguageSwitch.vue';
 
 export default {
   name: 'PortfolioDetil',
+  components: { LanguageSwitch },
   setup() {
     const WORKS_API_URL = 'https://unzip.clab.org.tw/api/v1/projects/21/works?level=detail&limit=500';
     const WORK_DETAIL_API = (workId) => `https://unzip.clab.org.tw/api/v1/works/${workId}`;
@@ -944,12 +950,30 @@ export default {
       }
     };
 
-    const handleStorage = (e) => {
-      if (e.key === 'lang') {
-        isEnglish.value = e.newValue === 'en';
-        if (work.value) recalcDerived();
-      }
+    const persistLangToStorageAndRoute = () => {
+      const en = isEnglish.value;
+      try {
+        localStorage.setItem('lang', en ? 'en' : 'zh');
+      } catch (_) { /* noop */ }
+      const r = proxy.$route;
+      const nextLang = en ? 'en' : 'zh';
+      if (r.query.lang === nextLang) return;
+      proxy.$router.replace({
+        path: r.path,
+        query: { ...r.query, lang: nextLang },
+        hash: r.hash || undefined,
+      }).catch(() => {});
     };
+
+    const handleStorage = (e) => {
+      if (e.key !== 'lang') return;
+      isEnglish.value = e.newValue === 'en';
+    };
+
+    watch(isEnglish, () => {
+      persistLangToStorageAndRoute();
+      if (work.value) recalcDerived();
+    });
 
     onMounted(async () => {
       isEnglish.value = resolveInitialLang();
