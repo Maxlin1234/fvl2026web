@@ -211,32 +211,8 @@
 </template>
 
 <script>
-import axios from 'axios';
 import Calendar from './Calendar2.vue';
-
-const SCHEDULE_WORKS_API_URL = 'https://unzip.clab.org.tw/api/v1/projects/21/works';
-const SCHEDULE_WORKS_API_AUTH = 'Api-Key 1e801a8fbe21fe2bef15df853e62ec9dc5a1cd08';
-
-/** 節目表輪播：僅用作品 featured_photo_media（相對路徑補 unzip-clab-api 網域） */
-function resolveWorkFeaturedPhotoUrl(w) {
-  const directUrl = w?.featured_photo_media?.url || w?.featuredPhotoMedia?.url;
-  if (!directUrl) return '';
-  const s = String(directUrl);
-  if (/^https?:\/\//i.test(s)) return s;
-  return `https://unzip-clab-api.clab.org.tw/${s.replace(/^\/+/, '')}`;
-}
-
-function sortWorksById(works) {
-  if (!Array.isArray(works)) return [];
-  return [...works].sort((a, b) => {
-    const idA = a?.id;
-    const idB = b?.id;
-    const nA = Number(idA);
-    const nB = Number(idB);
-    if (Number.isFinite(nA) && Number.isFinite(nB)) return nA - nB;
-    return String(idA ?? '').localeCompare(String(idB ?? ''), undefined, { numeric: true });
-  });
-}
+import { getWorks, resolveWorkFeaturedPhotoUrl } from '../api/clabData';
 
 const FALLBACK_SCHEDULE_CAROUSEL_IMAGES = [
   require('../assets/slider1.jpg'),
@@ -306,9 +282,8 @@ export default {
   },
   mounted() {
     this.lectureDrawerFullyClosed = !this.showLectureDrawer;
-    this.loadScheduleCarouselImages().then(() => {
-      this.startCarousel();
-    });
+    this.loadScheduleCarouselImages();
+    this.startCarousel();
   },
   beforeUnmount() {
     this.stopCarousel();
@@ -364,13 +339,9 @@ export default {
     goToSlide(index) {
       this.currentImageIndex = index;
     },
-    async loadScheduleCarouselImages() {
+    loadScheduleCarouselImages() {
       try {
-        const { data } = await axios.get(SCHEDULE_WORKS_API_URL, {
-          headers: { Authorization: SCHEDULE_WORKS_API_AUTH },
-        });
-        const rawList = Array.isArray(data) ? data : (data?.data || data?.results || []);
-        const list = sortWorksById(rawList);
+        const list = getWorks();
         // 8 張輪播：依 id 排序後取第 1–6、9、8 件之 featured（與先前「第 7 張用第 9 件」邏輯相同）
         const workIndices = [0, 1, 2, 3, 4, 5, 8, 7];
         const urls = [];

@@ -5,6 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "fetch-data": "node scripts/fetch-static-data.mjs",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint"
   },

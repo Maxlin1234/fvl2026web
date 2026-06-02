@@ -42,7 +42,7 @@ import VideoBanner from './VideoBanner.vue';
 import PortfolioSection from './PortfolioSection.vue';
 import TeamSection from './TeamSection.vue';
 import Drawers from './Drawers.vue';
-import axios from 'axios';
+import { getWorks } from '../api/clabData';
 import { gsap } from 'gsap';
 import { SplitText } from 'gsap/SplitText.js';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -54,8 +54,6 @@ import img3 from '../assets/3.jpg';
 gsap.registerPlugin(SplitText, ScrollTrigger);
 
 // 常數定義
-const WORKS_API_URL = 'https://unzip.clab.org.tw/api/v1/projects/21/works';
-const API_AUTH = 'Api-Key 1e801a8fbe21fe2bef15df853e62ec9dc5a1cd08';
 const LOCAL_STORAGE_KEYS = {
   LANG: 'lang'
 };
@@ -69,19 +67,6 @@ const EVENT_TYPES = {
   WORKSHOP: 'workshop',
   PERFORMANCE: 'performance'
 };
-
-/** API 回傳順序不定，播映作品／首圖依作品 id 遞增排列 */
-function sortWorksById(works) {
-  if (!Array.isArray(works)) return [];
-  return [...works].sort((a, b) => {
-    const idA = a?.id;
-    const idB = b?.id;
-    const nA = Number(idA);
-    const nB = Number(idB);
-    if (Number.isFinite(nA) && Number.isFinite(nB)) return nA - nB;
-    return String(idA ?? '').localeCompare(String(idB ?? ''), undefined, { numeric: true });
-  });
-}
 
 export default {
   name: 'fvl-fest-2026',
@@ -147,7 +132,7 @@ export default {
     try {
       this.removeStrayBodyCanvases();
       this.initLanguage();
-      await this.loadWorksData();
+      this.loadWorksData();
       this.initAnimations();
     } catch (error) {
       console.error('MainSection initialization failed:', error);
@@ -176,21 +161,13 @@ export default {
         }
       });
     },
-    /**
-     * 作品列表只請求一次 WORKS_API_URL，同步更新 firstImage 與 portfolioList。
-     */
-    async loadWorksData() {
+    /** 從建置時寫入的靜態 JSON 載入作品列表。 */
+    loadWorksData() {
       try {
-        const response = await axios.get(WORKS_API_URL, {
-          headers: { Authorization: API_AUTH },
-        });
-        const payload = response?.data;
-        const rawWorks = Array.isArray(payload) ? payload : payload?.data || payload?.results || [];
-        const works = sortWorksById(rawWorks);
+        const works = getWorks();
 
         if (process.env.NODE_ENV === 'development') {
-          console.log('[Fvl2026Final] works loaded', {
-            status: response?.status,
+          console.log('[Fvl2026Final] works loaded (static)', {
             worksCount: works.length,
             firstWork: works[0] || null,
           });
@@ -217,11 +194,7 @@ export default {
           },
         }));
       } catch (error) {
-        console.error('[Fvl2026Final] loadWorksData failed', {
-          message: error?.message,
-          status: error?.response?.status,
-          data: error?.response?.data,
-        });
+        console.error('[Fvl2026Final] loadWorksData failed', error);
         this.firstImage = '';
         this.portfolioList = [];
       }

@@ -202,17 +202,14 @@
 
 <script>
 import { ref, onMounted, onBeforeUnmount, computed, watch, getCurrentInstance, nextTick } from 'vue';
-import axios from 'axios';
+import { getWorkById, getWorkProposal } from '../api/clabData';
 import LanguageSwitch from '../components/LanguageSwitch.vue';
 
 export default {
   name: 'PortfolioDetil',
   components: { LanguageSwitch },
   setup() {
-    const WORKS_API_URL = 'https://unzip.clab.org.tw/api/v1/projects/21/works?level=detail&limit=500';
-    const WORK_DETAIL_API = (workId) => `https://unzip.clab.org.tw/api/v1/works/${workId}`;
-    const API_AUTH = 'Api-Key 1e801a8fbe21fe2bef15df853e62ec9dc5a1cd08';
-    /** 需額外顯示 proposal_zh_tw / proposal 的作品 id（單筆 works API） */
+    /** 需額外顯示 proposal_zh_tw / proposal 的作品 id（建置時已寫入 work-proposals.json） */
     const EXTRA_PROPOSAL_WORK_IDS = new Set(['193', '194']);
     // vue-router v3 doesn't provide useRoute(); use component instance route instead
     const { proxy } = getCurrentInstance();
@@ -864,27 +861,18 @@ export default {
       else stopSlider();
     }, { immediate: false });
 
-    const fetchExtraProposal = async (workIdStr) => {
+    const loadExtraProposal = (workIdStr) => {
       const sid = String(workIdStr || '');
       if (!EXTRA_PROPOSAL_WORK_IDS.has(sid)) {
         extraProposalZh.value = '';
         extraProposalEn.value = '';
         return;
       }
-      try {
-        const { data } = await axios.get(WORK_DETAIL_API(sid), {
-          headers: { Authorization: API_AUTH },
-        });
-        const entity = data?.data && typeof data.data === 'object' ? data.data : data;
-        const zh = entity?.proposal_zh_tw ?? entity?.proposalZhTw ?? '';
-        const en = entity?.proposal ?? '';
-        extraProposalZh.value = typeof zh === 'string' ? zh : '';
-        extraProposalEn.value = typeof en === 'string' ? en : '';
-      } catch (e) {
-        console.error('Failed to fetch work proposal (193/194):', e);
-        extraProposalZh.value = '';
-        extraProposalEn.value = '';
-      }
+      const entity = getWorkProposal(sid);
+      const zh = entity?.proposal_zh_tw ?? '';
+      const en = entity?.proposal ?? '';
+      extraProposalZh.value = typeof zh === 'string' ? zh : '';
+      extraProposalEn.value = typeof en === 'string' ? en : '';
     };
 
     const loadFromLocal = () => {
@@ -902,15 +890,9 @@ export default {
       }
     };
 
-    const fetchFromApi = async () => {
+    const loadWorkFromStaticData = (workId = id) => {
       try {
-        const { data } = await axios.get(WORKS_API_URL, {
-          headers: {
-            Authorization: API_AUTH,
-          },
-        });
-        const list = Array.isArray(data) ? data : (data?.data || data?.results || []);
-        const entity = list.find((w) => String(w?.id) === String(id));
+        const entity = getWorkById(workId);
         if (entity) {
           const zhTitle = entity?.title_zh_tw || entity?.titleZhTw || entity?.work_zh?.title || entity?.title || '';
           const enTitle = entity?.title || entity?.work_en?.title || '';
@@ -945,7 +927,7 @@ export default {
           errorText.value = 'No data for this work.';
         }
       } catch (e) {
-        console.error('Failed to fetch work by id:', e);
+        console.error('Failed to load work from static data:', e);
         errorText.value = 'Failed to load work. Please try again later.';
       }
     };
@@ -978,9 +960,8 @@ export default {
     onMounted(async () => {
       isEnglish.value = resolveInitialLang();
       loadFromLocal();
-      // 確保每次都能拿到最新帶有 level=detail 的資料
-      await fetchFromApi();
-      await fetchExtraProposal(id);
+      loadWorkFromStaticData();
+      loadExtraProposal(id);
       window.addEventListener('storage', handleStorage);
       // 初始啟動 banner 邏輯
       await nextTick();
@@ -992,7 +973,8 @@ export default {
       () => String(proxy.$route.params.id || ''),
       (newId, oldId) => {
         if (!newId || newId === oldId) return;
-        fetchExtraProposal(newId);
+        loadWorkFromStaticData(newId);
+        loadExtraProposal(newId);
       },
     );
 

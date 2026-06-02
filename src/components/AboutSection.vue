@@ -20,10 +20,7 @@
 </template>
 
 <script>
-import axios from 'axios';
-
-const PROJECT_API_URL = 'https://unzip.clab.org.tw/api/v1/projects/21';
-const API_AUTH = 'Api-Key 1e801a8fbe21fe2bef15df853e62ec9dc5a1cd08';
+import { getProjectEntity } from '../api/clabData';
 
 /** API 無法取得專案介紹時的備援（與 unzip 後台文案同步後可刪或留作離線保底） */
 const ABOUT_FALLBACK_ZH = `<p>自2020年起，C-LAB 未來視覺實驗室持續推動實驗展演計畫「FUTURE VISION LAB」，並以數位實驗建築為起點，打造穹形場域（DOME），持續探索科技媒體的視覺極限，過去六年已進行超過兩百件作品展演。2023年，在文化部支持下完成軟硬體升級，打造直徑15公尺、全臺唯一的巨型移動式戶外沉浸體驗空間「C-LAB穹頂劇場」。沉浸影像投影系統總運算可達 8K × 8K 超高解析度，並克服球形曲面投影在校正、融接、對位、播放控制與影像前製等多重技術挑戰。場域採雙層結構設計，搭配客製透聲投影膜片與25.4聲道環繞聲場環境，打造高規格沉浸式體驗。未來視覺實驗室持續優化穹形場域之創作環境，並向國際標準接軌，展現臺灣在科技藝術領域的創作能量。</p><p>「FUTURE VISION LAB 2026」將自 2026年4月18日至6月7日，連續8個週末登場，匯集來自臺灣、法國、西班牙、匈牙利、奧地利、韓國、日本、美國與加拿大等各地精彩作品，共呈現19件作品、16檔節目。透過展覽、播映與現場 Live 演出等多元形式，在跨國創作的交會之中，邀請觀眾走入C-LAB穹頂劇場，沉浸於多元文化交織的感官體驗。</p>`;
@@ -55,20 +52,17 @@ export default {
     },
   },
   mounted() {
-    this.fetchProjectIntro();
-  }, 
+    this.loadProjectIntro();
+  },
   methods: {
-    async fetchProjectIntro() {
+    loadProjectIntro() {
       try {
-        const { data } = await axios.get(PROJECT_API_URL, {
-          headers: { Authorization: API_AUTH },
-        });
-        if (data && typeof data === 'object' && 'error' in data && !data.data) {
+        const entity = getProjectEntity();
+        if (!entity) {
           this.descriptionZhTw = ABOUT_FALLBACK_ZH;
           this.descriptionEn = ABOUT_FALLBACK_EN;
           return;
         }
-        const entity = data?.data && typeof data.data === 'object' ? data.data : data;
         const zhRaw = entity?.description_zh_tw ?? entity?.descriptionZhTw ?? '';
         const enRaw = entity?.description ?? '';
         const zh = typeof zhRaw === 'string' ? zhRaw.trim() : '';
