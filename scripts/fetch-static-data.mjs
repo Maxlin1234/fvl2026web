@@ -1,7 +1,6 @@
 /**
  * Optional: fetch CLAB API and overwrite src/static-data/*.json
- * Run manually when you need to sync from the backend: npm run fetch-data
- * Normal serve/build use existing JSON only — no API calls.
+ * Runs automatically before `npm run build`; manual: npm run fetch-data
  */
 import fs from 'fs';
 import path from 'path';

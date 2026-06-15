@@ -4,7 +4,10 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "npm run fetch-data && vue-cli-service build",
+    "build:skip-fetch": "vue-cli-service build",
+    "preview": "serve -s dist",
+    "build:preview": "npm run build && npm run preview",
     "fetch-data": "node scripts/fetch-static-data.mjs",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint"
@@ -61,6 +64,7 @@
     "lint-staged": "^9.5.0",
     "sass": "^1.76.0",
     "sass-loader": "^8.0.2",
+    "serve": "^14.2.4",
     "style-loader": "^1.3.0",
     "tailwindcss": "^3.4.3",
     "vue-template-compiler": "^2.6.11",

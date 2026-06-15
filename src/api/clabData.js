@@ -1,6 +1,6 @@
 /**
- * Site content from committed JSON under src/static-data/.
- * No runtime API calls. Optional refresh: npm run fetch-data
+ * Site content from src/static-data/*.json (written at build time).
+ * No runtime API calls in the browser.
  */
 import projectBundle from '../static-data/project.json';
 import worksBundle from '../static-data/works.json';
