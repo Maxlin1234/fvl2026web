@@ -1,2 +1,11 @@
-# SPA：所有路徑都回 index.html，由 Vue Router 處理（含 /festival/2026）
+# 靜態資源：必須在 SPA fallback 之前（Netlify / 部分靜態主機）
+/static-media/*  /static-media/:splat  200
+/imgs/*          /imgs/:splat          200
+/textures/*      /textures/:splat      200
+/img/*           /img/:splat           200
+/js/*            /js/:splat            200
+/css/*           /css/:splat           200
+/favicon.ico     /favicon.ico          200
+
+# SPA：其餘路徑交給 Vue Router
 /*    /index.html   200

@@ -51,6 +51,7 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { onMounted, onBeforeUnmount, ref, nextTick, watch } from 'vue';
+import { resolveMediaUrl } from '../api/clabData';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -257,15 +258,12 @@ export default {
   },
   methods: {
     getPhotoSrc(item) {
-      // 新 API 優先：featured_photo_media.url
       const directUrl = item?.featured_photo_media?.url
         || item?.featuredPhotoMedia?.url
         || item?.image_1920_media?.url
         || item?.image1920Media?.url
         || item?.photo_1;
-      if (!directUrl) return '';
-      if (typeof directUrl === 'string' && /^https?:\/\//i.test(directUrl)) return directUrl;
-      return `https://unzip-clab-api.clab.org.tw/${String(directUrl).replace(/^\/+/, '')}`;
+      return resolveMediaUrl(directUrl);
     },
     getWorkTitle(item) {
       const zhTitle = item?.work_zh?.title

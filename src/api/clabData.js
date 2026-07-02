@@ -43,13 +43,19 @@ export function getWorkProposal(workId) {
   return proposalsBundle?.proposals?.[sid] || null;
 }
 
+/** Resolve media URL: local /static-media, absolute remote, or legacy API path. */
+export function resolveMediaUrl(url) {
+  if (!url) return '';
+  const s = String(url);
+  if (s.startsWith('/')) return s;
+  if (/^https?:\/\//i.test(s)) return s;
+  return `https://unzip-clab-api.clab.org.tw/${s.replace(/^\/+/, '')}`;
+}
+
 /** Resolve featured photo URL (absolute or unzip-clab-api relative path). */
 export function resolveWorkFeaturedPhotoUrl(w) {
   const directUrl = w?.featured_photo_media?.url || w?.featuredPhotoMedia?.url;
-  if (!directUrl) return '';
-  const s = String(directUrl);
-  if (/^https?:\/\//i.test(s)) return s;
-  return `https://unzip-clab-api.clab.org.tw/${s.replace(/^\/+/, '')}`;
+  return resolveMediaUrl(directUrl);
 }
 
 export function getStaticDataFetchedAt() {

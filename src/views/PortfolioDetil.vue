@@ -202,7 +202,7 @@
 
 <script>
 import { ref, onMounted, onBeforeUnmount, computed, watch, getCurrentInstance, nextTick } from 'vue';
-import { getWorkById, getWorkProposal } from '../api/clabData';
+import { getWorkById, getWorkProposal, resolveMediaUrl } from '../api/clabData';
 import LanguageSwitch from '../components/LanguageSwitch.vue';
 
 export default {
@@ -397,12 +397,7 @@ export default {
       return rows;
     });
 
-    const makeUrl = (p) => {
-      if (!p) return '';
-      const s = String(p);
-      if (/^https?:\/\//i.test(s)) return s;
-      return `https://unzip-clab-api.clab.org.tw/${s.replace(/^\/+/, '')}`;
-    };
+    const makeUrl = (p) => resolveMediaUrl(p);
 
     const recalcDerived = () => {
       // 優先使用 photos 陣列（新 API），回退到 photo_1/2/3 舊欄位
@@ -558,12 +553,7 @@ export default {
       return source ? [{ name: '', description: source }] : [];
     });
 
-    const normalizeMediaUrl = (p) => {
-      if (!p) return '';
-      const s = String(p);
-      if (/^https?:\/\//i.test(s)) return s;
-      return `https://unzip-clab-api.clab.org.tw/${s.replace(/^\/+/, '')}`;
-    };
+    const normalizeMediaUrl = (p) => resolveMediaUrl(p);
 
     const isBlockedArtistImage = (url) => {
       if (!url) return true;
