@@ -6,6 +6,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import https from 'https';
+import { walkAndStripIntroFields } from '../src/utils/stripCreatorsImportNote.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const OUT_DIR = path.join(__dirname, '../src/static-data');
@@ -82,6 +83,9 @@ async function main() {
   }
 
   const meta = { fetchedAt: new Date().toISOString() };
+
+  walkAndStripIntroFields(projectRaw);
+  walkAndStripIntroFields(works);
 
   writeJson('project.json', { ...meta, raw: projectRaw });
   writeJson('works.json', { ...meta, works });

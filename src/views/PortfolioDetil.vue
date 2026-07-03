@@ -203,6 +203,7 @@
 <script>
 import { ref, onMounted, onBeforeUnmount, computed, watch, getCurrentInstance, nextTick } from 'vue';
 import { getWorkById, getWorkProposal, resolveMediaUrl } from '../api/clabData';
+import { stripCreatorsImportNote } from '../utils/stripCreatorsImportNote';
 import LanguageSwitch from '../components/LanguageSwitch.vue';
 
 export default {
@@ -255,6 +256,8 @@ export default {
       const text = temp.textContent || temp.innerText || '';
       return text;
     };
+
+    const cleanIntroText = (raw) => stripHtml(stripCreatorsImportNote(raw || '')).trim();
 
     /** 指定作品：藝術家／團體顯示與介紹順序（依 API name / name_zh_tw 比對） */
     const CUSTOM_DISPLAY_ORDER_RULES = [
@@ -391,7 +394,7 @@ export default {
             ? (item?.description || '')
             : (item?.description_zh_tw || item?.descriptionZhTw || item?.description || '');
         }
-        const description = stripHtml(raw || '').trim();
+        const description = cleanIntroText(raw);
         rows.push({ name, description });
       }
       return rows;
@@ -434,7 +437,7 @@ export default {
       const raw = isEnglish.value
         ? (c?.introduction || '')
         : (c?.introduction_zh_tw || c?.introductionZhTw || c?.introduction || '');
-      return stripHtml(raw).trim().length > 0;
+      return cleanIntroText(raw).length > 0;
     };
 
     /** 判斷 collective 是否有介紹內容 */
@@ -515,7 +518,7 @@ export default {
             const raw = isEnglish.value
               ? (c?.introduction || '')
               : (c?.introduction_zh_tw || c?.introductionZhTw || c?.introduction || '');
-            const description = stripHtml(raw).trim();
+            const description = cleanIntroText(raw);
             return { c, description };
           })
           .filter(({ description }) => description.length > 0);
@@ -664,7 +667,7 @@ export default {
         const rawIntro = isEnglish.value
           ? (m?.introduction || '')
           : (m?.introduction_zh_tw || m?.introduction || '');
-        const description = stripHtml(rawIntro).trim();
+        const description = cleanIntroText(rawIntro);
         const u =
           m?.image_1920_media?.url
           || m?.image1920Media?.url
